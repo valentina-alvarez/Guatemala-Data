@@ -15,6 +15,12 @@ library(infer)
 library(ggplot2)
 ```
 
+### Background Information
+This survey was conducted on 143 girls in an all-girl boarding school in Guatemala before and after a pair of Duke students conducted STEM-focused courses. Grade 1 would be equivalent to 7th grade in the American school system. We taught girls in grades 1, 2, and 3 the same curriculum, and girls in grades 5 magisterio (mag) and 5 bachillerato (bach) another curriculum. In 2017, the girls in 5 magisterio and 5 bachillerato took the curriculum that grades 1, 2, and 3 took in 2018. The girls in 5 magisterio are on a program specifically to become school teachers. The girls in 5 bachillerato usually pursue careers other than teaching. 
+
+### Purpose
+The purpose of the course is to give girls the chance to explore STEM-related courses and help them realize that they are capable of pursuing STEM-related careers, if they want to. Thus, the purpose of the survey is to evaluate the girls' attitudes towards STEM and STEM-related careers before and after the course. 
+
 ### Load data
 ```{r load-data}
 pre_empower <- read.csv("PRE_Empowerment.csv",
@@ -23,7 +29,7 @@ post_empower <- read.csv("POST_Empowerment.csv",
                     sep = ";")
 ```
 
-## Classifying and joining pre and post responses 
+### Classifying and joining pre and post responses 
 ```{r data}
 pre_empower <- pre_empower %>%
   mutate(pre_or_post = "pre")
@@ -36,13 +42,13 @@ empower <- full_join(pre_empower, post_empower)
 empower
 ```
 
-## Rank
+### Rank
 ```{r id-numbers}
 empower$ID <- seq.int(nrow(empower))
 empower
 ```
 
-## Changing responses from letters to words
+### Changing responses from letters to words and characterizing them as "Positive" or "Negative" 
 
 I decided to join "Absolutely" with "Yes" to define someone who feels positively about a certain question. I joined "No" with "Absolutely Not" to define someone who feels negatively about a certain question. 
 
@@ -117,8 +123,9 @@ empower$future_egr_classes <- change_names3(empower$future_egr_classes)
 
 ## Selecting data
 
-I excluded variables that the girls did not understand. 
-I created a new data set that looks at the grades by age group. 
+I excluded variables that showed extreme variance or are not relevant to the study. For example, when they were asked whether their parents had STEM-related careers (parents_stem), many girls classified farming or other agricultural/manual labor as STEM-related careers.
+
+I created a new data set that looks at the grades by age group ("Younger" vs. "Older")
 ```{r}
 empower_new <- empower %>%
   select(-c(parents_stem, 
@@ -128,7 +135,6 @@ empower_new <- empower %>%
             number_math_classes, 
             number_tech_classes, 
             number_egr_classes))
-
 empower_byage <- empower_new %>%
   mutate(age_groups = case_when(
     grade == "1" ~ "younger",
@@ -139,8 +145,15 @@ empower_byage <- empower_new %>%
   ))
 ```
 
+## Initially, I analyzed what I found to be the 9 most important questions in the survey.
+I created three visualizations for each question: 
+1. Visualizes all the girls' answers together. 
+2. Separates the girls' responses by age group (Younger or Older)
+3. Separates the girls' responses by their grade 
 
 ## Career in math
+
+This question asks whether the girls would like to pursue a career related to math.  
 
 ### All grades together
 ```{r}
@@ -191,6 +204,8 @@ ggplot(data = empower_new) +
 
 ## Good at math
 
+This question asks whether the girls believe they are good at math.
+
 ### All grades together
 ```{r}
 empower_new$good_at_math <- factor(empower_new$good_at_math, levels = c("yes", "neutral", "no"))
@@ -233,6 +248,8 @@ ggplot(data = empower_new) +
 ```
 
 ## More math courses
+
+This question asks whether the girls would like the opportunity to take more math courses. 
 
 ### All groups together
 ```{r}
@@ -278,6 +295,8 @@ ggplot(data = empower_new) +
 
 ## Science career
 
+This question asks whether the girls would like to pursue a career related to science.  
+
 ### All groups together
 
 ```{r}
@@ -320,6 +339,8 @@ ggplot(data = empower_new) +
 
 
 ## Good at science 
+
+This question asks whether the girls believe they are good at science.
 
 ### All groups together
 
@@ -364,6 +385,8 @@ ggplot(data = empower_new) +
 
 ## More science courses
 
+This question asks whether the girls would like the opportunity to take more science courses. 
+
 ### All groups together
 
 ```{r}
@@ -407,6 +430,8 @@ ggplot(data = empower_new) +
 
 ## Science and math together to invent things
 
+This question asks whether the girls agree with the statement that knowing how to use math and science together will allow them to invent useful things. 
+
 ### All groups together
 
 ```{r}
@@ -448,6 +473,8 @@ ggplot(data = empower_new) +
 ```
 
 ## Success in engineering
+
+This question asks whether the girls think they could succeed at an engineering-related career. 
 
 ### All groups together
 
@@ -492,6 +519,8 @@ ggplot(data = empower_new) +
 
 ## Courses in engineering
 
+This question asks whether the girls would like the opportunity to take more science courses. 
+
 ### All groups together
 
 ```{r}
@@ -533,6 +562,8 @@ ggplot(data = empower_new) +
 ```
 
 ## PRE Attitudes towards math
+
+The next section finds the proportion of girls in each grade who answered positively questions that related to math in the pre-implementation survey.
 
 ### Grade 1 
 ```{r}
@@ -595,6 +626,8 @@ pre_math_prop5b
 
 ## PRE Attitudes towards science
 
+The next section finds the proportion of girls in each grade who answered positively questions that related to science in the pre-implementation survey.
+
 ### Grade 1
 
 ```{r}
@@ -655,6 +688,8 @@ pre_science_prop5b
 ```
 
 ## PRE Attitudes towards engineering
+
+The next section finds the proportion of girls in each grade who answered positively questions that related to engineering in the pre-implementation survey.
 
 ### Grade 1
 
@@ -726,6 +761,8 @@ avg_egr_pre <- (pre_egr_prop1 + pre_egr_prop2 + pre_egr_prop3 + pre_egr_prop5m +
 
 ## POST Attitudes towards math
 
+The next section finds the proportion of girls in each grade who answered positively questions that related to math in the post-implementation survey.
+
 ### Grade 1 
 ```{r}
 empower_math1 <- empower_new %>%
@@ -787,6 +824,8 @@ math_prop5b
 
 ## POST Attitudes towards science
 
+The next section finds the proportion of girls in each grade who answered positively questions that related to science in the post-implementation survey.
+
 ### Grade 1
 
 ```{r}
@@ -847,6 +886,8 @@ science_prop5b
 ```
 
 ## POST Attitudes towards engineering
+
+The next section finds the proportion of girls in each grade who answered positively questions that related to engineering in the post-implementation survey.
 
 ### Grade 1
 
@@ -918,6 +959,8 @@ avg_egr <- (egr_prop1 + egr_prop2 + egr_prop3 + egr_prop5m + egr_prop5b)/5
 
 ## Attitudes towards STEM table
 
+I put together a table with all the proportions of girls who responded positively to math, science and engineering questions, per grade.
+
 ```{r}
 stem_attitudes <- data.frame("grade" = c("1", "2", "3", "5 mag", "5bach", "Average"), "math" = c(math_prop1, math_prop2, math_prop3, math_prop5m, math_prop5b, avg_math), "science" = c(science_prop1, science_prop2, science_prop3, science_prop5m, science_prop5b, avg_science), "egr" = c(egr_prop1, egr_prop2, egr_prop3, egr_prop5m, egr_prop5b, avg_egr))
 stem_attitudes
@@ -927,6 +970,8 @@ stem_attitudes
 stem <- data.frame("grade" = c("1", "2", "3", "5 mag", "5bach", "Average"), "prop" = c(pre_math_prop1, pre_math_prop2, pre_math_prop3, pre_math_prop5m, pre_math_prop5b, avg_math_pre, pre_science_prop1, pre_science_prop2, pre_science_prop3, pre_science_prop5m, pre_science_prop5b, avg_science_pre, pre_egr_prop1, pre_egr_prop2, pre_egr_prop3, pre_egr_prop5m, pre_egr_prop5b, avg_egr_pre, math_prop1, math_prop2, math_prop3, math_prop5m, math_prop5b, avg_math, science_prop1, science_prop2, science_prop3, science_prop5m, science_prop5b, avg_science, egr_prop1, egr_prop2, egr_prop3, egr_prop5b, egr_prop5m, avg_egr), "course" = c("math", "math", "math", "math", "math", "math", "science", "science", "science", "science", "science", "science", "egr", "egr", "egr", "egr", "egr", "egr", "math", "math", "math", "math", "math", "math", "science", "science", "science", "science", "science", "science", "egr", "egr", "egr", "egr", "egr", "egr"), "pre_post" = c("pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post"))
 stem
 ```
+
+I visualized the chart in the following bar graph. 
 
 ```{r}
 stem$course <- factor(stem$course, levels = c("math", "science", "egr"))
@@ -942,9 +987,10 @@ ggplot(data=stem, aes(x=grade, y=prop, fill=course)) +
 ```
 
 
-## Template for finding proportions
+## Notes:
 
-```{r}
+### Template for finding proportions
+
 prop_pre_mathcareer <- empower_new %>%
   filter(!is.na(math_career)) %>%
   count(math_career, pre_or_post) %>%
@@ -953,9 +999,8 @@ prop_pre_mathcareer <- empower_new %>%
   select(math_career, pre_or_post, perc) %>%
   filter(pre_or_post == "pre")
 prop_pre_mathcareer
-```
 
 
-## Ideas 
+### Ideas 
 
 How predicted grades vary between subjects
