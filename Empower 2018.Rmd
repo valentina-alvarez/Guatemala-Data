@@ -23,9 +23,9 @@ The purpose of the course is to give girls the chance to explore STEM-related co
 
 ### Load data
 ```{r load-data}
-pre_empower <- read.csv("PRE_Empowerment.csv",
+pre_empower <- read.csv("data/PRE_Empowerment.csv",
                     sep = ";")
-post_empower <- read.csv("POST_Empowerment.csv",
+post_empower <- read.csv("data/POST_Empowerment.csv",
                     sep = ";")
 ```
 
