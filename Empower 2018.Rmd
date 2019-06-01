@@ -22,10 +22,17 @@ This survey was conducted on 143 girls in an all-girl boarding school in Guatema
 The purpose of the course is to give girls the chance to explore STEM-related courses and help them realize that they are capable of pursuing STEM-related careers, if they want to. Thus, the purpose of the survey is to evaluate the girls' attitudes towards STEM and STEM-related careers before and after the course. 
 
 ### A note for Professor Tackett
-I feel like a have a lot of interesting data and visualizations, but I am unsure about what direction to take the project in order to come to conclusions about the program. I am thinking that some of the important takeaways could be observations about how the program's effect differs: 
+I feel like a have a lot of interesting data and visualizations, but I am unsure about what direction to take the statistical research in order to come to important conclusions about the curriculum. 
+
+I am thinking that some of the important takeaways could be observations about how the program's effect differs: 
 - Between older and younger girls (middle vs. high school)
 - Between different grade levels (more specific than just saying younger vs. older)
 - Between girls who are on the teaching-specific program (5 magisterio) vs. those who might have time to decide on their career path (5 bach and grades 1-3)
+- Between girls who took the course last year and those who did not 
+
+However, I am stuck on how to decide which of these paths to pursue. 
+
+Furthermore, the lab through which I am doing this investigation failed to send me the Post-Implementation survey for 2017, so I only have the Pre-Implementation survey for 2017. The survey in 2017 was much shorter. However, we might be able to draw some comparisons between 2017 and 2018, once I get all the 2017 data. 
 
 ### Load data
 ```{r load-data}
