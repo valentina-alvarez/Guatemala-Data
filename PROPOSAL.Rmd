@@ -58,13 +58,11 @@ post_empower <- post_empower %>%
 
 ```{r join-data}
 empower <- full_join(pre_empower, post_empower)
-empower
 ```
 
 ### Rank
 ```{r id-numbers}
 empower$ID <- seq.int(nrow(empower))
-empower
 ```
 
 ### Changing responses from letters to words and characterizing them as "Positive" or "Negative" 
