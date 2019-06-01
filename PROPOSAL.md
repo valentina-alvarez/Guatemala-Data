@@ -1238,59 +1238,11 @@ positively to math, science and engineering questions, per grade.
 
 ``` r
 stem_attitudes <- data.frame("grade" = c("1", "2", "3", "5 mag", "5bach", "Average"), "math" = c(math_prop1, math_prop2, math_prop3, math_prop5m, math_prop5b, avg_math), "science" = c(science_prop1, science_prop2, science_prop3, science_prop5m, science_prop5b, avg_science), "egr" = c(egr_prop1, egr_prop2, egr_prop3, egr_prop5m, egr_prop5b, avg_egr))
-stem_attitudes
 ```
-
-    ##     grade      math   science       egr
-    ## 1       1 0.7407407 0.7735849 0.9764706
-    ## 2       2 0.6825397 0.8450704 0.9375000
-    ## 3       3 0.8510638 0.9423077 0.9677419
-    ## 4   5 mag 0.5820896 0.8309859 0.8773585
-    ## 5   5bach 0.8834951 0.9344262 0.9461078
-    ## 6 Average 0.7479858 0.8652750 0.9410358
 
 ``` r
 stem <- data.frame("grade" = c("1", "2", "3", "5 mag", "5bach", "Average"), "prop" = c(pre_math_prop1, pre_math_prop2, pre_math_prop3, pre_math_prop5m, pre_math_prop5b, avg_math_pre, pre_science_prop1, pre_science_prop2, pre_science_prop3, pre_science_prop5m, pre_science_prop5b, avg_science_pre, pre_egr_prop1, pre_egr_prop2, pre_egr_prop3, pre_egr_prop5m, pre_egr_prop5b, avg_egr_pre, math_prop1, math_prop2, math_prop3, math_prop5m, math_prop5b, avg_math, science_prop1, science_prop2, science_prop3, science_prop5m, science_prop5b, avg_science, egr_prop1, egr_prop2, egr_prop3, egr_prop5b, egr_prop5m, avg_egr), "course" = c("math", "math", "math", "math", "math", "math", "science", "science", "science", "science", "science", "science", "egr", "egr", "egr", "egr", "egr", "egr", "math", "math", "math", "math", "math", "math", "science", "science", "science", "science", "science", "science", "egr", "egr", "egr", "egr", "egr", "egr"), "pre_post" = c("pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post"))
-stem
 ```
-
-    ##      grade      prop  course pre_post
-    ## 1        1 0.7594937    math      pre
-    ## 2        2 0.7285714    math      pre
-    ## 3        3 0.7666667    math      pre
-    ## 4    5 mag 0.4842105    math      pre
-    ## 5    5bach 0.7884615    math      pre
-    ## 6  Average 0.7054808    math      pre
-    ## 7        1 0.8292683 science      pre
-    ## 8        2 0.8108108 science      pre
-    ## 9        3 0.8629032 science      pre
-    ## 10   5 mag 0.8191489 science      pre
-    ## 11   5bach 0.8780488 science      pre
-    ## 12 Average 0.8400360 science      pre
-    ## 13       1 0.8429752     egr      pre
-    ## 14       2 0.8791209     egr      pre
-    ## 15       3 0.9086022     egr      pre
-    ## 16   5 mag 0.8818898     egr      pre
-    ## 17   5bach 0.8203593     egr      pre
-    ## 18 Average 0.8665895     egr      pre
-    ## 19       1 0.7407407    math     post
-    ## 20       2 0.6825397    math     post
-    ## 21       3 0.8510638    math     post
-    ## 22   5 mag 0.5820896    math     post
-    ## 23   5bach 0.8834951    math     post
-    ## 24 Average 0.7479858    math     post
-    ## 25       1 0.7735849 science     post
-    ## 26       2 0.8450704 science     post
-    ## 27       3 0.9423077 science     post
-    ## 28   5 mag 0.8309859 science     post
-    ## 29   5bach 0.9344262 science     post
-    ## 30 Average 0.8652750 science     post
-    ## 31       1 0.9764706     egr     post
-    ## 32       2 0.9375000     egr     post
-    ## 33       3 0.9677419     egr     post
-    ## 34   5 mag 0.9461078     egr     post
-    ## 35   5bach 0.8773585     egr     post
-    ## 36 Average 0.9410358     egr     post
 
 I visualized the chart in the following bar graph.
 
