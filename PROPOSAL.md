@@ -9,8 +9,8 @@ library(ggplot2)
 
 ### Background Information
 
-This survey was conducted on 143 girls in an all-girl boarding school in
-Guatemala before and after a pair of Duke students conducted
+This survey was conducted on 143 girls in an all-female boarding school
+in Guatemala before and after a pair of Duke students conducted
 STEM-focused courses. Grade 1 would be equivalent to 7th grade in the
 American school system. We taught girls in grades 1, 2, and 3 the same
 curriculum, and girls in grades 5 magisterio (mag) and 5 bachillerato
@@ -51,11 +51,11 @@ Pre-Implementation survey for 2017. The survey in 2017 was much shorter.
 However, we might be able to draw some comparisons between 2017 and
 2018, once I get all the 2017 data.
 
-Also, how do I factor in things that were not directly addressed in the
-survey? For example, at lunch we talked about how the girls might have
-felt inclined to answer the post-implementation survey more positively
-because they liked their teachers, not necessarily because they liked
-the subject.
+Finally, how do I factor in things that were not directly addressed in
+the survey? For example, at Flunch we talked about how the girls might
+have felt inclined to answer the post-implementation survey more
+positively because they liked their teachers, not necessarily because
+they liked the subject.
 
 ### Load data
 
@@ -65,6 +65,9 @@ pre_empower <- read.csv("data/PRE_Empowerment.csv",
 post_empower <- read.csv("data/POST_Empowerment.csv",
                     sep = ";")
 ```
+
+SECTION 1: ORGANIZING DATA
+==========================
 
 ### Classifying and joining pre and post responses
 
@@ -256,512 +259,15 @@ empower_byage <- empower_new %>%
   ))
 ```
 
-Initially, I analyzed what I found to be the 9 most important questions in the survey.
---------------------------------------------------------------------------------------
-
-I created three visualizations for each question: 1. Visualizes all the
-girls’ answers together. 2. Separates the girls’ responses by age group
-(Younger or Older) 3. Separates the girls’ responses by their grade
-
-Career in math
---------------
-
-This question asks whether the girls would like to pursue a career
-related to math.
-
-### All grades together
-
-``` r
-empower_new$math_career <- factor(empower_new$math_career, levels = c("yes", "neutral", "no"))
-empower_new$pre_or_post <- factor(empower_new$pre_or_post, levels = c("pre", "post"))
-
-ggplot(data = empower_new) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = math_career), position = "fill") +
-  labs(title = "Proportion of People Who Think of a Career in Math",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "Would you consider a career in math?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-2-1.png)
-
-### By age group
-
-``` r
-empower_byage$math_career <- factor(empower_byage$math_career, levels = c("yes", "neutral", "no"))
-empower_byage$pre_or_post <- factor(empower_byage$pre_or_post, levels = c("pre", "post"))
-empower_byage$age_groups <- factor(empower_byage$age_groups, levels = c("younger", "older"))
-
-ggplot(data = empower_byage) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = math_career), position = "fill") +
-  facet_grid(~ age_groups) +
-  labs(title = "Proportion of People Who Think of a Career in Math",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "Career in math?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-3-1.png)
-
-### By grade
-
-``` r
-empower_new$math_career <- factor(empower_new$math_career, levels = c("yes", "neutral", "no"))
-empower_new$pre_or_post <- factor(empower_new$pre_or_post, levels = c("pre", "post"))
-
-ggplot(data = empower_new) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = math_career), position = "fill") +
-  facet_grid(~ grade) +
-  labs(title = "Proportion of People Who Think of a Career in Math",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "Career in math?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-4-1.png)
-
-Good at math
-------------
-
-This question asks whether the girls believe they are good at math.
-
-### All grades together
-
-``` r
-empower_new$good_at_math <- factor(empower_new$good_at_math, levels = c("yes", "neutral", "no"))
-
-ggplot(data = empower_new) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = good_at_math), position = "fill") +
-  labs(title = "Proportion of People Who Think They Are Good at Math",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "Good at math?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-5-1.png)
-
-### By age group
-
-``` r
-empower_byage$good_at_math <- factor(empower_byage$good_at_math, levels = c("yes", "neutral", "no"))
-
-ggplot(data = empower_byage) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = good_at_math), position = "fill") +
-  facet_grid(~ age_groups) +
-  labs(title = "Proportion of People Who Think They are Good at Math",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "Good at math?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-6-1.png)
-
-### By grade
-
-``` r
-ggplot(data = empower_new) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = good_at_math), position = "fill") +
-  facet_grid(~ grade) +
- labs(title = "Proportion of People Who Think They are Good at Math",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "Good at math?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-7-1.png)
-
-More math courses
------------------
-
-This question asks whether the girls would like the opportunity to take
-more math courses.
-
-### All groups together
-
-``` r
-empower_new$math_courses <- factor(empower_new$math_courses, levels = c("yes", "neutral", "no"))
-
-ggplot(data = empower_new) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = math_courses), position = "fill") +
-  labs(title = "Proportion of People Who Want to Take More Math Courses",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "More math courses?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-8-1.png)
-
-### By age group
-
-``` r
-empower_byage$math_courses <- factor(empower_byage$math_courses, levels = c("yes", "neutral", "no"))
-
-ggplot(data = empower_byage) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = math_courses), position = "fill") +
-  facet_grid(~ age_groups) +
-  labs(title = "Proportion of People Who Want to Take More Math Courses",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "More math courses?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-9-1.png)
-
-### By grade
-
-``` r
-empower_new$math_courses <- factor(empower_new$math_courses, levels = c("yes", "neutral", "no"))
-
-ggplot(data = empower_new) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = math_courses), position = "fill") +
-  facet_grid(~ grade) +
-  labs(title = "Proportion of People Who Want to Take More Math Courses",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "More math courses?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-10-1.png)
-
-Science career
---------------
-
-This question asks whether the girls would like to pursue a career
-related to science.
-
-### All groups together
-
-``` r
-empower_new$science_career <- factor(empower_new$science_career, levels = c("yes", "neutral", "no"))
-
-ggplot(data = empower_new) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = science_career), position = "fill") +
-  labs(title = "Proportion of People Who Think of a Career in Science",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "Career in science?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-11-1.png)
-
-### By age group
-
-``` r
-empower_byage$science_career <- factor(empower_byage$science_career, levels = c("yes", "neutral", "no"))
-
-ggplot(data = empower_byage) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = science_career), position = "fill") +
-  facet_grid(~ age_groups) +
-  labs(title = "Proportion of People Who Think of a Career in Science",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "Career in science?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-12-1.png)
-
-### By grade
-
-``` r
-ggplot(data = empower_new) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = science_career), position = "fill") +
-  facet_grid(~ grade) +
-  labs(title = "Proportion of People Who Think of a Career in Science",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "Career in science?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-13-1.png)
-
-Good at science
----------------
-
-This question asks whether the girls believe they are good at science.
-
-### All groups together
-
-``` r
-empower_new$good_science <- factor(empower_new$science_career, levels = c("yes", "neutral", "no"))
-
-ggplot(data = empower_new) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = science_career), position = "fill") +
-  labs(title = "Proportion of People Who Think of a Career in Science",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "Career in science?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-14-1.png)
-
-### By age group
-
-``` r
-empower_byage$science_career <- factor(empower_byage$science_career, levels = c("yes", "neutral", "no"))
-
-ggplot(data = empower_byage) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = science_career), position = "fill") +
-  facet_grid(~ age_groups) +
-  labs(title = "Proportion of People Who Think of a Career in Science",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "Career in science?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-15-1.png)
-
-### By grade
-
-``` r
-ggplot(data = empower_new) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = science_career), position = "fill") +
-  facet_grid(~ grade) +
-  labs(title = "Proportion of People Who Think of a Career in Science",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "Career in science?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-16-1.png)
-
-More science courses
---------------------
-
-This question asks whether the girls would like the opportunity to take
-more science courses.
-
-### All groups together
-
-``` r
-empower_new$science_courses <- factor(empower_new$science_courses, levels = c("yes", "neutral", "no"))
-
-ggplot(data = empower_new) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = science_courses), position = "fill") +
-  labs(title = "Proportion of People Who Want to take More Science Courses",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "More Science Courses?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-17-1.png)
-
-### By age group
-
-``` r
-empower_byage$science_courses <- factor(empower_byage$science_courses, levels = c("yes", "neutral", "no"))
-
-ggplot(data = empower_byage) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = science_courses), position = "fill") +
-  facet_grid(~ age_groups) +
-  labs(title = "Proportion of People Who Want to take More Science Courses",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "More Science Courses?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-18-1.png)
-
-### By grade
-
-``` r
-ggplot(data = empower_new) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = science_courses), position = "fill") +
-  facet_grid(~ grade) +
-  labs(title = "Proportion of People Who Want to take More Science Courses",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "More Science Courses?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-19-1.png)
-
-Science and math together to invent things
-------------------------------------------
-
-This question asks whether the girls agree with the statement that
-knowing how to use math and science together will allow them to invent
-useful things.
-
-### All groups together
-
-``` r
-empower_new$mathscience_useful <- factor(empower_new$mathscience_useful, levels = c("yes", "neutral", "no"))
-
-ggplot(data = empower_new) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = mathscience_useful), position = "fill") +
-  labs(title = "Proportion of People Who Think They Can Invent",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "Can invent?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-20-1.png)
-
-### By age group
-
-``` r
-empower_byage$mathscience_useful <- factor(empower_byage$mathscience_useful, levels = c("yes", "neutral", "no"))
-
-ggplot(data = empower_byage) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = mathscience_useful), position = "fill") +
-  facet_grid(~ age_groups) +
-  labs(title = "Proportion of People Who Think They Can Invent",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "Can invent?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-21-1.png)
-
-### By grade
-
-``` r
-ggplot(data = empower_new) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = science_courses), position = "fill") +
-  facet_grid(~ grade) +
-  labs(title = "Proportion of People Who Think They Can Invent",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "Can invent?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-22-1.png)
-
-Success in engineering
-----------------------
-
-This question asks whether the girls think they could succeed at an
-engineering-related career.
-
-### All groups together
-
-``` r
-empower_new$success_engineering <- factor(empower_new$success_engineering, levels = c("yes", "neutral", "no"))
-
-ggplot(data = empower_new) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = success_engineering), position = "fill") +
-  labs(title = "Proportion of People Who Think They Can Succeed as Engineers",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "Can succeed?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-23-1.png)
-
-### By age group
-
-``` r
-empower_byage$success_engineering <- factor(empower_byage$success_engineering, levels = c("yes", "neutral", "no"))
-
-ggplot(data = empower_byage) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = success_engineering), position = "fill") +
-  facet_grid(~ age_groups) +
-  labs(title = "Proportion of People Who Think They Can Succeed as Engineers",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "Can succeed?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-24-1.png)
-
-### By grade
-
-``` r
-ggplot(data = empower_new) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = success_engineering), position = "fill") +
-  facet_grid(~ grade) +
-  labs(title = "Proportion of People Who Think They Can Succeed as Engineers",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "Can succeed?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-25-1.png)
-
-Courses in engineering
-----------------------
-
-This question asks whether the girls would like the opportunity to take
-more science courses.
-
-### All groups together
-
-``` r
-empower_new$opportunity_engineering <- factor(empower_new$opportunity_engineering, levels = c("yes", "neutral", "no"))
-
-ggplot(data = empower_new) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = opportunity_engineering), position = "fill") +
-  labs(title = "Proportion of People Who Want to Take More EGR Courses",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "EGR courses?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-26-1.png)
-
-### By age group
-
-``` r
-empower_byage$opportunity_engineering <- factor(empower_byage$opportunity_engineering, levels = c("yes", "neutral", "no"))
-
-ggplot(data = empower_byage) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = opportunity_engineering), position = "fill") +
-  facet_grid(~ age_groups) +
-  labs(title = "Proportion of People Who Want to Take More EGR Courses",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "EGR Courses?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-27-1.png)
-
-### By grade
-
-``` r
-ggplot(data = empower_new) +
-  geom_bar(mapping = aes(x = pre_or_post, 
-                         fill = opportunity_engineering), position = "fill") +
-  facet_grid(~ grade) +
-  labs(title = "Proportion of People Who Want to Take More EGR Courses",
-       x = "Pre or Post",
-       y = "Proportions", 
-       fill = "EGR Courses?")
-```
-
-![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-28-1.png)
+SECTION 2: PROPORTION OF GIRLS THAT RESPOND POSITIVELY TO STEM
+==============================================================
 
 PRE Attitudes towards math
 --------------------------
 
-The next section finds the proportion of girls in each grade who
-answered positively questions that related to math in the
-pre-implementation survey.
+This section finds the proportion of girls in each grade who answered
+positively questions that related to math in the pre-implementation
+survey.
 
 ### Grade 1
 
@@ -852,7 +358,7 @@ pre_science_prop1 <- sum(str_count(pre_empower_science1$science, "yes")) / (sum(
 pre_science_prop1
 ```
 
-    ## [1] 0.8292683
+    ## [1] 0.8433735
 
 ### Grade 2
 
@@ -866,7 +372,7 @@ pre_science_prop2 <- sum(str_count(pre_empower_science2$science, "yes")) / (sum(
 pre_science_prop2
 ```
 
-    ## [1] 0.8108108
+    ## [1] 0.8133333
 
 ### Grade 3
 
@@ -894,7 +400,7 @@ pre_science_prop5m <- sum(str_count(pre_empower_science5m$science, "yes")) / (su
 pre_science_prop5m
 ```
 
-    ## [1] 0.8191489
+    ## [1] 0.8426966
 
 ### Grade 5 bachillerato
 
@@ -908,7 +414,7 @@ pre_science_prop5b <- sum(str_count(pre_empower_science5b$science, "yes")) / (su
 pre_science_prop5b
 ```
 
-    ## [1] 0.8780488
+    ## [1] 0.8861789
 
 PRE Attitudes towards engineering
 ---------------------------------
@@ -1089,7 +595,7 @@ science_prop1 <- sum(str_count(empower_science1$science, "yes")) / (sum(str_coun
 science_prop1
 ```
 
-    ## [1] 0.7735849
+    ## [1] 0.7592593
 
 ### Grade 2
 
@@ -1103,7 +609,7 @@ science_prop2 <- sum(str_count(empower_science2$science, "yes")) / (sum(str_coun
 science_prop2
 ```
 
-    ## [1] 0.8450704
+    ## [1] 0.8732394
 
 ### Grade 3
 
@@ -1131,7 +637,7 @@ science_prop5m <- sum(str_count(empower_science5m$science, "yes")) / (sum(str_co
 science_prop5m
 ```
 
-    ## [1] 0.8309859
+    ## [1] 0.8611111
 
 ### Grade 5 bachillerato
 
@@ -1242,7 +748,46 @@ stem_attitudes <- data.frame("grade" = c("1", "2", "3", "5 mag", "5bach", "Avera
 
 ``` r
 stem <- data.frame("grade" = c("1", "2", "3", "5 mag", "5bach", "Average"), "prop" = c(pre_math_prop1, pre_math_prop2, pre_math_prop3, pre_math_prop5m, pre_math_prop5b, avg_math_pre, pre_science_prop1, pre_science_prop2, pre_science_prop3, pre_science_prop5m, pre_science_prop5b, avg_science_pre, pre_egr_prop1, pre_egr_prop2, pre_egr_prop3, pre_egr_prop5m, pre_egr_prop5b, avg_egr_pre, math_prop1, math_prop2, math_prop3, math_prop5m, math_prop5b, avg_math, science_prop1, science_prop2, science_prop3, science_prop5m, science_prop5b, avg_science, egr_prop1, egr_prop2, egr_prop3, egr_prop5b, egr_prop5m, avg_egr), "course" = c("math", "math", "math", "math", "math", "math", "science", "science", "science", "science", "science", "science", "egr", "egr", "egr", "egr", "egr", "egr", "math", "math", "math", "math", "math", "math", "science", "science", "science", "science", "science", "science", "egr", "egr", "egr", "egr", "egr", "egr"), "pre_post" = c("pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "pre", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post", "post"))
+stem
 ```
+
+    ##      grade      prop  course pre_post
+    ## 1        1 0.7594937    math      pre
+    ## 2        2 0.7285714    math      pre
+    ## 3        3 0.7666667    math      pre
+    ## 4    5 mag 0.4842105    math      pre
+    ## 5    5bach 0.7884615    math      pre
+    ## 6  Average 0.7054808    math      pre
+    ## 7        1 0.8433735 science      pre
+    ## 8        2 0.8133333 science      pre
+    ## 9        3 0.8629032 science      pre
+    ## 10   5 mag 0.8426966 science      pre
+    ## 11   5bach 0.8861789 science      pre
+    ## 12 Average 0.8496971 science      pre
+    ## 13       1 0.8429752     egr      pre
+    ## 14       2 0.8791209     egr      pre
+    ## 15       3 0.9086022     egr      pre
+    ## 16   5 mag 0.8818898     egr      pre
+    ## 17   5bach 0.8203593     egr      pre
+    ## 18 Average 0.8665895     egr      pre
+    ## 19       1 0.7407407    math     post
+    ## 20       2 0.6825397    math     post
+    ## 21       3 0.8510638    math     post
+    ## 22   5 mag 0.5820896    math     post
+    ## 23   5bach 0.8834951    math     post
+    ## 24 Average 0.7479858    math     post
+    ## 25       1 0.7592593 science     post
+    ## 26       2 0.8732394 science     post
+    ## 27       3 0.9423077 science     post
+    ## 28   5 mag 0.8611111 science     post
+    ## 29   5bach 0.9344262 science     post
+    ## 30 Average 0.8740687 science     post
+    ## 31       1 0.9764706     egr     post
+    ## 32       2 0.9375000     egr     post
+    ## 33       3 0.9677419     egr     post
+    ## 34   5 mag 0.9461078     egr     post
+    ## 35   5bach 0.8773585     egr     post
+    ## 36 Average 0.9410358     egr     post
 
 I visualized the chart in the following bar graph.
 
@@ -1250,19 +795,588 @@ I visualized the chart in the following bar graph.
 stem$course <- factor(stem$course, levels = c("math", "science", "egr"))
 stem$pre_post <- factor(stem$pre_post, levels = c("pre", "post"))
 
-ggplot(data=stem, aes(x=grade, y=prop, fill=course)) +
+  ggplot(data = stem, aes(x=pre_post, y=prop, fill=course)) +
     geom_bar(stat="identity", position=position_dodge()) +
-    facet_grid(~ pre_post) +
-    labs(title = "Proportion of Students Who Feel Positively About STEM", 
+    facet_grid(~ grade) +
+    labs(title = "Proportion of Students Who Feel Positively About math", 
          x = "Grade",
          y = "Proportion",
          fill = "Course")
 ```
 
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-36-1.png)
+
+Then, I found the difference in proportions of girls who feel positively
+about STEM.
+
+``` r
+stem_diffprop <- data.frame("grade" = c("1", "2", "3", "5 mag", "5bach", "Average"),  "diff_prop" = c(math_prop1-pre_math_prop1, math_prop2-pre_math_prop2, math_prop3-pre_math_prop3, math_prop5m-pre_math_prop5m, math_prop5b-pre_math_prop5b, avg_math-avg_math_pre,science_prop1-pre_science_prop1, science_prop2-pre_science_prop2, science_prop3-pre_science_prop3, science_prop5m-pre_science_prop5m, science_prop5b-pre_science_prop5b, avg_science-avg_science_pre, egr_prop1-pre_egr_prop1, egr_prop2-pre_egr_prop2, egr_prop3-pre_egr_prop3, egr_prop5b-pre_egr_prop5b, egr_prop5m-pre_egr_prop5m, avg_egr-avg_egr_pre), "course" = c("math", "math", "math", "math", "math", "math", "science", "science", "science", "science", "science", "science", "egr", "egr", "egr", "egr", "egr", "egr", "math", "math", "math", "math", "math", "math", "science", "science", "science", "science", "science", "science", "egr", "egr", "egr", "egr", "egr", "egr"))
+stem_diffprop
+```
+
+    ##      grade    diff_prop  course
+    ## 1        1 -0.018752930    math
+    ## 2        2 -0.046031746    math
+    ## 3        3  0.084397163    math
+    ## 4    5 mag  0.097879026    math
+    ## 5    5bach  0.095033607    math
+    ## 6  Average  0.042505024    math
+    ## 7        1 -0.084114235 science
+    ## 8        2  0.059906103 science
+    ## 9        3  0.079404467 science
+    ## 10   5 mag  0.018414482 science
+    ## 11   5bach  0.048247368 science
+    ## 12 Average  0.024371637 science
+    ## 13       1  0.133495382     egr
+    ## 14       2  0.058379121     egr
+    ## 15       3  0.059139785     egr
+    ## 16   5 mag  0.125748503     egr
+    ## 17   5bach -0.004531273     egr
+    ## 18 Average  0.074446303     egr
+    ## 19       1 -0.018752930    math
+    ## 20       2 -0.046031746    math
+    ## 21       3  0.084397163    math
+    ## 22   5 mag  0.097879026    math
+    ## 23   5bach  0.095033607    math
+    ## 24 Average  0.042505024    math
+    ## 25       1 -0.084114235 science
+    ## 26       2  0.059906103 science
+    ## 27       3  0.079404467 science
+    ## 28   5 mag  0.018414482 science
+    ## 29   5bach  0.048247368 science
+    ## 30 Average  0.024371637 science
+    ## 31       1  0.133495382     egr
+    ## 32       2  0.058379121     egr
+    ## 33       3  0.059139785     egr
+    ## 34   5 mag  0.125748503     egr
+    ## 35   5bach -0.004531273     egr
+    ## 36 Average  0.074446303     egr
+
+I visualized this difference in the following graph. I feel like this
+should be at the crux of the investigation.
+
+``` r
+stem_diffprop$course <- factor(stem$course, levels = c("math", "science", "egr"))
+
+  ggplot(data = stem_diffprop, aes(x=course, y=diff_prop, fill = grade)) +
+    geom_bar(stat="identity", position=position_dodge()) +
+    facet_grid(~ grade) +
+    labs(title = "Difference in Proportion of Students Who Feel Positively About STEM", 
+         subtitle = "Before and after the course",
+         x = "Grade",
+         y = "Proportion",
+         fill = "Course")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-38-1.png)
+
+SECTION 3: ANALYSIS BY QUESTION
+===============================
+
+More specifically, I analyzed what I found to be the 9 most important questions in the survey.
+----------------------------------------------------------------------------------------------
+
+### The following section is lengthy and repetitive, but I used it to gauge the data initially and see how the girls’ answers differed by grade and age group. I don’t think I will actually include the following graphs in the analysis. I could make a Shiny app for them? I don’t know if I would include that in the analysis, but it could be informative/fun?
+
+I created three visualizations for each question: 1. Visualizes all the
+girls’ answers together. 2. Separates the girls’ responses by age group
+(Younger or Older) 3. Separates the girls’ responses by their grade
+
+Career in math
+--------------
+
+This question asks whether the girls would like to pursue a career
+related to math.
+
+### All grades together
+
+``` r
+empower_new$math_career <- factor(empower_new$math_career, levels = c("yes", "neutral", "no"))
+empower_new$pre_or_post <- factor(empower_new$pre_or_post, levels = c("pre", "post"))
+
+ggplot(data = empower_new) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = math_career), position = "fill") +
+  labs(title = "Proportion of People Who Think of a Career in Math",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "Would you consider a career in math?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-39-1.png)
+
+### By age group
+
+``` r
+empower_byage$math_career <- factor(empower_byage$math_career, levels = c("yes", "neutral", "no"))
+empower_byage$pre_or_post <- factor(empower_byage$pre_or_post, levels = c("pre", "post"))
+empower_byage$age_groups <- factor(empower_byage$age_groups, levels = c("younger", "older"))
+
+ggplot(data = empower_byage) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = math_career), position = "fill") +
+  facet_grid(~ age_groups) +
+  labs(title = "Proportion of People Who Think of a Career in Math",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "Career in math?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-40-1.png)
+
+### By grade
+
+``` r
+empower_new$math_career <- factor(empower_new$math_career, levels = c("yes", "neutral", "no"))
+empower_new$pre_or_post <- factor(empower_new$pre_or_post, levels = c("pre", "post"))
+
+ggplot(data = empower_new) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = math_career), position = "fill") +
+  facet_grid(~ grade) +
+  labs(title = "Proportion of People Who Think of a Career in Math",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "Career in math?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-41-1.png)
+
+Good at math
+------------
+
+This question asks whether the girls believe they are good at math.
+
+### All grades together
+
+``` r
+empower_new$good_at_math <- factor(empower_new$good_at_math, levels = c("yes", "neutral", "no"))
+
+ggplot(data = empower_new) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = good_at_math), position = "fill") +
+  labs(title = "Proportion of People Who Think They Are Good at Math",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "Good at math?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-42-1.png)
+
+### By age group
+
+``` r
+empower_byage$good_at_math <- factor(empower_byage$good_at_math, levels = c("yes", "neutral", "no"))
+
+ggplot(data = empower_byage) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = good_at_math), position = "fill") +
+  facet_grid(~ age_groups) +
+  labs(title = "Proportion of People Who Think They are Good at Math",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "Good at math?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-43-1.png)
+
+### By grade
+
+``` r
+ggplot(data = empower_new) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = good_at_math), position = "fill") +
+  facet_grid(~ grade) +
+ labs(title = "Proportion of People Who Think They are Good at Math",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "Good at math?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-44-1.png)
+
+More math courses
+-----------------
+
+This question asks whether the girls would like the opportunity to take
+more math courses.
+
+### All groups together
+
+``` r
+empower_new$math_courses <- factor(empower_new$math_courses, levels = c("yes", "neutral", "no"))
+
+ggplot(data = empower_new) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = math_courses), position = "fill") +
+  labs(title = "Proportion of People Who Want to Take More Math Courses",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "More math courses?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-45-1.png)
+
+### By age group
+
+``` r
+empower_byage$math_courses <- factor(empower_byage$math_courses, levels = c("yes", "neutral", "no"))
+
+ggplot(data = empower_byage) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = math_courses), position = "fill") +
+  facet_grid(~ age_groups) +
+  labs(title = "Proportion of People Who Want to Take More Math Courses",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "More math courses?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-46-1.png)
+
+### By grade
+
+``` r
+empower_new$math_courses <- factor(empower_new$math_courses, levels = c("yes", "neutral", "no"))
+
+ggplot(data = empower_new) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = math_courses), position = "fill") +
+  facet_grid(~ grade) +
+  labs(title = "Proportion of People Who Want to Take More Math Courses",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "More math courses?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-47-1.png)
+
+Science career
+--------------
+
+This question asks whether the girls would like to pursue a career
+related to science.
+
+### All groups together
+
+``` r
+empower_new$science_career <- factor(empower_new$science_career, levels = c("yes", "neutral", "no"))
+
+ggplot(data = empower_new) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = science_career), position = "fill") +
+  labs(title = "Proportion of People Who Think of a Career in Science",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "Career in science?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-48-1.png)
+
+### By age group
+
+``` r
+empower_byage$science_career <- factor(empower_byage$science_career, levels = c("yes", "neutral", "no"))
+
+ggplot(data = empower_byage) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = science_career), position = "fill") +
+  facet_grid(~ age_groups) +
+  labs(title = "Proportion of People Who Think of a Career in Science",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "Career in science?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-49-1.png)
+
+### By grade
+
+``` r
+ggplot(data = empower_new) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = science_career), position = "fill") +
+  facet_grid(~ grade) +
+  labs(title = "Proportion of People Who Think of a Career in Science",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "Career in science?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-50-1.png)
+
+Good at science
+---------------
+
+This question asks whether the girls believe they are good at science.
+
+### All groups together
+
+``` r
+empower_new$good_science <- factor(empower_new$science_career, levels = c("yes", "neutral", "no"))
+
+ggplot(data = empower_new) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = science_career), position = "fill") +
+  labs(title = "Proportion of People Who Think of a Career in Science",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "Career in science?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-51-1.png)
+
+### By age group
+
+``` r
+empower_byage$science_career <- factor(empower_byage$science_career, levels = c("yes", "neutral", "no"))
+
+ggplot(data = empower_byage) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = science_career), position = "fill") +
+  facet_grid(~ age_groups) +
+  labs(title = "Proportion of People Who Think of a Career in Science",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "Career in science?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-52-1.png)
+
+### By grade
+
+``` r
+ggplot(data = empower_new) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = science_career), position = "fill") +
+  facet_grid(~ grade) +
+  labs(title = "Proportion of People Who Think of a Career in Science",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "Career in science?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-53-1.png)
+
+More science courses
+--------------------
+
+This question asks whether the girls would like the opportunity to take
+more science courses.
+
+### All groups together
+
+``` r
+empower_new$science_courses <- factor(empower_new$science_courses, levels = c("yes", "neutral", "no"))
+
+ggplot(data = empower_new) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = science_courses), position = "fill") +
+  labs(title = "Proportion of People Who Want to take More Science Courses",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "More Science Courses?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-54-1.png)
+
+### By age group
+
+``` r
+empower_byage$science_courses <- factor(empower_byage$science_courses, levels = c("yes", "neutral", "no"))
+
+ggplot(data = empower_byage) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = science_courses), position = "fill") +
+  facet_grid(~ age_groups) +
+  labs(title = "Proportion of People Who Want to take More Science Courses",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "More Science Courses?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-55-1.png)
+
+### By grade
+
+``` r
+ggplot(data = empower_new) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = science_courses), position = "fill") +
+  facet_grid(~ grade) +
+  labs(title = "Proportion of People Who Want to take More Science Courses",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "More Science Courses?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-56-1.png)
+
+Science and math together to invent things
+------------------------------------------
+
+This question asks whether the girls agree with the statement that
+knowing how to use math and science together will allow them to invent
+useful things.
+
+### All groups together
+
+``` r
+empower_new$mathscience_useful <- factor(empower_new$mathscience_useful, levels = c("yes", "neutral", "no"))
+
+ggplot(data = empower_new) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = mathscience_useful), position = "fill") +
+  labs(title = "Proportion of People Who Think They Can Invent",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "Can invent?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-57-1.png)
+
+### By age group
+
+``` r
+empower_byage$mathscience_useful <- factor(empower_byage$mathscience_useful, levels = c("yes", "neutral", "no"))
+
+ggplot(data = empower_byage) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = mathscience_useful), position = "fill") +
+  facet_grid(~ age_groups) +
+  labs(title = "Proportion of People Who Think They Can Invent",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "Can invent?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-58-1.png)
+
+### By grade
+
+``` r
+ggplot(data = empower_new) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = science_courses), position = "fill") +
+  facet_grid(~ grade) +
+  labs(title = "Proportion of People Who Think They Can Invent",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "Can invent?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-59-1.png)
+
+Success in engineering
+----------------------
+
+This question asks whether the girls think they could succeed at an
+engineering-related career.
+
+### All groups together
+
+``` r
+empower_new$success_engineering <- factor(empower_new$success_engineering, levels = c("yes", "neutral", "no"))
+
+ggplot(data = empower_new) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = success_engineering), position = "fill") +
+  labs(title = "Proportion of People Who Think They Can Succeed as Engineers",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "Can succeed?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-60-1.png)
+
+### By age group
+
+``` r
+empower_byage$success_engineering <- factor(empower_byage$success_engineering, levels = c("yes", "neutral", "no"))
+
+ggplot(data = empower_byage) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = success_engineering), position = "fill") +
+  facet_grid(~ age_groups) +
+  labs(title = "Proportion of People Who Think They Can Succeed as Engineers",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "Can succeed?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-61-1.png)
+
+### By grade
+
+``` r
+ggplot(data = empower_new) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = success_engineering), position = "fill") +
+  facet_grid(~ grade) +
+  labs(title = "Proportion of People Who Think They Can Succeed as Engineers",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "Can succeed?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-62-1.png)
+
+Courses in engineering
+----------------------
+
+This question asks whether the girls would like the opportunity to take
+more science courses.
+
+### All groups together
+
+``` r
+empower_new$opportunity_engineering <- factor(empower_new$opportunity_engineering, levels = c("yes", "neutral", "no"))
+
+ggplot(data = empower_new) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = opportunity_engineering), position = "fill") +
+  labs(title = "Proportion of People Who Want to Take More EGR Courses",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "EGR courses?")
+```
+
 ![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-63-1.png)
 
-Notes:
-------
+### By age group
+
+``` r
+empower_byage$opportunity_engineering <- factor(empower_byage$opportunity_engineering, levels = c("yes", "neutral", "no"))
+
+ggplot(data = empower_byage) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = opportunity_engineering), position = "fill") +
+  facet_grid(~ age_groups) +
+  labs(title = "Proportion of People Who Want to Take More EGR Courses",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "EGR Courses?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-64-1.png)
+
+### By grade
+
+``` r
+ggplot(data = empower_new) +
+  geom_bar(mapping = aes(x = pre_or_post, 
+                         fill = opportunity_engineering), position = "fill") +
+  facet_grid(~ grade) +
+  labs(title = "Proportion of People Who Want to Take More EGR Courses",
+       x = "Pre or Post",
+       y = "Proportions", 
+       fill = "EGR Courses?")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-65-1.png)
+
+Personal Notes:
+---------------
 
 ### Template for finding proportions
 
