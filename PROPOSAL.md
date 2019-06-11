@@ -888,6 +888,50 @@ I created three visualizations for each question: 1. Visualizes all the
 girls’ answers together. 2. Separates the girls’ responses by age group
 (Younger or Older) 3. Separates the girls’ responses by their grade
 
+The following are the number of girls in each of the groups outlined
+above.
+
+All the girls:
+
+``` r
+empower_new %>%
+  count()
+```
+
+    ## # A tibble: 1 x 1
+    ##       n
+    ##   <int>
+    ## 1   143
+
+By age group:
+
+``` r
+empower_byage %>%
+  count(age_groups)
+```
+
+    ## # A tibble: 2 x 2
+    ##   age_groups     n
+    ##   <chr>      <int>
+    ## 1 older         64
+    ## 2 younger       79
+
+By grade:
+
+``` r
+empower_new %>%
+  count(grade)
+```
+
+    ## # A tibble: 5 x 2
+    ##   grade      n
+    ##   <fct>  <int>
+    ## 1 1         23
+    ## 2 2         21
+    ## 3 3         35
+    ## 4 5 bach    36
+    ## 5 5 mag     28
+
 ``` r
 # Define UI
 

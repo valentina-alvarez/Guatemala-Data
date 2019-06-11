@@ -1039,6 +1039,33 @@ stem_diffprop</code></pre>
 <div id="the-graphs-are-repetitive-so-i-created-a-shinyapp-to-keep-them-more-organized.-i-dont-think-i-will-actually-include-the-following-graphs-in-the-analysis-but-i-used-it-to-gauge-the-data-initially-and-see-how-the-girls-answers-differed-by-grade-and-age-group." class="section level3">
 <h3>The graphs are repetitive, so I created a ShinyApp to keep them more organized. I don’t think I will actually include the following graphs in the analysis, but I used it to gauge the data initially and see how the girls’ answers differed by grade and age group.</h3>
 <p>I created three visualizations for each question: 1. Visualizes all the girls’ answers together. 2. Separates the girls’ responses by age group (Younger or Older) 3. Separates the girls’ responses by their grade</p>
+<p>The following are the number of girls in each of the groups outlined above.</p>
+<p>All the girls:</p>
+<pre class="r"><code>empower_new %&gt;%
+  count()</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##       n
+##   &lt;int&gt;
+## 1   143</code></pre>
+<p>By age group:</p>
+<pre class="r"><code>empower_byage %&gt;%
+  count(age_groups)</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   age_groups     n
+##   &lt;chr&gt;      &lt;int&gt;
+## 1 older         64
+## 2 younger       79</code></pre>
+<p>By grade:</p>
+<pre class="r"><code>empower_new %&gt;%
+  count(grade)</code></pre>
+<pre><code>## # A tibble: 5 x 2
+##   grade      n
+##   &lt;fct&gt;  &lt;int&gt;
+## 1 1         23
+## 2 2         21
+## 3 3         35
+## 4 5 bach    36
+## 5 5 mag     28</code></pre>
 <pre class="r"><code># Define UI
 
 ui &lt;- fluidPage(

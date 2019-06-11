@@ -1,6 +1,8 @@
 ---
 title: "Empowerment Survey"
-output: html_document
+output: 
+  md_document:
+    variant: markdown_github
 
 ---
 
@@ -626,6 +628,27 @@ I created three visualizations for each question:
 1. Visualizes all the girls' answers together. 
 2. Separates the girls' responses by age group (Younger or Older)
 3. Separates the girls' responses by their grade 
+
+The following are the number of girls in each of the groups outlined above. 
+
+All the girls:
+```{r}
+empower_new %>%
+  count()
+```
+
+By age group:
+```{r}
+empower_byage %>%
+  count(age_groups)
+```
+
+By grade:
+```{r}
+empower_new %>%
+  count(grade)
+```
+
 
 ```{r}
 # Define UI
