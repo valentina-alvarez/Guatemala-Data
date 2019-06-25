@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(ggplot2)
 library(shiny)
+library(infer)
 ```
 
 ### Background Information
@@ -623,6 +624,37 @@ stem_diffprop$course <- factor(stem$course, levels = c("math", "science", "egr")
          y = "Proportion",
          fill = "Course")
 ```
+
+
+```{r}
+set.seed(2019)
+boot_diffprepost <- stem %>%
+  specify(response = prop, explanatory = pre_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("post", "pre"))
+```
+
+```{r}
+ggplot(data = boot_diffprepost, 
+       mapping = aes(x = stat)) +
+  geom_histogram() +
+  labs(title = "Bootstrap Distribution of difference in Proportions", subtite = "between pre and post implementations", y = "Frequency") +
+    geom_vline(xintercept = 0.0210, color = "red") +
+  geom_vline(xintercept = 0.155, color = "red")
+```
+
+```{r}
+boot_diffprepost %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+We are 95% confident that the mean post-implementation positivity is 0.0210 to 0.155 higher than the  mean post-implementation positivity of pre-implementation.
+
+```{r}
+stem
+```
+
 
 # SECTION 3: ANALYSIS BY QUESTION
 
