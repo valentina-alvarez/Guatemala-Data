@@ -1074,7 +1074,8 @@ server <- function(input, output)
         else if(input$y == "math_courses" && input$x == "grade"){
             empower_new$math_courses <- factor(empower_new$math_courses, levels = c("yes", "neutral", "no"))
             empower_new$pre_or_post <- factor(empower_new$pre_or_post, levels = c("pre", "post"))
-                geom_bar(mapping = aes(x = pre_or_post, 
+            ggplot(data = empower_new) +    
+            geom_bar(mapping = aes(x = pre_or_post, 
                                        fill = math_courses), position = "fill") +
                 facet_grid(~ grade) +
                 labs(title = "Proportion of People Who Want to Take More Math Courses",

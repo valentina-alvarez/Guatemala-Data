@@ -1,0 +1,10 @@
+name: shinydeployed
+title:
+username:
+account: valentina-alvarez
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 997698
+bundleId: 2177572
+url: https://valentina-alvarez.shinyapps.io/shinydeployed/
+when: 1561480468.70546
