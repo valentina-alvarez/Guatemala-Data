@@ -2,10 +2,9 @@
 
 ``` r
 library(tidyverse)
-library(broom)
-library(infer)
 library(ggplot2)
 library(shiny)
+library(infer)
 ```
 
 ### Background Information
@@ -65,6 +64,8 @@ pre_empower <- read.csv("data/PRE_Empowerment.csv",
                     sep = ";")
 post_empower <- read.csv("data/POST_Empowerment.csv",
                     sep = ";")
+pre_empower2017 <- read.csv("data/2017_Empower.csv",
+                    sep = ";")
 ```
 
 SECTION 1: ORGANIZING DATA
@@ -74,16 +75,21 @@ SECTION 1: ORGANIZING DATA
 
 ``` r
 pre_empower <- pre_empower %>%
-  mutate(pre_or_post = "pre")
+  mutate(pre_or_post = "pre") %>%
+  mutate(year = "2018")
 post_empower <- post_empower %>%
-  mutate(pre_or_post = "post")
+  mutate(pre_or_post = "post") %>%
+  mutate(year = "2018")
+pre_empower2017 <- pre_empower2017 %>%
+  mutate(pre_or_post = "pre") %>%
+  mutate(year = "2017")
 ```
 
 ``` r
 empower <- full_join(pre_empower, post_empower)
 ```
 
-    ## Joining, by = c("grade", "city_birth", "parents_stem", "which_parent_stem", "parent_profession", "number_science_classes", "number_math_classes", "number_tech_classes", "number_egr_classes", "math_worst", "math_career", "not_enjoy_math", "good_at_math", "decentschool_badmath", "higherlevel_math", "good_math_grades", "interesting_math", "future_math", "math_courses", "sure_science", "science_career", "science_outsideofschool", "science_pay", "science_job", "good_science", "decentschool_badscience", "higherlevel_science", "science_courses", "new_products", "engineering_everyday", "enjoy_building", "interested_machines", "career_design", "curiosity_tech", "future_innovation", "mathscience_useful", "success_engineering", "i_can_build", "opportunity_engineering", "prediction_literature", "prediction_math", "prediction_science", "future_math_classes", "future_science_classes", "future_egr_classes", "college", "what_major", "why_not_college", "plan_after_school", "other_plan_afterschool", "frequency_learning_stem", "why_no_chances", "opportunities_women_stem", "reason_opportunities_stem", "contribute_community", "resolve_problems_community", "external_help", "leader_community", "contribute_community.1", "pre_or_post")
+    ## Joining, by = c("grade", "city_birth", "parents_stem", "which_parent_stem", "parent_profession", "number_science_classes", "number_math_classes", "number_tech_classes", "number_egr_classes", "math_worst", "math_career", "not_enjoy_math", "good_at_math", "decentschool_badmath", "higherlevel_math", "good_math_grades", "interesting_math", "future_math", "math_courses", "sure_science", "science_career", "science_outsideofschool", "science_pay", "science_job", "good_science", "decentschool_badscience", "higherlevel_science", "science_courses", "new_products", "engineering_everyday", "enjoy_building", "interested_machines", "career_design", "curiosity_tech", "future_innovation", "mathscience_useful", "success_engineering", "i_can_build", "opportunity_engineering", "prediction_literature", "prediction_math", "prediction_science", "future_math_classes", "future_science_classes", "future_egr_classes", "college", "what_major", "why_not_college", "plan_after_school", "other_plan_afterschool", "frequency_learning_stem", "why_no_chances", "opportunities_women_stem", "reason_opportunities_stem", "contribute_community", "resolve_problems_community", "external_help", "leader_community", "contribute_community.1", "pre_or_post", "year")
 
     ## Warning: Column `parent_profession` joining factors with different levels,
     ## coercing to character vector
@@ -283,11 +289,11 @@ pre_empower_math1 <- empower_new %>%
   filter(pre_or_post == "pre")
 pre_empower_math1$math <- paste(pre_empower_math1$math_career, pre_empower_math1$good_at_math, pre_empower_math1$higherlevel_math, pre_empower_math1$good_math_grades, pre_empower_math1$interesting_math, pre_empower_math1$future_math, pre_empower_math1$math_courses)
 
-pre_math_prop1 <- sum(str_count(pre_empower_math1$math, "yes")) / (sum(str_count(pre_empower_math1$math, "no")) + sum(str_count(pre_empower_math1$math, "yes")))
+pre_math_prop1 <- sum(str_count(pre_empower_math1$math, "yes")) / (sum(str_count(pre_empower_math1$math, "no")) + sum(str_count(pre_empower_math1$math, "yes")) +sum(str_count(pre_empower_math1$math, "neutral")))
 pre_math_prop1
 ```
 
-    ## [1] 0.7594937
+    ## [1] 0.625
 
 ### Grade 2
 
@@ -297,11 +303,11 @@ pre_empower_math2 <- empower_new %>%
   filter(pre_or_post == "pre")
 pre_empower_math2$math <- paste(pre_empower_math2$math_career, pre_empower_math2$good_at_math, pre_empower_math2$higherlevel_math, pre_empower_math2$good_math_grades, pre_empower_math2$interesting_math, pre_empower_math2$future_math, pre_empower_math2$math_courses)
 
-pre_math_prop2 <- sum(str_count(pre_empower_math2$math, "yes")) / (sum(str_count(pre_empower_math2$math, "no")) + sum(str_count(pre_empower_math2$math, "yes")))
+pre_math_prop2 <- sum(str_count(pre_empower_math2$math, "yes")) / (sum(str_count(pre_empower_math2$math, "no")) + sum(str_count(pre_empower_math2$math, "yes")) + sum(str_count(pre_empower_math2$math, "neutral")))
 pre_math_prop2
 ```
 
-    ## [1] 0.7285714
+    ## [1] 0.6623377
 
 ### Grade 3
 
@@ -311,11 +317,11 @@ pre_empower_math3 <- empower_new %>%
   filter(pre_or_post == "pre")
 pre_empower_math3$math <- paste(pre_empower_math3$math_career, pre_empower_math3$good_at_math, pre_empower_math3$higherlevel_math, pre_empower_math3$good_math_grades, pre_empower_math3$interesting_math, pre_empower_math3$future_math, pre_empower_math3$math_courses)
 
-pre_math_prop3 <- sum(str_count(pre_empower_math3$math, "yes")) / (sum(str_count(pre_empower_math3$math, "no")) + sum(str_count(pre_empower_math3$math, "yes")))
+pre_math_prop3 <- sum(str_count(pre_empower_math3$math, "yes")) / (sum(str_count(pre_empower_math3$math, "no")) + sum(str_count(pre_empower_math3$math, "yes")) + sum(str_count(pre_empower_math3$math, "neutral")))
 pre_math_prop3
 ```
 
-    ## [1] 0.7666667
+    ## [1] 0.6917293
 
 ### Grade 5 magisterio
 
@@ -325,11 +331,11 @@ pre_empower_math5m <- empower_new %>%
   filter(pre_or_post == "pre")
 pre_empower_math5m$math <- paste(pre_empower_math5m$math_career, pre_empower_math5m$good_at_math, pre_empower_math5m$higherlevel_math, pre_empower_math5m$good_math_grades, pre_empower_math5m$interesting_math, pre_empower_math5m$future_math, pre_empower_math5m$math_courses)
 
-pre_math_prop5m <- sum(str_count(pre_empower_math5m$math, "yes")) / (sum(str_count(pre_empower_math5m$math, "no")) + sum(str_count(pre_empower_math5m$math, "yes")))
+pre_math_prop5m <- sum(str_count(pre_empower_math5m$math, "yes")) / (sum(str_count(pre_empower_math5m$math, "no")) + sum(str_count(pre_empower_math5m$math, "yes")) + sum(str_count(pre_empower_math5m$math, "neutral")))
 pre_math_prop5m
 ```
 
-    ## [1] 0.4842105
+    ## [1] 0.3898305
 
 ### Grade 5 bachillerato
 
@@ -339,11 +345,11 @@ pre_empower_math5b <- empower_new %>%
   filter(pre_or_post == "pre")
 pre_empower_math5b$math <- paste(pre_empower_math5b$math_career, pre_empower_math5b$good_at_math, pre_empower_math5b$higherlevel_math, pre_empower_math5b$good_math_grades, pre_empower_math5b$interesting_math, pre_empower_math5b$future_math, pre_empower_math5b$math_courses)
 
-pre_math_prop5b <- sum(str_count(pre_empower_math5b$math, "yes")) / (sum(str_count(pre_empower_math5b$math, "no")) + sum(str_count(pre_empower_math5b$math, "yes")))
+pre_math_prop5b <- sum(str_count(pre_empower_math5b$math, "yes")) / (sum(str_count(pre_empower_math5b$math, "no")) + sum(str_count(pre_empower_math5b$math, "yes")) + sum(str_count(pre_empower_math5b$math, "neutral")))
 pre_math_prop5b
 ```
 
-    ## [1] 0.7884615
+    ## [1] 0.656
 
 PRE Attitudes towards science
 -----------------------------
@@ -360,11 +366,11 @@ pre_empower_science1 <- empower_new %>%
   filter(pre_or_post == "pre")
 pre_empower_science1$science <- paste(pre_empower_science1$sure_science, pre_empower_science1$science_career, pre_empower_science1$science_outsideofschool, pre_empower_science1$science_pay, pre_empower_science1$science_job, pre_empower_science1$good_science, pre_empower_science1$higherlevel_science, pre_empower_science1$science_courses)
 
-pre_science_prop1 <- sum(str_count(pre_empower_science1$science, "yes")) / (sum(str_count(pre_empower_science1$science, "no")) + sum(str_count(pre_empower_science1$science, "yes")))
+pre_science_prop1 <- sum(str_count(pre_empower_science1$science, "yes")) / (sum(str_count(pre_empower_science1$science, "no")) + sum(str_count(pre_empower_science1$science, "yes")) + sum(str_count(pre_empower_science1$science, "neutral")))
 pre_science_prop1
 ```
 
-    ## [1] 0.8433735
+    ## [1] 0.6481481
 
 ### Grade 2
 
@@ -374,11 +380,11 @@ pre_empower_science2 <- empower_new %>%
   filter(pre_or_post == "pre")
 pre_empower_science2$science <- paste(pre_empower_science2$sure_science, pre_empower_science2$science_career, pre_empower_science2$science_outsideofschool, pre_empower_science2$science_pay, pre_empower_science2$science_job, pre_empower_science2$good_science, pre_empower_science2$higherlevel_science, pre_empower_science2$science_courses)
 
-pre_science_prop2 <- sum(str_count(pre_empower_science2$science, "yes")) / (sum(str_count(pre_empower_science2$science, "no")) + sum(str_count(pre_empower_science2$science, "yes")))
+pre_science_prop2 <- sum(str_count(pre_empower_science2$science, "yes")) / (sum(str_count(pre_empower_science2$science, "no")) + sum(str_count(pre_empower_science2$science, "yes")) + sum(str_count(pre_empower_science2$science, "neutral")))
 pre_science_prop2
 ```
 
-    ## [1] 0.8133333
+    ## [1] 0.6931818
 
 ### Grade 3
 
@@ -388,11 +394,11 @@ pre_empower_science3 <- empower_new %>%
   filter(pre_or_post == "pre")
 pre_empower_science3$science <- paste(pre_empower_science3$sure_science, pre_empower_science3$science_career, pre_empower_science3$science_outsideofschool, pre_empower_science3$science_pay, pre_empower_science3$science_job, pre_empower_science3$good_science, pre_empower_science3$higherlevel_science, pre_empower_science3$science_courses)
 
-pre_science_prop3 <- sum(str_count(pre_empower_science3$science, "yes")) / (sum(str_count(pre_empower_science3$science, "no")) + sum(str_count(pre_empower_science3$science, "yes")))
+pre_science_prop3 <- sum(str_count(pre_empower_science3$science, "yes")) / (sum(str_count(pre_empower_science3$science, "no")) + sum(str_count(pre_empower_science3$science, "yes")) + sum(str_count(pre_empower_science3$science, "neutral")))
 pre_science_prop3
 ```
 
-    ## [1] 0.8629032
+    ## [1] 0.7133333
 
 ### Grade 5 magisterio
 
@@ -402,11 +408,11 @@ pre_empower_science5m <- empower_new %>%
   filter(pre_or_post == "pre")
 pre_empower_science5m$science <- paste(pre_empower_science5m$sure_science, pre_empower_science5m$science_career, pre_empower_science5m$science_outsideofschool, pre_empower_science5m$science_pay, pre_empower_science5m$science_job, pre_empower_science5m$good_science, pre_empower_science5m$higherlevel_science, pre_empower_science5m$science_courses)
 
-pre_science_prop5m <- sum(str_count(pre_empower_science5m$science, "yes")) / (sum(str_count(pre_empower_science5m$science, "no")) + sum(str_count(pre_empower_science5m$science, "yes")))
+pre_science_prop5m <- sum(str_count(pre_empower_science5m$science, "yes")) / (sum(str_count(pre_empower_science5m$science, "no")) + sum(str_count(pre_empower_science5m$science, "yes")) +sum(str_count(pre_empower_science5m$science, "neutral")))
 pre_science_prop5m
 ```
 
-    ## [1] 0.8426966
+    ## [1] 0.5813953
 
 ### Grade 5 bachillerato
 
@@ -416,11 +422,11 @@ pre_empower_science5b <- empower_new %>%
   filter(pre_or_post == "pre")
 pre_empower_science5b$science <- paste(pre_empower_science5b$sure_science, pre_empower_science5b$science_career, pre_empower_science5b$science_outsideofschool, pre_empower_science5b$science_pay, pre_empower_science5b$science_job, pre_empower_science5b$good_science, pre_empower_science5b$higherlevel_science, pre_empower_science5b$science_courses)
 
-pre_science_prop5b <- sum(str_count(pre_empower_science5b$science, "yes")) / (sum(str_count(pre_empower_science5b$science, "no")) + sum(str_count(pre_empower_science5b$science, "yes")))
+pre_science_prop5b <- sum(str_count(pre_empower_science5b$science, "yes")) / (sum(str_count(pre_empower_science5b$science, "no")) + sum(str_count(pre_empower_science5b$science, "yes")) + sum(str_count(pre_empower_science5b$science, "neutral")))
 pre_science_prop5b
 ```
 
-    ## [1] 0.8861789
+    ## [1] 0.7569444
 
 PRE Attitudes towards engineering
 ---------------------------------
@@ -437,11 +443,11 @@ pre_empower_egr1 <- empower_new %>%
   filter(pre_or_post == "pre")
 pre_empower_egr1$egr <- paste(pre_empower_egr1$new_products, pre_empower_egr1$engineering_everyday, pre_empower_egr1$enjoy_building, pre_empower_egr1$interested_machines, pre_empower_egr1$career_design, pre_empower_egr1$curiosity_tech, pre_empower_egr1$future_innovation, pre_empower_egr1$mathscience_useful, pre_empower_egr1$success_engineering, pre_empower_egr1$i_can_build, pre_empower_egr1$opportunity_engineering)
 
-pre_egr_prop1 <- sum(str_count(pre_empower_egr1$egr, "yes")) / (sum(str_count(pre_empower_egr1$egr, "no")) + sum(str_count(pre_empower_egr1$egr, "yes")))
+pre_egr_prop1 <- sum(str_count(pre_empower_egr1$egr, "yes")) / (sum(str_count(pre_empower_egr1$egr, "no")) + sum(str_count(pre_empower_egr1$egr, "yes")) + sum(str_count(pre_empower_egr1$egr, "neutral")))
 pre_egr_prop1
 ```
 
-    ## [1] 0.8429752
+    ## [1] 0.6754967
 
 ### Grade 2
 
@@ -451,11 +457,11 @@ pre_empower_egr2 <- empower_new %>%
   filter(pre_or_post == "pre")
 pre_empower_egr2$egr <- paste(pre_empower_egr2$new_products, pre_empower_egr2$engineering_everyday, pre_empower_egr2$enjoy_building, pre_empower_egr2$interested_machines, pre_empower_egr2$career_design, pre_empower_egr2$curiosity_tech, pre_empower_egr2$future_innovation, pre_empower_egr2$mathscience_useful, pre_empower_egr2$success_engineering, pre_empower_egr2$i_can_build, pre_empower_egr2$opportunity_engineering)
 
-pre_egr_prop2 <- sum(str_count(pre_empower_egr2$egr, "yes")) / (sum(str_count(pre_empower_egr2$egr, "no")) + sum(str_count(pre_empower_egr2$egr, "yes")))
+pre_egr_prop2 <- sum(str_count(pre_empower_egr2$egr, "yes")) / (sum(str_count(pre_empower_egr2$egr, "no")) + sum(str_count(pre_empower_egr2$egr, "yes")) + sum(str_count(pre_empower_egr2$egr, "neutral")))
 pre_egr_prop2
 ```
 
-    ## [1] 0.8791209
+    ## [1] 0.8080808
 
 ### Grade 3
 
@@ -465,11 +471,11 @@ pre_empower_egr3 <- empower_new %>%
   filter(pre_or_post == "pre")
 pre_empower_egr3$egr <- paste(pre_empower_egr3$new_products, pre_empower_egr3$engineering_everyday, pre_empower_egr3$enjoy_building, pre_empower_egr3$interested_machines, pre_empower_egr3$career_design, pre_empower_egr3$curiosity_tech, pre_empower_egr3$future_innovation, pre_empower_egr3$mathscience_useful, pre_empower_egr3$success_engineering, pre_empower_egr3$i_can_build, pre_empower_egr3$opportunity_engineering)
 
-pre_egr_prop3 <- sum(str_count(pre_empower_egr3$egr, "yes")) / (sum(str_count(pre_empower_egr3$egr, "no")) + sum(str_count(pre_empower_egr3$egr, "yes")))
+pre_egr_prop3 <- sum(str_count(pre_empower_egr3$egr, "yes")) / (sum(str_count(pre_empower_egr3$egr, "no")) + sum(str_count(pre_empower_egr3$egr, "yes")) + sum(str_count(pre_empower_egr3$egr, "neutral")))
 pre_egr_prop3
 ```
 
-    ## [1] 0.9086022
+    ## [1] 0.8203883
 
 ### Grade 5 magisterio
 
@@ -479,11 +485,12 @@ pre_empower_egr5m <- empower_new %>%
   filter(pre_or_post == "pre")
 pre_empower_egr5m$egr <- paste(pre_empower_egr5m$new_products, pre_empower_egr5m$engineering_everyday, pre_empower_egr5m$enjoy_building, pre_empower_egr5m$interested_machines, pre_empower_egr5m$career_design, pre_empower_egr5m$curiosity_tech, pre_empower_egr5m$future_innovation, pre_empower_egr5m$mathscience_useful, pre_empower_egr5m$success_engineering, pre_empower_egr5m$i_can_build, pre_empower_egr5m$opportunity_engineering)
 
-pre_egr_prop5m <- sum(str_count(pre_empower_egr5m$egr, "yes")) / (sum(str_count(pre_empower_egr5m$egr, "no")) + sum(str_count(pre_empower_egr5m$egr, "yes")))
+pre_egr_prop5m <- sum(str_count(pre_empower_egr5m$egr, "yes")) / (sum(str_count(pre_empower_egr5m$egr, "no")) + sum(str_count(pre_empower_egr5m$egr, "yes")) +
+                                                              sum(str_count(pre_empower_egr5m$egr, "yes")))
 pre_egr_prop5m
 ```
 
-    ## [1] 0.8818898
+    ## [1] 0.4686192
 
 ### Grade 5 bachillerato
 
@@ -493,11 +500,12 @@ pre_empower_egr5b <- empower_new %>%
   filter(pre_or_post == "pre")
 pre_empower_egr5b$egr <- paste(pre_empower_egr5b$new_products, pre_empower_egr5b$engineering_everyday, pre_empower_egr5b$enjoy_building, pre_empower_egr5b$interested_machines, pre_empower_egr5b$career_design, pre_empower_egr5b$curiosity_tech, pre_empower_egr5b$future_innovation, pre_empower_egr5b$mathscience_useful, pre_empower_egr5b$success_engineering, pre_empower_egr5b$i_can_build, pre_empower_egr5b$opportunity_engineering)
 
-pre_egr_prop5b <- sum(str_count(pre_empower_egr5b$egr, "yes")) / (sum(str_count(pre_empower_egr5b$egr, "no")) + sum(str_count(pre_empower_egr5b$egr, "yes")))
+pre_egr_prop5b <- sum(str_count(pre_empower_egr5b$egr, "yes")) / (sum(str_count(pre_empower_egr5b$egr, "no")) + sum(str_count(pre_empower_egr5b$egr, "yes")) +
+                                                                    sum(str_count(pre_empower_egr5b$egr, "yes")))
 pre_egr_prop5b
 ```
 
-    ## [1] 0.8203593
+    ## [1] 0.4506579
 
 ``` r
 avg_math_pre <- (pre_math_prop1 + pre_math_prop2 + pre_math_prop3 + pre_math_prop5m + pre_math_prop5b)/5
@@ -520,11 +528,11 @@ empower_math1 <- empower_new %>%
   filter(pre_or_post == "post")
 empower_math1$math <- paste(empower_math1$math_career, empower_math1$good_at_math, empower_math1$higherlevel_math, empower_math1$good_math_grades, empower_math1$interesting_math, empower_math1$future_math, empower_math1$math_courses)
 
-math_prop1 <- sum(str_count(empower_math1$math, "yes")) / (sum(str_count(empower_math1$math, "no")) + sum(str_count(empower_math1$math, "yes")))
+math_prop1 <- sum(str_count(empower_math1$math, "yes")) / (sum(str_count(empower_math1$math, "no")) + sum(str_count(empower_math1$math, "yes")) + sum(str_count(empower_math1$math, "neutral")))
 math_prop1
 ```
 
-    ## [1] 0.7407407
+    ## [1] 0.6451613
 
 ### Grade 2
 
@@ -534,11 +542,11 @@ empower_math2 <- empower_new %>%
   filter(pre_or_post == "post")
 empower_math2$math <- paste(empower_math2$math_career, empower_math2$good_at_math, empower_math2$higherlevel_math, empower_math2$good_math_grades, empower_math2$interesting_math, empower_math2$future_math, empower_math2$math_courses)
 
-math_prop2 <- sum(str_count(empower_math2$math, "yes")) / (sum(str_count(empower_math2$math, "no")) + sum(str_count(empower_math2$math, "yes")))
+math_prop2 <- sum(str_count(empower_math2$math, "yes")) / (sum(str_count(empower_math2$math, "no")) + sum(str_count(empower_math2$math, "yes")) + sum(str_count(empower_math2$math, "neutral")))
 math_prop2
 ```
 
-    ## [1] 0.6825397
+    ## [1] 0.6231884
 
 ### Grade 3
 
@@ -548,11 +556,11 @@ empower_math3 <- empower_new %>%
   filter(pre_or_post == "post")
 empower_math3$math <- paste(empower_math3$math_career, empower_math3$good_at_math, empower_math3$higherlevel_math, empower_math3$good_math_grades, empower_math3$interesting_math, empower_math3$future_math, empower_math3$math_courses)
 
-math_prop3 <- sum(str_count(empower_math3$math, "yes")) / (sum(str_count(empower_math3$math, "no")) + sum(str_count(empower_math3$math, "yes")))
+math_prop3 <- sum(str_count(empower_math3$math, "yes")) / (sum(str_count(empower_math3$math, "no")) + sum(str_count(empower_math3$math, "yes")) + sum(str_count(empower_math3$math, "neutral")))
 math_prop3
 ```
 
-    ## [1] 0.8510638
+    ## [1] 0.7207207
 
 ### Grade 5 magisterio
 
@@ -562,11 +570,11 @@ empower_math5m <- empower_new %>%
   filter(pre_or_post == "post")
 empower_math5m$math <- paste(empower_math5m$math_career, empower_math5m$good_at_math, empower_math5m$higherlevel_math, empower_math5m$good_math_grades, empower_math5m$interesting_math, empower_math5m$future_math, empower_math5m$math_courses)
 
-math_prop5m <- sum(str_count(empower_math5m$math, "yes")) / (sum(str_count(empower_math5m$math, "no")) + sum(str_count(empower_math5m$math, "yes")))
+math_prop5m <- sum(str_count(empower_math5m$math, "yes")) / (sum(str_count(empower_math5m$math, "no")) + sum(str_count(empower_math5m$math, "yes")) + sum(str_count(empower_math5m$math, "neutral")))
 math_prop5m
 ```
 
-    ## [1] 0.5820896
+    ## [1] 0.5064935
 
 ### Grade 5 bachillerato
 
@@ -576,11 +584,11 @@ empower_math5b <- empower_new %>%
   filter(pre_or_post == "post")
 empower_math5b$math <- paste(empower_math5b$math_career, empower_math5b$good_at_math, empower_math5b$higherlevel_math, empower_math5b$good_math_grades, empower_math5b$interesting_math, empower_math5b$future_math, empower_math5b$math_courses)
 
-math_prop5b <- sum(str_count(empower_math5b$math, "yes")) / (sum(str_count(empower_math5b$math, "no")) + sum(str_count(empower_math5b$math, "yes")))
+math_prop5b <- sum(str_count(empower_math5b$math, "yes")) / (sum(str_count(empower_math5b$math, "no")) + sum(str_count(empower_math5b$math, "yes")) + sum(str_count(empower_math5b$math, "neutral")))
 math_prop5b
 ```
 
-    ## [1] 0.8834951
+    ## [1] 0.728
 
 POST Attitudes towards science
 ------------------------------
@@ -597,11 +605,11 @@ empower_science1 <- empower_new %>%
   filter(pre_or_post == "post")
 empower_science1$science <- paste(empower_science1$sure_science, empower_science1$science_career, empower_science1$science_outsideofschool, empower_science1$science_pay, empower_science1$science_job, empower_science1$good_science, empower_science1$higherlevel_science, empower_science1$science_courses)
 
-science_prop1 <- sum(str_count(empower_science1$science, "yes")) / (sum(str_count(empower_science1$science, "no")) + sum(str_count(empower_science1$science, "yes")))
+science_prop1 <- sum(str_count(empower_science1$science, "yes")) / (sum(str_count(empower_science1$science, "no")) + sum(str_count(empower_science1$science, "yes")) + sum(str_count(empower_science1$science, "neutral")))
 science_prop1
 ```
 
-    ## [1] 0.7592593
+    ## [1] 0.5774648
 
 ### Grade 2
 
@@ -611,11 +619,11 @@ empower_science2 <- empower_new %>%
   filter(pre_or_post == "post")
 empower_science2$science <- paste(empower_science2$sure_science, empower_science2$science_career, empower_science2$science_outsideofschool, empower_science2$science_pay, empower_science2$science_job, empower_science2$good_science, empower_science2$higherlevel_science, empower_science2$science_courses)
 
-science_prop2 <- sum(str_count(empower_science2$science, "yes")) / (sum(str_count(empower_science2$science, "no")) + sum(str_count(empower_science2$science, "yes")))
+science_prop2 <- sum(str_count(empower_science2$science, "yes")) / (sum(str_count(empower_science2$science, "no")) + sum(str_count(empower_science2$science, "yes")) + sum(str_count(empower_science2$science, "neutral")))
 science_prop2
 ```
 
-    ## [1] 0.8732394
+    ## [1] 0.775
 
 ### Grade 3
 
@@ -625,11 +633,11 @@ empower_science3 <- empower_new %>%
   filter(pre_or_post == "post")
 empower_science3$science <- paste(empower_science3$sure_science, empower_science3$science_career, empower_science3$science_outsideofschool, empower_science3$science_pay, empower_science3$science_job, empower_science3$good_science, empower_science3$higherlevel_science, empower_science3$science_courses)
 
-science_prop3 <- sum(str_count(empower_science3$science, "yes")) / (sum(str_count(empower_science3$science, "no")) + sum(str_count(empower_science3$science, "yes")))
+science_prop3 <- sum(str_count(empower_science3$science, "yes")) / (sum(str_count(empower_science3$science, "no")) + sum(str_count(empower_science3$science, "yes")) + sum(str_count(empower_science3$science, "neutral")))
 science_prop3
 ```
 
-    ## [1] 0.9423077
+    ## [1] 0.7716535
 
 ### Grade 5 magisterio
 
@@ -639,11 +647,11 @@ empower_science5m <- empower_new %>%
   filter(pre_or_post == "post")
 empower_science5m$science <- paste(empower_science5m$sure_science, empower_science5m$science_career, empower_science5m$science_outsideofschool, empower_science5m$science_pay, empower_science5m$science_job, empower_science5m$good_science, empower_science5m$higherlevel_science, empower_science5m$science_courses)
 
-science_prop5m <- sum(str_count(empower_science5m$science, "yes")) / (sum(str_count(empower_science5m$science, "no")) + sum(str_count(empower_science5m$science, "yes")))
+science_prop5m <- sum(str_count(empower_science5m$science, "yes")) / (sum(str_count(empower_science5m$science, "no")) + sum(str_count(empower_science5m$science, "yes")) + sum(str_count(empower_science5m$science, "neutral")))
 science_prop5m
 ```
 
-    ## [1] 0.8611111
+    ## [1] 0.7045455
 
 ### Grade 5 bachillerato
 
@@ -653,11 +661,11 @@ empower_science5b <- empower_new %>%
   filter(pre_or_post == "post")
 empower_science5b$science <- paste(empower_science5b$sure_science, empower_science5b$science_career, empower_science5b$science_outsideofschool, empower_science5b$science_pay, empower_science5b$science_job, empower_science5b$good_science, empower_science5b$higherlevel_science, empower_science5b$science_courses)
 
-science_prop5b <- sum(str_count(empower_science5b$science, "yes")) / (sum(str_count(empower_science5b$science, "no")) + sum(str_count(empower_science5b$science, "yes")))
+science_prop5b <- sum(str_count(empower_science5b$science, "yes")) / (sum(str_count(empower_science5b$science, "no")) + sum(str_count(empower_science5b$science, "yes")) + sum(str_count(empower_science5b$science, "neutral")))
 science_prop5b
 ```
 
-    ## [1] 0.9344262
+    ## [1] 0.7972028
 
 POST Attitudes towards engineering
 ----------------------------------
@@ -674,11 +682,11 @@ empower_egr1 <- empower_new %>%
   filter(pre_or_post == "post")
 empower_egr1$egr <- paste(empower_egr1$new_products, empower_egr1$engineering_everyday, empower_egr1$enjoy_building, empower_egr1$interested_machines, empower_egr1$career_design, empower_egr1$curiosity_tech, empower_egr1$future_innovation, empower_egr1$mathscience_useful, empower_egr1$success_engineering, empower_egr1$i_can_build, empower_egr1$opportunity_engineering)
 
-egr_prop1 <- sum(str_count(empower_egr1$egr, "yes")) / (sum(str_count(empower_egr1$egr, "no")) + sum(str_count(empower_egr1$egr, "yes")))
+egr_prop1 <- sum(str_count(empower_egr1$egr, "yes")) / (sum(str_count(empower_egr1$egr, "no")) + sum(str_count(empower_egr1$egr, "yes")) + sum(str_count(empower_egr1$egr, "neutral")))
 egr_prop1
 ```
 
-    ## [1] 0.9764706
+    ## [1] 0.8556701
 
 ### Grade 2
 
@@ -688,11 +696,11 @@ empower_egr2 <- empower_new %>%
   filter(pre_or_post == "post")
 empower_egr2$egr <- paste(empower_egr2$new_products, empower_egr2$engineering_everyday, empower_egr2$enjoy_building, empower_egr2$interested_machines, empower_egr2$career_design, empower_egr2$curiosity_tech, empower_egr2$future_innovation, empower_egr2$mathscience_useful, empower_egr2$success_engineering, empower_egr2$i_can_build, empower_egr2$opportunity_engineering)
 
-egr_prop2 <- sum(str_count(empower_egr2$egr, "yes")) / (sum(str_count(empower_egr2$egr, "no")) + sum(str_count(empower_egr2$egr, "yes")))
+egr_prop2 <- sum(str_count(empower_egr2$egr, "yes")) / (sum(str_count(empower_egr2$egr, "no")) + sum(str_count(empower_egr2$egr, "yes")) + sum(str_count(empower_egr2$egr, "neutral")))
 egr_prop2
 ```
 
-    ## [1] 0.9375
+    ## [1] 0.8181818
 
 ### Grade 3
 
@@ -702,11 +710,11 @@ empower_egr3 <- empower_new %>%
   filter(pre_or_post == "post")
 empower_egr3$egr <- paste(empower_egr3$new_products, empower_egr3$engineering_everyday, empower_egr3$enjoy_building, empower_egr3$interested_machines, empower_egr3$career_design, empower_egr3$curiosity_tech, empower_egr3$future_innovation, empower_egr3$mathscience_useful, empower_egr3$success_engineering, empower_egr3$i_can_build, empower_egr3$opportunity_engineering)
 
-egr_prop3 <- sum(str_count(empower_egr3$egr, "yes")) / (sum(str_count(empower_egr3$egr, "no")) + sum(str_count(empower_egr3$egr, "yes")))
+egr_prop3 <- sum(str_count(empower_egr3$egr, "yes")) / (sum(str_count(empower_egr3$egr, "no")) + sum(str_count(empower_egr3$egr, "yes")) + sum(str_count(empower_egr3$egr, "neutral")))
 egr_prop3
 ```
 
-    ## [1] 0.9677419
+    ## [1] 0.8571429
 
 ### Grade 5 magisterio
 
@@ -716,11 +724,11 @@ empower_egr5m <- empower_new %>%
   filter(pre_or_post == "post")
 empower_egr5m$egr <- paste(empower_egr5m$new_products, empower_egr5m$engineering_everyday, empower_egr5m$enjoy_building, empower_egr5m$interested_machines, empower_egr5m$career_design, empower_egr5m$curiosity_tech, empower_egr5m$future_innovation, empower_egr5m$mathscience_useful, empower_egr5m$success_engineering, empower_egr5m$i_can_build, empower_egr5m$opportunity_engineering)
 
-egr_prop5m <- sum(str_count(empower_egr5m$egr, "yes")) / (sum(str_count(empower_egr5m$egr, "no")) + sum(str_count(empower_egr5m$egr, "yes")))
+egr_prop5m <- sum(str_count(empower_egr5m$egr, "yes")) / (sum(str_count(empower_egr5m$egr, "no")) + sum(str_count(empower_egr5m$egr, "yes")) + sum(str_count(empower_egr5m$egr, "neutral")))
 egr_prop5m
 ```
 
-    ## [1] 0.8773585
+    ## [1] 0.775
 
 ### Grade 5 bachillerato
 
@@ -730,11 +738,11 @@ empower_egr5b <- empower_new %>%
   filter(pre_or_post == "post")
 empower_egr5b$egr <- paste(empower_egr5b$new_products, empower_egr5b$engineering_everyday, empower_egr5b$enjoy_building, empower_egr5b$interested_machines, empower_egr5b$career_design, empower_egr5b$curiosity_tech, empower_egr5b$future_innovation, empower_egr5b$mathscience_useful, empower_egr5b$success_engineering, empower_egr5b$i_can_build, empower_egr5b$opportunity_engineering)
 
-egr_prop5b <- sum(str_count(empower_egr5b$egr, "yes")) / (sum(str_count(empower_egr5b$egr, "no")) + sum(str_count(empower_egr5b$egr, "yes")))
+egr_prop5b <- sum(str_count(empower_egr5b$egr, "yes")) / (sum(str_count(empower_egr5b$egr, "no")) + sum(str_count(empower_egr5b$egr, "yes")) + sum(str_count(empower_egr5b$egr, "neutral")))
 egr_prop5b
 ```
 
-    ## [1] 0.9461078
+    ## [1] 0.7979798
 
 ``` r
 avg_math <- (math_prop1 + math_prop2 + math_prop3 + math_prop5m + math_prop5b)/5
@@ -758,42 +766,42 @@ stem
 ```
 
     ##      grade      prop  course pre_post
-    ## 1        1 0.7594937    math      pre
-    ## 2        2 0.7285714    math      pre
-    ## 3        3 0.7666667    math      pre
-    ## 4    5 mag 0.4842105    math      pre
-    ## 5    5bach 0.7884615    math      pre
-    ## 6  Average 0.7054808    math      pre
-    ## 7        1 0.8433735 science      pre
-    ## 8        2 0.8133333 science      pre
-    ## 9        3 0.8629032 science      pre
-    ## 10   5 mag 0.8426966 science      pre
-    ## 11   5bach 0.8861789 science      pre
-    ## 12 Average 0.8496971 science      pre
-    ## 13       1 0.8429752     egr      pre
-    ## 14       2 0.8791209     egr      pre
-    ## 15       3 0.9086022     egr      pre
-    ## 16   5 mag 0.8818898     egr      pre
-    ## 17   5bach 0.8203593     egr      pre
-    ## 18 Average 0.8665895     egr      pre
-    ## 19       1 0.7407407    math     post
-    ## 20       2 0.6825397    math     post
-    ## 21       3 0.8510638    math     post
-    ## 22   5 mag 0.5820896    math     post
-    ## 23   5bach 0.8834951    math     post
-    ## 24 Average 0.7479858    math     post
-    ## 25       1 0.7592593 science     post
-    ## 26       2 0.8732394 science     post
-    ## 27       3 0.9423077 science     post
-    ## 28   5 mag 0.8611111 science     post
-    ## 29   5bach 0.9344262 science     post
-    ## 30 Average 0.8740687 science     post
-    ## 31       1 0.9764706     egr     post
-    ## 32       2 0.9375000     egr     post
-    ## 33       3 0.9677419     egr     post
-    ## 34   5 mag 0.9461078     egr     post
-    ## 35   5bach 0.8773585     egr     post
-    ## 36 Average 0.9410358     egr     post
+    ## 1        1 0.6250000    math      pre
+    ## 2        2 0.6623377    math      pre
+    ## 3        3 0.6917293    math      pre
+    ## 4    5 mag 0.3898305    math      pre
+    ## 5    5bach 0.6560000    math      pre
+    ## 6  Average 0.6049795    math      pre
+    ## 7        1 0.6481481 science      pre
+    ## 8        2 0.6931818 science      pre
+    ## 9        3 0.7133333 science      pre
+    ## 10   5 mag 0.5813953 science      pre
+    ## 11   5bach 0.7569444 science      pre
+    ## 12 Average 0.6786006 science      pre
+    ## 13       1 0.6754967     egr      pre
+    ## 14       2 0.8080808     egr      pre
+    ## 15       3 0.8203883     egr      pre
+    ## 16   5 mag 0.4686192     egr      pre
+    ## 17   5bach 0.4506579     egr      pre
+    ## 18 Average 0.6446486     egr      pre
+    ## 19       1 0.6451613    math     post
+    ## 20       2 0.6231884    math     post
+    ## 21       3 0.7207207    math     post
+    ## 22   5 mag 0.5064935    math     post
+    ## 23   5bach 0.7280000    math     post
+    ## 24 Average 0.6447128    math     post
+    ## 25       1 0.5774648 science     post
+    ## 26       2 0.7750000 science     post
+    ## 27       3 0.7716535 science     post
+    ## 28   5 mag 0.7045455 science     post
+    ## 29   5bach 0.7972028 science     post
+    ## 30 Average 0.7251733 science     post
+    ## 31       1 0.8556701     egr     post
+    ## 32       2 0.8181818     egr     post
+    ## 33       3 0.8571429     egr     post
+    ## 34   5 mag 0.7979798     egr     post
+    ## 35   5bach 0.7750000     egr     post
+    ## 36 Average 0.8207949     egr     post
 
 I visualized the chart in the following bar graph.
 
@@ -804,7 +812,7 @@ stem$pre_post <- factor(stem$pre_post, levels = c("pre", "post"))
   ggplot(data = stem, aes(x=pre_post, y=prop, fill=course)) +
     geom_bar(stat="identity", position=position_dodge()) +
     facet_grid(~ grade) +
-    labs(title = "Proportion of Students Who Feel Positively About math", 
+    labs(title = "Proportion of Students Who Feel Positively About STEM", 
          x = "Grade",
          y = "Proportion",
          fill = "Course")
@@ -820,43 +828,43 @@ stem_diffprop <- data.frame("grade" = c("1", "2", "3", "5 mag", "5bach", "Averag
 stem_diffprop
 ```
 
-    ##      grade    diff_prop  course
-    ## 1        1 -0.018752930    math
-    ## 2        2 -0.046031746    math
-    ## 3        3  0.084397163    math
-    ## 4    5 mag  0.097879026    math
-    ## 5    5bach  0.095033607    math
-    ## 6  Average  0.042505024    math
-    ## 7        1 -0.084114235 science
-    ## 8        2  0.059906103 science
-    ## 9        3  0.079404467 science
-    ## 10   5 mag  0.018414482 science
-    ## 11   5bach  0.048247368 science
-    ## 12 Average  0.024371637 science
-    ## 13       1  0.133495382     egr
-    ## 14       2  0.058379121     egr
-    ## 15       3  0.059139785     egr
-    ## 16   5 mag  0.125748503     egr
-    ## 17   5bach -0.004531273     egr
-    ## 18 Average  0.074446303     egr
-    ## 19       1 -0.018752930    math
-    ## 20       2 -0.046031746    math
-    ## 21       3  0.084397163    math
-    ## 22   5 mag  0.097879026    math
-    ## 23   5bach  0.095033607    math
-    ## 24 Average  0.042505024    math
-    ## 25       1 -0.084114235 science
-    ## 26       2  0.059906103 science
-    ## 27       3  0.079404467 science
-    ## 28   5 mag  0.018414482 science
-    ## 29   5bach  0.048247368 science
-    ## 30 Average  0.024371637 science
-    ## 31       1  0.133495382     egr
-    ## 32       2  0.058379121     egr
-    ## 33       3  0.059139785     egr
-    ## 34   5 mag  0.125748503     egr
-    ## 35   5bach -0.004531273     egr
-    ## 36 Average  0.074446303     egr
+    ##      grade   diff_prop  course
+    ## 1        1  0.02016129    math
+    ## 2        2 -0.03914926    math
+    ## 3        3  0.02899140    math
+    ## 4    5 mag  0.11666300    math
+    ## 5    5bach  0.07200000    math
+    ## 6  Average  0.03973329    math
+    ## 7        1 -0.07068336 science
+    ## 8        2  0.08181818 science
+    ## 9        3  0.05832021 science
+    ## 10   5 mag  0.12315011 science
+    ## 11   5bach  0.04025835 science
+    ## 12 Average  0.04657270 science
+    ## 13       1  0.18017341     egr
+    ## 14       2  0.01010101     egr
+    ## 15       3  0.03675451     egr
+    ## 16   5 mag  0.34732190     egr
+    ## 17   5bach  0.30638075     egr
+    ## 18 Average  0.17614632     egr
+    ## 19       1  0.02016129    math
+    ## 20       2 -0.03914926    math
+    ## 21       3  0.02899140    math
+    ## 22   5 mag  0.11666300    math
+    ## 23   5bach  0.07200000    math
+    ## 24 Average  0.03973329    math
+    ## 25       1 -0.07068336 science
+    ## 26       2  0.08181818 science
+    ## 27       3  0.05832021 science
+    ## 28   5 mag  0.12315011 science
+    ## 29   5bach  0.04025835 science
+    ## 30 Average  0.04657270 science
+    ## 31       1  0.18017341     egr
+    ## 32       2  0.01010101     egr
+    ## 33       3  0.03675451     egr
+    ## 34   5 mag  0.34732190     egr
+    ## 35   5bach  0.30638075     egr
+    ## 36 Average  0.17614632     egr
 
 I visualized this difference in the following graph. I feel like this
 should be at the crux of the investigation.
@@ -875,6 +883,115 @@ stem_diffprop$course <- factor(stem$course, levels = c("math", "science", "egr")
 ```
 
 ![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-39-1.png)
+
+Simulation-Based Inference
+--------------------------
+
+### Distribution of Proportions of Girls Who Feel Positively About STEM
+
+``` r
+stem_new <- stem %>%
+  filter(grade != "Average")
+ggplot(data = stem_new) +
+  geom_histogram(aes(x = prop), binwidth = 0.1) +
+  labs(title = "Distribution of Proportions of Girls Who Feel Positively About STEM", x = "Proportions of Girls Who Feel Positively About STEM", y = "Frequency")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-40-1.png)
+
+### Confidence Interval
+
+``` r
+set.seed(2019)
+boot_diffprepost <- stem_new %>%
+  specify(response = prop, explanatory = pre_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("post", "pre"))
+```
+
+``` r
+ggplot(data = boot_diffprepost, 
+       mapping = aes(x = stat)) +
+  geom_histogram() +
+  labs(title = "Bootstrap Distribution of Difference in Proportions", subtitle = "Of Girls Who Feel Positively About STEM Before and After the Implementation of Empower", x = "Difference in Proportions", y = "Frequency") +
+    geom_vline(xintercept = 0.005072689, color = "red") +
+  geom_vline(xintercept = 0.1702555, color = "red")
+```
+
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-42-1.png)
+
+``` r
+boot_diffprepost %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1     0.00507       0.170
+
+We are 95% confident that the proportion of girls who feel positively
+about STEM is 0.005072689 to 0.1702555 higher after the implementation
+of Empower.
+
+### Permutation
+
+``` r
+mean <- stem_new %>%
+  group_by(pre_post) %>%
+  summarize(mean = mean(prop)) %>%
+  mutate(diff(mean)) %>%
+  filter(pre_post == "pre") %>%
+  select(-pre_post, -mean) %>%
+  pull()
+```
+
+``` r
+set.seed(2019)
+permute <- stem_new %>%
+  specify(response = prop, explanatory = pre_post) %>%
+  hypothesize(null = "independence") %>%
+  generate(reps = 1000, type = "permute") %>%
+  calculate(stat = "diff in means", order = c("post", "pre"))
+```
+
+Null hypothesis: There is no difference in the mean proportion of girls
+who feel positively about STEM before and after the implementation of
+Empower
+
+``` r
+ggplot(data = permute, 
+       mapping = aes(x = stat)) +
+  geom_histogram() +
+  labs(title = "Permute Distribution of Difference in Mean Proportions", subtitle = "Of Girls Who Feel Positively About STEM Before and After the Implementation of Empower", x = "Difference in Mean Proportions", y = "Frequency") +
+  geom_vline(xintercept = -mean, color = "red") +
+  geom_vline(xintercept = mean, color = "red")
+```
+
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-46-1.png)
+
+``` r
+permute %>%
+  filter(stat <= -mean) %>%
+  summarise((p_value = n()/1000) * 2)
+```
+
+    ## # A tibble: 1 x 1
+    ##   `(p_value = n()/1000) * 2`
+    ##                        <dbl>
+    ## 1                       0.04
+
+The p-value of 0.04 is less than the significance level alpha = 0.05.
+Therefore, we reject the null hypothesis that there is no difference in
+the mean proportion of girls who feel positively about STEM before and
+after the implementation of Empower, in favor of the alternative
+hypothesis that there is a statistically significant difference in their
+attitudes towards STEM.
 
 SECTION 3: ANALYSIS BY QUESTION
 ===============================
@@ -932,381 +1049,130 @@ empower_new %>%
     ## 4 5 bach    36
     ## 5 5 mag     28
 
+SHINY APP GOES HERE
+===================
+
+Pre 2017 vs. Pre 2018 Analysis
+==============================
+
+Renaming the 2017 answers
+-------------------------
+
 ``` r
-# Define UI
+change_names <- function(naming){
+naming %>%
+  str_replace("1", "no") %>%
+  str_replace("2", "no") %>%
+  str_replace("3", "neutral") %>%
+  str_replace("4", "yes") %>%
+  str_replace("5", "yes")
+}
 
-ui <- fluidPage(
-    
-    # App title
-    titlePanel("Questions"),
-    
-    # Sidebar layout with a input and output definitions
-    sidebarLayout(
-        
-        # Inputs: Select variables to plot
-        sidebarPanel(
-            
-            # Select variable for y-axis
-            selectInput(inputId = "y", 
-                        label = "Question",
-                        choices = c("math_career", "good_at_math", 
-                                    "math_courses", "science_career", 
-                                    "good_science", "science_courses",
-                                    "mathscience_useful", "success_engineering",
-                                    "opportunity_engineering"), 
-                        selected = "math_career"),
-            
-            # Select variable for x-axis
-            selectInput(inputId = "x", 
-                        label = "Group",
-                        choices = c("all_together", "age_groups", "grade"), 
-                        selected = "all_together")
-        ),
-        
-        # Output: Show graph
-        mainPanel(
-            plotOutput(outputId = "graph1"), 
-            textOutput(outputId = "influential")
-        )
-    )
-)
-
-# Define server function --------------------------------------------
-server <- function(input, output) 
-    
-    #Top Graph
-    output$graph1 <- renderPlot({
-        if(input$y == "math_career" && input$x == "all_together"){
-            empower_new$math_career <- factor(empower_new$math_career, levels = c("yes", "neutral", "no"))
-            empower_new$pre_or_post <- factor(empower_new$pre_or_post, levels = c("pre", "post"))
-            ggplot(data = empower_new) +
-                geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = math_career), position = "fill") +
-                labs(title = "Proportion of People Who Think of a Career in Math",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "Would you consider a career in math?")
-        }
-        else if(input$y == "math_career" && input$x == "age_groups"){
-            empower_byage$math_career <- factor(empower_byage$math_career, levels = c("yes", "neutral", "no"))
-            empower_byage$pre_or_post <- factor(empower_byage$pre_or_post, levels = c("pre", "post"))
-            empower_byage$age_groups <- factor(empower_byage$age_groups, levels = c("younger", "older"))
-            ggplot(data = empower_byage) +
-                geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = math_career), position = "fill") +
-                facet_grid(~ age_groups) +
-                labs(title = "Proportion of People Who Think of a Career in Math",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "Career in math?")
-        }
-        else if(input$y == "math_career" && input$x == "grade"){
-            empower_new$math_career <- factor(empower_new$math_career, levels = c("yes", "neutral", "no"))
-            empower_new$pre_or_post <- factor(empower_new$pre_or_post, levels = c("pre", "post"))
-            ggplot(data = empower_new) +
-                geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = math_career), position = "fill") +
-                facet_grid(~ grade) +
-                labs(title = "Proportion of People Who Think of a Career in Math",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "Career in math?")
-        }
-        else if(input$y == "good_at_math" && input$x == "all_together"){
-            empower_new$good_at_math <- factor(empower_new$good_at_math, levels = c("yes", "neutral", "no"))
-            empower_new$pre_or_post <- factor(empower_new$pre_or_post, levels = c("pre", "post"))
-            ggplot(data = empower_new) +
-                geom_bar(mapping = aes(x = pre_or_post, 
-                                    fill = good_at_math), position = "fill") +
-                labs(title = "Proportion of People Who Think They Are Good at Math",
-                    x = "Pre or Post",
-                    y = "Proportions", 
-                    fill = "Good at math?")
-        }
-        else if(input$y == "good_at_math" && input$x == "age_groups"){
-            empower_byage$good_at_math <- factor(empower_byage$good_at_math, levels = c("yes", "neutral", "no"))
-            empower_byage$pre_or_post <- factor(empower_byage$pre_or_post, levels = c("pre", "post"))
-            ggplot(data = empower_byage) +
-                geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = good_at_math), position = "fill") +
-                facet_grid(~ age_groups) +
-                labs(title = "Proportion of People Who Think They are Good at Math",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "Good at math?")
-        }
-        else if(input$y == "good_at_math" && input$x == "grade"){
-            empower_new$good_at_math <- factor(empower_new$good_at_math, levels = c("yes", "neutral", "no"))
-            empower_new$pre_or_post <- factor(empower_new$pre_or_post, levels = c("pre", "post"))
-            ggplot(data = empower_new) +
-                geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = good_at_math), position = "fill") +
-                facet_grid(~ grade) +
-                labs(title = "Proportion of People Who Think They are Good at Math",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "Good at math?")    
-        }
-        else if(input$y == "math_courses" && input$x == "all_together"){
-            empower_new$math_courses <- factor(empower_new$math_courses, levels = c("yes", "neutral", "no"))
-            empower_new$pre_or_post <- factor(empower_new$pre_or_post, levels = c("pre", "post"))  
-                ggplot(data = empower_new) +
-                geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = math_courses), position = "fill") +
-                labs(title = "Proportion of People Who Want to Take More Math Courses",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "More math courses?")
-        }
-        
-        else if(input$y == "math_courses" && input$x == "age_groups"){
-            empower_byage$math_courses <- factor(empower_byage$math_courses, levels = c("yes", "neutral", "no"))
-            empower_byage$pre_or_post <- factor(empower_byage$pre_or_post, levels = c("pre", "post")) 
-               ggplot(data = empower_byage) +
-                 geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = math_courses), position = "fill") +
-                facet_grid(~ age_groups) +
-                labs(title = "Proportion of People Who Want to Take More Math Courses",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "More math courses?")
-        }
-        else if(input$y == "math_courses" && input$x == "grade"){
-            empower_new$math_courses <- factor(empower_new$math_courses, levels = c("yes", "neutral", "no"))
-            empower_new$pre_or_post <- factor(empower_new$pre_or_post, levels = c("pre", "post"))
-            ggplot(data = empower_new) +    
-            geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = math_courses), position = "fill") +
-                facet_grid(~ grade) +
-                labs(title = "Proportion of People Who Want to Take More Math Courses",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "More math courses?")
-        }
-        else if(input$y == "science_career" && input$x == "all_together"){
-            empower_new$science_career <- factor(empower_new$science_career, levels = c("yes", "neutral", "no"))
-            empower_new$pre_or_post <- factor(empower_new$pre_or_post, levels = c("pre", "post"))                
-            ggplot(data = empower_new) +
-                geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = science_career), position = "fill") +
-                labs(title = "Proportion of People Who Think of a Career in Science",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "Career in science?")
-        }
-        else if(input$y == "science_career" && input$x == "age_groups"){
-            empower_byage$science_career <- factor(empower_byage$science_career, levels = c("yes", "neutral", "no"))
-            empower_byage$pre_or_post <- factor(empower_byage$pre_or_post, levels = c("pre", "post"))                 
-            ggplot(data = empower_byage) +
-                geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = science_career), position = "fill") +
-                facet_grid(~ age_groups) +
-                labs(title = "Proportion of People Who Think of a Career in Science",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "Career in science?")
-        }
-        else if(input$y == "science_career" && input$x == "grade"){
-            empower_new$science_career <- factor(empower_new$science_career, levels = c("yes", "neutral", "no"))
-            empower_new$pre_or_post <- factor(empower_new$pre_or_post, levels = c("pre", "post")) 
-            ggplot(data = empower_new) +
-                geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = science_career), position = "fill") +
-                facet_grid(~ grade) +
-                labs(title = "Proportion of People Who Think of a Career in Science",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "Career in science?")
-        }
-        else if(input$y == "good_science" && input$x == "all_together"){
-            empower_new$good_science <- factor(empower_new$good_science, levels = c("yes", "neutral", "no"))
-            empower_new$pre_or_post <- factor(empower_new$pre_or_post, levels = c("pre", "post"))              
-            ggplot(data = empower_new) +
-                geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = good_science), position = "fill") +
-                labs(title = "Proportion of People Who Think They are Good at Science",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "Good at science?")
-        }
-        else if(input$y == "good_science" && input$x == "age_groups"){
-            empower_byage$good_science <- factor(empower_byage$good_science, levels = c("yes", "neutral", "no"))
-            empower_byage$pre_or_post <- factor(empower_byage$pre_or_post, levels = c("pre", "post"))     
-            ggplot(data = empower_byage) +
-                geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = good_science), position = "fill") +
-                facet_grid(~ age_groups) +
-                labs(title = "Proportion of People Who Think They are Good at Science",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "Good at science?")
-        }
-        else if(input$y == "good_science" && input$x == "grade"){
-            empower_new$good_science <- factor(empower_new$good_science, levels = c("yes", "neutral", "no"))
-            empower_new$pre_or_post <- factor(empower_new$pre_or_post, levels = c("pre", "post")) 
-            ggplot(data = empower_new) +
-                geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = good_science), position = "fill") +
-                facet_grid(~ grade) +
-                labs(title = "Proportion of People Who Think They are Good at Science",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "Good at Science?")
-        }
-        else if(input$y == "science_courses" && input$x == "all_together"){
-            empower_new$science_courses <- factor(empower_new$science_courses, levels = c("yes", "neutral", "no"))
-            empower_new$pre_or_post <- factor(empower_new$pre_or_post, levels = c("pre", "post")) 
-            empower_new$science_courses <- factor(empower_new$science_courses, levels = c("yes", "neutral", "no"))
-            ggplot(data = empower_new) +
-                geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = science_courses), position = "fill") +
-                labs(title = "Proportion of People Who Want to take More Science Courses",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "More Science Courses?")
-        }
-        else if(input$y == "science_courses" && input$x == "age_groups"){
-            empower_byage$science_courses <- factor(empower_byage$science_courses, levels = c("yes", "neutral", "no"))
-            empower_byage$pre_or_post <- factor(empower_byage$pre_or_post, levels = c("pre", "post"))     
-                ggplot(data = empower_byage) +
-                geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = science_courses), position = "fill") +
-                facet_grid(~ age_groups) +
-                labs(title = "Proportion of People Who Want to take More Science Courses",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "More Science Courses?")
-        }
-        else if(input$y == "science_courses" && input$x == "grade"){
-            empower_new$science_courses <- factor(empower_new$science_courses, levels = c("yes", "neutral", "no"))
-            empower_new$pre_or_post <- factor(empower_new$pre_or_post, levels = c("pre", "post")) 
-            ggplot(data = empower_new) +
-                geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = science_courses), position = "fill") +
-                facet_grid(~ grade) +
-                labs(title = "Proportion of People Who Want to take More Science Courses",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "More Science Courses?")
-        }
-        else if(input$y == "mathscience_useful" && input$x == "all_together"){
-            empower_new$mathscience_useful <- factor(empower_new$mathscience_useful, levels = c("yes", "neutral", "no"))
-            empower_new$pre_or_post <- factor(empower_new$pre_or_post, levels = c("pre", "post")) 
-            empower_new$mathscience_useful <- factor(empower_new$mathscience_useful, levels = c("yes", "neutral", "no"))
-            ggplot(data = empower_new) +
-                geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = mathscience_useful), position = "fill") +
-                labs(title = "Proportion of People Who Think They Can Invent",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "Can invent?")
-        }
-        else if(input$y == "mathscience_useful" && input$x == "age_groups"){
-            empower_byage$mathscience_useful <- factor(empower_byage$mathscience_useful, levels = c("yes", "neutral", "no"))
-            empower_byage$pre_or_post <- factor(empower_byage$pre_or_post, levels = c("pre", "post"))            
-            ggplot(data = empower_byage) +
-                geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = mathscience_useful), position = "fill") +
-                facet_grid(~ age_groups) +
-                labs(title = "Proportion of People Who Think They Can Invent",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "Can invent?")
-        }
-        else if(input$y == "mathscience_useful" && input$x == "grade"){
-            empower_new$mathscience_useful <- factor(empower_new$mathscience_useful, levels = c("yes", "neutral", "no"))
-            empower_new$pre_or_post <- factor(empower_new$pre_or_post, levels = c("pre", "post")) 
-            ggplot(data = empower_new) +
-                geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = mathscience_useful), position = "fill") +
-                facet_grid(~ grade) +
-                labs(title = "Proportion of People Who Think They Can Invent",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "Can invent?")
-        }
-        else if(input$y == "success_engineering" && input$x == "all_together"){
-            empower_new$success_engineering <- factor(empower_new$success_engineering, levels = c("yes", "neutral", "no"))
-            empower_new$pre_or_post <- factor(empower_new$pre_or_post, levels = c("pre", "post"))             
-            ggplot(data = empower_new) +
-                geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = success_engineering), position = "fill") +
-                labs(title = "Proportion of People Who Think They Can Succeed as Engineers",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "Can succeed?")
-        }
-        else if(input$y == "success_engineering" && input$x == "age_groups"){
-            empower_byage$success_engineering <- factor(empower_byage$success_engineering, levels = c("yes", "neutral", "no"))
-            empower_byage$pre_or_post <- factor(empower_byage$pre_or_post, levels = c("pre", "post"))            
-            ggplot(data = empower_byage) +
-                geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = success_engineering), position = "fill") +
-                facet_grid(~ age_groups) +
-                labs(title = "Proportion of People Who Think They Can Succeed as Engineers",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "Can succeed?")
-        }
-        else if(input$y == "success_engineering" && input$x == "grade"){
-            empower_new$success_engineering <- factor(empower_new$success_engineering, levels = c("yes", "neutral", "no"))
-            empower_new$pre_or_post <- factor(empower_new$pre_or_post, levels = c("pre", "post")) 
-            ggplot(data = empower_new) +
-                geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = success_engineering), position = "fill") +
-                facet_grid(~ grade) +
-                labs(title = "Proportion of People Who Think They Can Succeed as Engineers",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "Can succeed?")
-    }
-        else if(input$y == "opportunity_engineering" && input$x == "all_together"){
-            empower_new$opportunity_engineering <- factor(empower_new$opportunity_engineering, levels = c("yes", "neutral", "no"))
-            empower_new$pre_or_post <- factor(empower_new$pre_or_post, levels = c("pre", "post"))             
-            ggplot(data = empower_new) +
-                geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = opportunity_engineering), position = "fill") +
-                labs(title = "Proportion of People Who Want to Take More EGR Courses",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "EGR courses?")
-        }
-        else if(input$y == "opportunity_engineering" && input$x == "age_groups"){
-            empower_byage$opportunity_engineering <- factor(empower_byage$opportunity_engineering, levels = c("yes", "neutral", "no"))
-            empower_byage$pre_or_post <- factor(empower_byage$pre_or_post, levels = c("pre", "post"))            
-            ggplot(data = empower_byage) +
-                geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = opportunity_engineering), position = "fill") +
-                facet_grid(~ age_groups) +
-                labs(title = "Proportion of People Who Want to Take More EGR Courses",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "EGR Courses?")
-        }
-        else if(input$y == "opportunity_engineering" && input$x == "grade"){
-            empower_new$opportunity_engineering <- factor(empower_new$opportunity_engineering, levels = c("yes", "neutral", "no"))
-            empower_new$pre_or_post <- factor(empower_new$pre_or_post, levels = c("pre", "post")) 
-            ggplot(data = empower_new) +
-                geom_bar(mapping = aes(x = pre_or_post, 
-                                       fill = opportunity_engineering), position = "fill") +
-                facet_grid(~ grade) +
-                labs(title = "Proportion of People Who Want to Take More EGR Courses",
-                     x = "Pre or Post",
-                     y = "Proportions", 
-                     fill = "EGR Courses?")
-        }
-    }
-            )
-    
-
-# Create the Shiny app object ---------------------------------------
-shinyApp(ui = ui, server = server)
+pre_empower2017$understanding_stem <- change_names(pre_empower2017$understanding_stem)
+pre_empower2017$enjoy_stem <- change_names(pre_empower2017$enjoy_stem)
+pre_empower2017$interest_stem_classes <- change_names(pre_empower2017$interest_stem_classes)
+pre_empower2017$interest_stem_career <- change_names(pre_empower2017$interest_stem_career)
 ```
 
-<!--html_preserve-->
-Shiny applications not supported in static R Markdown documents
+### Finding proportions of positive answers for each question 2017
 
-<!--/html_preserve-->
+``` r
+understanding <- pre_empower2017 %>%
+  filter(!is.na(understanding_stem)) 
+
+understanding <- sum(str_count(understanding$understanding_stem, "yes")) / (sum(str_count(understanding$understanding_stem, "no")) + sum(str_count(understanding$understanding_stem, "yes")) + sum(str_count(understanding$understanding_stem, "neutral")))
+understanding
+```
+
+    ## [1] 0.4153846
+
+``` r
+enjoy <- pre_empower2017 %>%
+  filter(!is.na(enjoy_stem)) 
+
+enjoy <- sum(str_count(enjoy$enjoy_stem, "yes")) / (sum(str_count(enjoy$enjoy_stem, "no")) + sum(str_count(enjoy$enjoy_stem, "yes")) + sum(str_count(enjoy$enjoy_stem, "neutral")))
+enjoy
+```
+
+    ## [1] 0.5692308
+
+``` r
+interest_classes <- pre_empower2017 %>%
+  filter(!is.na(interest_stem_classes)) 
+
+interest_classes <- sum(str_count(interest_classes$interest_stem_classes, "yes")) / (sum(str_count(interest_classes$interest_stem_classes, "no")) + sum(str_count(interest_classes$interest_stem_classes, "yes")) + sum(str_count(interest_classes$interest_stem_classes, "neutral")))
+interest_classes
+```
+
+    ## [1] 0.6716418
+
+``` r
+interest_career <- pre_empower2017 %>%
+  filter(!is.na(interest_stem_classes)) 
+
+interest_career <- sum(str_count(interest_career$interest_stem_classes, "yes")) / (sum(str_count(interest_career$interest_stem_classes, "no")) + sum(str_count(interest_career$interest_stem_classes, "yes")) + sum(str_count(interest_career$interest_stem_classes, "neutral")))
+interest_career
+```
+
+    ## [1] 0.6716418
+
+Joining answers by same categories as 2017 in the 2018 data and finding proportions of positive answers
+-------------------------------------------------------------------------------------------------------
+
+``` r
+pre <- empower_new %>%
+  filter(pre_or_post == "pre")
+pre$careers <- paste(pre$math_career, pre$science_career, pre$future_innovation)
+
+pre_careers_prop <- sum(str_count(pre$careers, "yes")) / (sum(str_count(pre$careers, "no")) + sum(str_count(pre$careers, "yes")) + sum(str_count(pre$careers, "neutral")))
+pre_careers_prop
+```
+
+    ## [1] 0.6052632
+
+``` r
+pre$understanding <- paste(pre$good_at_math, pre$good_science, pre$i_can_build)
+
+pre_understanding_prop <- sum(str_count(pre$understanding, "yes")) / (sum(str_count(pre$understanding, "no")) + sum(str_count(pre$understanding, "yes")) + sum(str_count(pre$understanding, "neutral")))
+pre_understanding_prop
+```
+
+    ## [1] 0.5347826
+
+``` r
+pre$enjoy <- paste(pre$higherlevel_math, pre$higherlevel_science, pre$enjoy_building)
+
+pre_enjoy_prop <- sum(str_count(pre$enjoy, "yes")) / (sum(str_count(pre$enjoy, "no")) + sum(str_count(pre$enjoy, "yes")) + sum(str_count(pre$enjoy, "neutral")))
+pre_enjoy_prop
+```
+
+    ## [1] 0.5833333
+
+``` r
+pre$classes <- paste(pre$math_courses, pre$science_courses, pre$opportunity_engineering)
+
+pre_classes_prop <- sum(str_count(pre$classes, "yes")) / (sum(str_count(pre$classes, "no")) + sum(str_count(pre$classes, "yes")) + sum(str_count(pre$classes, "neutral")))
+pre_classes_prop
+```
+
+    ## [1] 0.7347826
+
+``` r
+years_comparison <- data.frame("category" = c("understanding STEM", "enjoy STEM", "STEM classes", "STEM career"), "prop" = c(understanding, enjoy, interest_classes, interest_career, pre_understanding_prop, pre_enjoy_prop, pre_classes_prop, pre_careers_prop), "year" = c("2017", "2017", "2017", "2017", "2018", "2018", "2018", "2018"))
+```
+
+``` r
+ggplot(data = years_comparison, aes(x=year, y=prop, fill=category)) +
+    geom_bar(stat="identity", position=position_dodge()) +
+    facet_grid(~ category) +
+    labs(title = "Proportion of Students Who Feel Positively About STEM", 
+         x = "Year",
+         y = "Proportion",
+         fill = "Question")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-60-1.png)
+
 Personal Notes:
 ---------------
 

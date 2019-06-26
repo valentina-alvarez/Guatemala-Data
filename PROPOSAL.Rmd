@@ -1,6 +1,8 @@
 ---
 title: "Empowerment Survey"
-output: html_document
+output: 
+  md_document:
+    variant: markdown_github
 ---
 
 ```{r setup, include=FALSE}
@@ -630,7 +632,9 @@ stem_diffprop$course <- factor(stem$course, levels = c("math", "science", "egr")
 ### Distribution of Proportions of Girls Who Feel Positively About STEM
 
 ```{r}
-ggplot(data = stem) +
+stem_new <- stem %>%
+  filter(grade != "Average")
+ggplot(data = stem_new) +
   geom_histogram(aes(x = prop), binwidth = 0.1) +
   labs(title = "Distribution of Proportions of Girls Who Feel Positively About STEM", x = "Proportions of Girls Who Feel Positively About STEM", y = "Frequency")
 ```
@@ -639,7 +643,7 @@ ggplot(data = stem) +
 
 ```{r}
 set.seed(2019)
-boot_diffprepost <- stem %>%
+boot_diffprepost <- stem_new %>%
   specify(response = prop, explanatory = pre_post) %>%
   generate(reps = 1000, type = "bootstrap") %>%
   calculate(stat = "diff in means", order = c("post", "pre"))
@@ -650,8 +654,8 @@ ggplot(data = boot_diffprepost,
        mapping = aes(x = stat)) +
   geom_histogram() +
   labs(title = "Bootstrap Distribution of Difference in Proportions", subtitle = "Of Girls Who Feel Positively About STEM Before and After the Implementation of Empower", x = "Difference in Proportions", y = "Frequency") +
-    geom_vline(xintercept = 0.0209781, color = "red") +
-  geom_vline(xintercept = 0.1553437, color = "red")
+    geom_vline(xintercept = 0.005072689, color = "red") +
+  geom_vline(xintercept = 0.1702555, color = "red")
 ```
 
 ```{r}
@@ -660,12 +664,12 @@ boot_diffprepost %>%
             upper_bound = quantile(stat, 0.975))
 ```
 
-We are 95% confident that the proportion of girls who feel positively about STEM is 0.0210 to 0.155 higher after the implementation of Empower. 
+We are 95% confident that the proportion of girls who feel positively about STEM is 0.005072689 to 0.1702555 higher after the implementation of Empower. 
 
 ### Permutation
 
 ```{r}
-mean <- stem %>%
+mean <- stem_new %>%
   group_by(pre_post) %>%
   summarize(mean = mean(prop)) %>%
   mutate(diff(mean)) %>%
@@ -676,7 +680,7 @@ mean <- stem %>%
 
 ```{r}
 set.seed(2019)
-permute <- stem %>%
+permute <- stem_new %>%
   specify(response = prop, explanatory = pre_post) %>%
   hypothesize(null = "independence") %>%
   generate(reps = 1000, type = "permute") %>%
@@ -700,7 +704,7 @@ permute %>%
   summarise((p_value = n()/1000) * 2)
 ```
 
-The p-value of 0.032 is less than the significance level alpha = 0.05. Therefore, we reject the null hypothesis that there is no difference in the mean proportion of girls who feel positively about STEM before and after the implementation of Empower, in favor of the alternative hypothesis that there is a statistically significant difference in their attitudes towards STEM. 
+The p-value of 0.04 is less than the significance level alpha = 0.05. Therefore, we reject the null hypothesis that there is no difference in the mean proportion of girls who feel positively about STEM before and after the implementation of Empower, in favor of the alternative hypothesis that there is a statistically significant difference in their attitudes towards STEM. 
 
 
 # SECTION 3: ANALYSIS BY QUESTION
