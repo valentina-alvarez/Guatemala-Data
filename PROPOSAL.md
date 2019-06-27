@@ -1049,6 +1049,9 @@ empower_new %>%
     ## 4 5 bach    36
     ## 5 5 mag     28
 
+SHINY APP GOES HERE
+===================
+
 Pre 2017 vs. Pre 2018 Analysis
 ==============================
 
@@ -1173,15 +1176,15 @@ Who Feel Positively About STEM",
 ![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-60-1.png)
 
 ``` r
-pre_diffprop <- data.frame("question" = c("enjoy STEM", "STEM career", "STEM classes", "understanding STEM"),  "diff_prop" = c(pre_understanding_prop-understanding, pre_enjoy_prop-enjoy, pre_classes_prop-interest_classes, pre_careers_prop-interest_career))
+pre_diffprop <- data.frame("question" = c("enjoy STEM", "STEM career", "STEM classes", "understanding STEM"),  "diff_prop" = c(pre_enjoy_prop-enjoy,pre_careers_prop-interest_career,  pre_classes_prop-interest_classes, pre_understanding_prop-understanding))
 pre_diffprop
 ```
 
     ##             question   diff_prop
-    ## 1         enjoy STEM  0.11939799
-    ## 2        STEM career  0.01410256
+    ## 1         enjoy STEM  0.01410256
+    ## 2        STEM career -0.06637863
     ## 3       STEM classes  0.06314082
-    ## 4 understanding STEM -0.06637863
+    ## 4 understanding STEM  0.11939799
 
 ``` r
 ggplot(data = pre_diffprop, aes(x=question, y=diff_prop, fill=question)) +

@@ -736,7 +736,7 @@ empower_new %>%
   count(grade)
 ```
 
-
+# SHINY APP GOES HERE
 
 
 
@@ -843,7 +843,7 @@ Who Feel Positively About STEM",
 ```
 
 ```{r}
-pre_diffprop <- data.frame("question" = c("enjoy STEM", "STEM career", "STEM classes", "understanding STEM"),  "diff_prop" = c(pre_understanding_prop-understanding, pre_enjoy_prop-enjoy, pre_classes_prop-interest_classes, pre_careers_prop-interest_career))
+pre_diffprop <- data.frame("question" = c("enjoy STEM", "STEM career", "STEM classes", "understanding STEM"),  "diff_prop" = c(pre_enjoy_prop-enjoy,pre_careers_prop-interest_career,  pre_classes_prop-interest_classes, pre_understanding_prop-understanding))
 pre_diffprop
 ```
 ```{r}
