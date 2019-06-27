@@ -1049,9 +1049,6 @@ empower_new %>%
     ## 4 5 bach    36
     ## 5 5 mag     28
 
-SHINY APP GOES HERE
-===================
-
 Pre 2017 vs. Pre 2018 Analysis
 ==============================
 
@@ -1165,13 +1162,86 @@ years_comparison <- data.frame("category" = c("understanding STEM", "enjoy STEM"
 ggplot(data = years_comparison, aes(x=year, y=prop, fill=category)) +
     geom_bar(stat="identity", position=position_dodge()) +
     facet_grid(~ category) +
-    labs(title = "Proportion of Students Who Feel Positively About STEM", 
+    labs(title = "Long Lasting Effects: Proportion of Students 
+Who Feel Positively About STEM", 
+         subtitle = "Before the course in 2017 vs. 2018",
          x = "Year",
          y = "Proportion",
          fill = "Question")
 ```
 
 ![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-60-1.png)
+
+``` r
+pre_diffprop <- data.frame("question" = c("enjoy STEM", "STEM career", "STEM classes", "understanding STEM"),  "diff_prop" = c(pre_understanding_prop-understanding, pre_enjoy_prop-enjoy, pre_classes_prop-interest_classes, pre_careers_prop-interest_career))
+pre_diffprop
+```
+
+    ##             question   diff_prop
+    ## 1         enjoy STEM  0.11939799
+    ## 2        STEM career  0.01410256
+    ## 3       STEM classes  0.06314082
+    ## 4 understanding STEM -0.06637863
+
+``` r
+ggplot(data = pre_diffprop, aes(x=question, y=diff_prop, fill=question)) +
+    geom_bar(stat="identity", position=position_dodge()) +
+    labs(title = "Long Lasting Effects: Difference in Proportion of Students 
+Who Feel Positively About STEM", 
+         subtitle = "Before the course in 2017 vs. 2018", 
+         x = "Year",
+         y = "Proportion",
+         fill = "Question")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-62-1.png)
+
+How much they like their teachers
+---------------------------------
+
+``` r
+pre_interestingmath <- empower %>%
+  filter(pre_or_post == "pre")
+pre_interestingmath <- sum(str_count(pre_interestingmath$interesting_math, "yes")) / (sum(str_count(pre_interestingmath$interesting_math, "no")) + sum(str_count(pre_interestingmath$interesting_math, "yes")) + sum(str_count(pre_interestingmath$interesting_math, "neutral")))
+
+post_interestingmath <- empower %>%
+  filter(pre_or_post == "post")
+post_interestingmath <- sum(str_count(post_interestingmath$interesting_math, "yes")) / (sum(str_count(post_interestingmath$interesting_math, "no")) + sum(str_count(post_interestingmath$interesting_math, "yes")) + sum(str_count(post_interestingmath$interesting_math, "neutral")))
+
+pre_mathcourses <- empower %>%
+  filter(pre_or_post == "pre") 
+pre_mathcourses <- pre_mathcourses %>%
+  filter(!is.na(math_courses))
+pre_mathcourses <- sum(str_count(pre_mathcourses$math_courses, "yes"))/ (sum(str_count(pre_mathcourses$math_courses, "no")) + sum(str_count(pre_mathcourses$math_courses, "yes")) + sum(str_count(pre_mathcourses$math_courses, "neutral")))
+
+post_mathcourses <- empower %>%
+  filter(pre_or_post == "post")
+post_mathcourses <- sum(str_count(post_mathcourses$math_courses, "yes")) / (sum(str_count(post_mathcourses$math_courses, "no")) + sum(str_count(post_mathcourses$math_courses, "yes")) + sum(str_count(post_mathcourses$math_courses, "neutral")))
+
+teachers <- data.frame("pre_post" = c("pre", "post", "pre", "post"),  "prop" = c(pre_interestingmath, post_interestingmath, pre_mathcourses, post_mathcourses), "interesting" = c("interesting", "interesting", "courses", "courses"))
+teachers
+```
+
+    ##   pre_post      prop interesting
+    ## 1      pre 0.8481013 interesting
+    ## 2     post 0.8906250 interesting
+    ## 3      pre 0.7692308     courses
+    ## 4     post 0.8125000     courses
+
+``` r
+teachers$pre_post <- factor(teachers$pre_post, levels = c("pre", "post", "egr"))
+
+  ggplot(data = teachers, aes(x=pre_post, y=prop, fill=interesting)) +
+    geom_bar(stat="identity", position=position_dodge()) +
+    facet_grid(~ interesting) +
+    labs(title = "Proportion of Students Who Responded",
+         subtitle = "that they find STEM interesting vs. would take more STEM courses",
+         x = "Pre or Post",
+         y = "Proportion",
+         fill = "Course")
+```
+
+![](PROPOSAL_files/figure-markdown_github/unnamed-chunk-64-1.png)
 
 Personal Notes:
 ---------------
