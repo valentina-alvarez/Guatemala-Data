@@ -48,6 +48,8 @@ post_empower <- read.csv("data/POST_Empowerment.csv",
                     sep = ";")
 pre_empower2017 <- read.csv("data/2017_Empower.csv",
                     sep = ";")
+empower2019 <- read.csv("data/19.csv",
+                    sep = ";")
 ```
 
 # SECTION 1: ORGANIZING DATA
@@ -62,15 +64,19 @@ post_empower <- post_empower %>%
 pre_empower2017 <- pre_empower2017 %>%
   mutate(pre_or_post = "pre") %>%
   mutate(year = "2017")
+empower2019 <- empower2019 %>%
+  mutate(year = "2019")
 ```
 
 ```{r join-data}
 empower <- full_join(pre_empower, post_empower)
+empower2019 <- full_join(pre2019, post2019)
+empower_full <- full_join(empower, empower2019)
 ```
 
 ### Rank
 ```{r id-numbers}
-empower$ID <- seq.int(nrow(empower))
+empower_full$ID <- seq.int(nrow(empower_full))
 ```
 
 ### Changing responses from letters to words and characterizing them as "Positive" or "Negative" 
@@ -101,49 +107,49 @@ naming %>%
   str_replace("C", "not sure")
 }
 
-empower$math_worst <- change_names(empower$math_worst)
-empower$math_career <- change_names(empower$math_career)
-empower$not_enjoy_math <- change_names(empower$not_enjoy_math)
-empower$good_at_math <- change_names(empower$good_at_math)
-empower$decentschool_badmath <- change_names(empower$decentschool_badmath)
-empower$higherlevel_math <- change_names(empower$higherlevel_math)
-empower$good_math_grades <- change_names(empower$good_math_grades)
-empower$interesting_math <- change_names(empower$interesting_math)
-empower$future_math <- change_names(empower$future_math)
-empower$math_courses <- change_names(empower$math_courses)
-empower$sure_science <- change_names(empower$sure_science)
-empower$science_career <- change_names(empower$science_career)
-empower$science_outsideofschool <- change_names(empower$science_outsideofschool)
-empower$science_pay <- change_names(empower$science_pay)
-empower$science_job <- change_names(empower$science_job)
-empower$good_science <- change_names(empower$good_science)
-empower$decentschool_badscience <- change_names(empower$decentschool_badscience)
-empower$higherlevel_science <- change_names(empower$higherlevel_science)
-empower$science_courses <- change_names(empower$science_courses)
-empower$new_products <- change_names(empower$new_products)
-empower$engineering_everyday <- change_names(empower$engineering_everyday)
-empower$enjoy_building <- change_names(empower$enjoy_building)
-empower$interested_machines <- change_names(empower$interested_machines)
-empower$career_design <- change_names(empower$career_design)
-empower$curiosity_tech <- change_names(empower$curiosity_tech)
-empower$future_innovation <- change_names(empower$future_innovation)
-empower$mathscience_useful <- change_names(empower$mathscience_useful)
-empower$success_engineering <- change_names(empower$success_engineering)
-empower$i_can_build <- change_names(empower$i_can_build)
-empower$opportunity_engineering <- change_names(empower$opportunity_engineering)
-empower$contribute_community <- change_names(empower$contribute_community)
-empower$resolve_problems_community <- change_names(empower$resolve_problems_community)
-empower$external_help <- change_names(empower$external_help)
-empower$leader_community <- change_names(empower$leader_community)
-empower$contribute_community.1 <- change_names(empower$contribute_community.1)
+empower_full$math_worst <- change_names(empower_full$math_worst)
+empower_full$math_career <- change_names(empower_full$math_career)
+empower_full$not_enjoy_math <- change_names(empower_full$not_enjoy_math)
+empower_full$good_at_math <- change_names(empower_full$good_at_math)
+empower_full$decentschool_badmath <- change_names(empower_full$decentschool_badmath)
+empower_full$higherlevel_math <- change_names(empower_full$higherlevel_math)
+empower_full$good_math_grades <- change_names(empower_full$good_math_grades)
+empower_full$interesting_math <- change_names(empower_full$interesting_math)
+empower_full$future_math <- change_names(empower_full$future_math)
+empower_full$math_courses <- change_names(empower_full$math_courses)
+empower_full$sure_science <- change_names(empower_full$sure_science)
+empower_full$science_career <- change_names(empower_full$science_career)
+empower_full$science_outsideofschool <- change_names(empower_full$science_outsideofschool)
+empower_full$science_pay <- change_names(empower_full$science_pay)
+empower_full$science_job <- change_names(empower_full$science_job)
+empower_full$good_science <- change_names(empower_full$good_science)
+empower_full$decentschool_badscience <- change_names(empower_full$decentschool_badscience)
+empower_full$higherlevel_science <- change_names(empower_full$higherlevel_science)
+empower_full$science_courses <- change_names(empower_full$science_courses)
+empower_full$new_products <- change_names(empower_full$new_products)
+empower_full$engineering_everyday <- change_names(empower_full$engineering_everyday)
+empower_full$enjoy_building <- change_names(empower_full$enjoy_building)
+empower_full$interested_machines <- change_names(empower_full$interested_machines)
+empower_full$career_design <- change_names(empower_full$career_design)
+empower_full$curiosity_tech <- change_names(empower_full$curiosity_tech)
+empower_full$future_innovation <- change_names(empower_full$future_innovation)
+empower_full$mathscience_useful <- change_names(empower_full$mathscience_useful)
+empower_full$success_engineering <- change_names(empower_full$success_engineering)
+empower_full$i_can_build <- change_names(empower_full$i_can_build)
+empower_full$opportunity_engineering <- change_names(empower_full$opportunity_engineering)
+empower_full$contribute_community <- change_names(empower_full$contribute_community)
+empower_full$resolve_problems_community <- change_names(empower_full$resolve_problems_community)
+empower_full$external_help <- change_names(empower_full$external_help)
+empower_full$leader_community <- change_names(empower_full$leader_community)
+empower_full$contribute_community.1 <- change_names(empower_full$contribute_community.1)
 
-empower$prediction_literature <- change_names2(empower$prediction_literature)
-empower$prediction_math <- change_names2(empower$prediction_math)
-empower$prediction_science <- change_names2(empower$prediction_science)
+empower_full$prediction_literature <- change_names2(empower_full$prediction_literature)
+empower_full$prediction_math <- change_names2(empower_full$prediction_math)
+empower_full$prediction_science <- change_names2(empower_full$prediction_science)
 
-empower$future_math_classes <- change_names3(empower$future_math_classes)
-empower$future_science_classes <- change_names3(empower$future_science_classes)
-empower$future_egr_classes <- change_names3(empower$future_egr_classes)
+empower_full$future_math_classes <- change_names3(empower_full$future_math_classes)
+empower_full$future_science_classes <- change_names3(empower_full$future_science_classes)
+empower_full$future_egr_classes <- change_names3(empower_full$future_egr_classes)
 ```
 
 ## Selecting data
@@ -152,7 +158,7 @@ I excluded variables that showed extreme variance or are not relevant to the stu
 
 I created a new data set that looks at the grades by age group ("Younger" vs. "Older")
 ```{r}
-empower_new <- empower %>%
+empower_new <- empower_full %>%
   select(-c(parents_stem, 
             which_parent_stem, 
             parent_profession, 
@@ -627,87 +633,7 @@ stem_diffprop$course <- factor(stem$course, levels = c("math", "science", "egr")
          fill = "Course")
 ```
 
-## Simulation-Based Inference
-
-### Distribution of Proportions of Girls Who Feel Positively About STEM
-
-```{r}
-stem_new <- stem %>%
-  filter(grade != "Average")
-ggplot(data = stem_new) +
-  geom_histogram(aes(x = prop), binwidth = 0.1) +
-  labs(title = "Distribution of Proportions of Girls Who Feel Positively About STEM", x = "Proportions of Girls Who Feel Positively About STEM", y = "Frequency")
-```
-
-### Confidence Interval
-
-```{r}
-set.seed(2019)
-boot_diffprepost <- stem_new %>%
-  specify(response = prop, explanatory = pre_post) %>%
-  generate(reps = 1000, type = "bootstrap") %>%
-  calculate(stat = "diff in means", order = c("post", "pre"))
-```
-
-```{r}
-ggplot(data = boot_diffprepost, 
-       mapping = aes(x = stat)) +
-  geom_histogram() +
-  labs(title = "Bootstrap Distribution of Difference in Proportions", subtitle = "Of Girls Who Feel Positively About STEM Before and After the Implementation of Empower", x = "Difference in Proportions", y = "Frequency") +
-    geom_vline(xintercept = 0.005072689, color = "red") +
-  geom_vline(xintercept = 0.1702555, color = "red")
-```
-
-```{r}
-boot_diffprepost %>%
-  summarize(lower_bound = quantile(stat, 0.025),
-            upper_bound = quantile(stat, 0.975))
-```
-
-We are 95% confident that the proportion of girls who feel positively about STEM is 0.005072689 to 0.1702555 higher after the implementation of Empower. 
-
-### Permutation
-
-```{r}
-mean <- stem_new %>%
-  group_by(pre_post) %>%
-  summarize(mean = mean(prop)) %>%
-  mutate(diff(mean)) %>%
-  filter(pre_post == "pre") %>%
-  select(-pre_post, -mean) %>%
-  pull()
-```
-
-```{r}
-set.seed(2019)
-permute <- stem_new %>%
-  specify(response = prop, explanatory = pre_post) %>%
-  hypothesize(null = "independence") %>%
-  generate(reps = 1000, type = "permute") %>%
-  calculate(stat = "diff in means", order = c("post", "pre"))
-```
-
-Null hypothesis: There is no difference in the mean proportion of girls who feel positively about STEM before and after the implementation of Empower
-
-```{r}
-ggplot(data = permute, 
-       mapping = aes(x = stat)) +
-  geom_histogram() +
-  labs(title = "Permute Distribution of Difference in Mean Proportions", subtitle = "Of Girls Who Feel Positively About STEM Before and After the Implementation of Empower", x = "Difference in Mean Proportions", y = "Frequency") +
-  geom_vline(xintercept = -mean, color = "red") +
-  geom_vline(xintercept = mean, color = "red")
-```
-
-```{r}
-permute %>%
-  filter(stat <= -mean) %>%
-  summarise((p_value = n()/1000) * 2)
-```
-
-The p-value of 0.04 is less than the significance level alpha = 0.05. Therefore, we reject the null hypothesis that there is no difference in the mean proportion of girls who feel positively about STEM before and after the implementation of Empower, in favor of the alternative hypothesis that there is a statistically significant difference in their attitudes towards STEM. 
-
-
-# SECTION 3: ANALYSIS BY QUESTION
+# SECTION 2: ANALYSIS BY QUESTION
 
 ## More specifically, I analyzed what I found to be the 9 most important questions in the survey.
 ### The graphs are repetitive, so I created a ShinyApp to keep them more organized. I don't think I will actually include the following graphs in the analysis, but I used it to gauge the data initially and see how the girls' answers differed by grade and age group. 
@@ -737,6 +663,16 @@ empower_new %>%
 ```
 
 # SHINY APP GOES HERE
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -909,8 +845,3 @@ prop_pre_mathcareer <- empower_new %>%
   select(math_career, pre_or_post, perc) %>%
   filter(pre_or_post == "pre")
 prop_pre_mathcareer
-
-
-### Ideas 
-
-How predicted grades vary between subjects

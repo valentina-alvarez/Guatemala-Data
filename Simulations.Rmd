@@ -1,0 +1,550 @@
+---
+title: "Simulations"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Load packages
+```{r load-packages, message=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(shiny)
+library(infer)
+```
+
+### Load data
+```{r load-data}
+pre_empower <- read.csv("data/PRE_Empowerment.csv",
+                    sep = ";")
+post_empower <- read.csv("data/POST_Empowerment.csv",
+                    sep = ";")
+pre_2019 <- read.csv("data/PRE2019.csv",
+                    sep = ";")
+post_2019 <- read.csv("data/POST2019.csv",
+                    sep = ";")
+```
+
+### Name pre vs. post
+```{r data}
+pre_empower <- pre_empower %>%
+  mutate(pre_or_post = "pre") %>%
+  mutate(year = "2018")
+post_empower <- post_empower %>%
+  mutate(pre_or_post = "post") %>%
+  mutate(year = "2018")
+pre_2019 <- pre_2019 %>%
+  mutate(pre_or_post = "pre") %>%
+  mutate(year = "2019")
+post_2019 <- post_2019 %>%
+  mutate(pre_or_post = "post") %>%
+  mutate(year = "2019")
+```
+
+### Join pre and post empower
+```{r}
+empower_2018 <- full_join(pre_empower, post_empower) %>%
+  select(-c(other_plan_afterschool))
+empower_2019 <- full_join(pre_2019, post_2019) %>%
+  select(-c(other_plan_afterschool))
+empower_2019$grade <- as.factor(empower_2019$grade)
+empower <- full_join(empower_2018, empower_2019)
+```
+
+### Rename to positive vs. negative feelings
+```{r change-names}
+change_names <- function(naming){
+naming %>%
+  str_replace("A", "no") %>%
+  str_replace("B", "no") %>%
+  str_replace("C", "neutral") %>%
+  str_replace("D", "yes") %>%
+  str_replace("E", "yes")
+}
+
+change_names2 <- function(naming){
+naming %>%
+  str_replace("A", "very good") %>%
+  str_replace("B", "okay") %>%
+  str_replace("C", "bad")
+}
+
+change_names3 <- function(naming){
+naming %>%
+  str_replace("A", "yes") %>%
+  str_replace("B", "no") %>%
+  str_replace("C", "not sure")
+}
+
+empower$math_worst <- change_names(empower$math_worst)
+empower$math_career <- change_names(empower$math_career)
+empower$not_enjoy_math <- change_names(empower$not_enjoy_math)
+empower$good_at_math <- change_names(empower$good_at_math)
+empower$decentschool_badmath <- change_names(empower$decentschool_badmath)
+empower$higherlevel_math <- change_names(empower$higherlevel_math)
+empower$good_math_grades <- change_names(empower$good_math_grades)
+empower$interesting_math <- change_names(empower$interesting_math)
+empower$future_math <- change_names(empower$future_math)
+empower$math_courses <- change_names(empower$math_courses)
+empower$sure_science <- change_names(empower$sure_science)
+empower$science_career <- change_names(empower$science_career)
+empower$science_outsideofschool <- change_names(empower$science_outsideofschool)
+empower$science_pay <- change_names(empower$science_pay)
+empower$science_job <- change_names(empower$science_job)
+empower$good_science <- change_names(empower$good_science)
+empower$decentschool_badscience <- change_names(empower$decentschool_badscience)
+empower$higherlevel_science <- change_names(empower$higherlevel_science)
+empower$science_courses <- change_names(empower$science_courses)
+empower$new_products <- change_names(empower$new_products)
+empower$engineering_everyday <- change_names(empower$engineering_everyday)
+empower$enjoy_building <- change_names(empower$enjoy_building)
+empower$interested_machines <- change_names(empower$interested_machines)
+empower$career_design <- change_names(empower$career_design)
+empower$curiosity_tech <- change_names(empower$curiosity_tech)
+empower$future_innovation <- change_names(empower$future_innovation)
+empower$mathscience_useful <- change_names(empower$mathscience_useful)
+empower$success_engineering <- change_names(empower$success_engineering)
+empower$i_can_build <- change_names(empower$i_can_build)
+empower$opportunity_engineering <- change_names(empower$opportunity_engineering)
+empower$contribute_community <- change_names(empower$contribute_community)
+empower$resolve_problems_community <- change_names(empower$resolve_problems_community)
+empower$external_help <- change_names(empower$external_help)
+empower$leader_community <- change_names(empower$leader_community)
+empower$contribute_community.1 <- change_names(empower$contribute_community.1)
+
+empower$prediction_literature <- change_names2(empower$prediction_literature)
+empower$prediction_math <- change_names2(empower$prediction_math)
+empower$prediction_science <- change_names2(empower$prediction_science)
+
+empower$future_math_classes <- change_names3(empower$future_math_classes)
+empower$future_science_classes <- change_names3(empower$future_science_classes)
+empower$future_egr_classes <- change_names3(empower$future_egr_classes)
+```
+
+### Positive about STEM
+### EGR
+```{r}
+new_products <- empower %>%
+  select(pre_or_post, new_products, grade) %>%
+  mutate(class = "egr")
+names(new_products) <- c("pre_or_post", "all", "grade", "class")
+
+engineering_everyday <- empower %>%
+  select(pre_or_post, engineering_everyday, grade) %>%
+  mutate(class = "egr")
+names(engineering_everyday) <- c("pre_or_post", "all", "grade", "class")
+
+enjoy_building <- empower %>%
+  select(pre_or_post, enjoy_building, grade) %>%
+  mutate(class = "egr")
+names(enjoy_building) <- c("pre_or_post", "all", "grade", "class")
+
+interested_machines <- empower %>%
+  select(pre_or_post, interested_machines, grade) %>%
+  mutate(class = "egr")
+names(interested_machines) <- c("pre_or_post", "all", "grade", "class")
+
+career_design <- empower %>%
+  select(pre_or_post, career_design, grade) %>%
+  mutate(class = "egr")
+names(career_design) <- c("pre_or_post", "all", "grade", "class")
+
+curiosity_tech <- empower %>%
+  select(pre_or_post, curiosity_tech, grade) %>%
+  mutate(class = "egr")
+names(curiosity_tech) <- c("pre_or_post", "all", "grade", "class")
+
+future_innovation <- empower %>%
+  select(pre_or_post, future_innovation, grade) %>%
+  mutate(class = "egr")
+names(future_innovation) <- c("pre_or_post", "all", "grade", "class")
+
+mathscience_useful <- empower %>%
+  select(pre_or_post, mathscience_useful, grade) %>%
+  mutate(class = "egr")
+names(mathscience_useful) <- c("pre_or_post", "all", "grade", "class")
+
+success_engineering <- empower %>%
+  select(pre_or_post, success_engineering, grade) %>%
+  mutate(class = "egr")
+names(success_engineering) <- c("pre_or_post", "all", "grade", "class")
+
+i_can_build <- empower %>%
+  select(pre_or_post, i_can_build, grade) %>%
+  mutate(class = "egr")
+names(i_can_build) <- c("pre_or_post", "all", "grade", "class")
+
+opportunity_engineering <- empower %>%
+  select(pre_or_post, opportunity_engineering, grade) %>%
+  mutate(class = "egr")
+names(opportunity_engineering) <- c("pre_or_post", "all", "grade", "class")
+```
+
+### Science
+```{r}
+sure_science <- empower %>%
+  select(pre_or_post, sure_science, grade) %>%
+  mutate(class = "science")
+names(sure_science) <- c("pre_or_post", "all", "grade", "class")
+
+science_career <- empower %>%
+  select(pre_or_post, science_career, grade) %>%
+  mutate(class = "science")
+names(science_career) <- c("pre_or_post", "all", "grade", "class")
+
+science_outsideofschool <- empower %>%
+  select(pre_or_post, science_outsideofschool, grade) %>%
+  mutate(class = "science")
+names(science_outsideofschool) <- c("pre_or_post", "all", "grade", "class")
+
+science_pay <- empower %>%
+  select(pre_or_post, science_pay, grade) %>%
+  mutate(class = "science")
+names(science_pay) <- c("pre_or_post", "all", "grade", "class")
+
+science_job <- empower %>%
+  select(pre_or_post, science_job, grade) %>%
+  mutate(class = "science")
+names(science_job) <- c("pre_or_post", "all", "grade", "class")
+
+good_science <- empower %>%
+  select(pre_or_post, good_science, grade) %>%
+  mutate(class = "science")
+names(good_science) <- c("pre_or_post", "all", "grade", "class")
+
+higherlevel_science <- empower %>%
+  select(pre_or_post, higherlevel_science, grade) %>%
+  mutate(class = "science")
+names(higherlevel_science) <- c("pre_or_post", "all", "grade", "class")
+
+science_courses <- empower %>%
+  select(pre_or_post, science_courses, grade) %>%
+  mutate(class = "science")
+names(science_courses) <- c("pre_or_post", "all", "grade", "class")
+```
+
+### Math
+```{r}
+math_career <- empower %>%
+  select(pre_or_post, math_career, grade) %>%
+  mutate(class = "math")
+names(math_career) <- c("pre_or_post", "all", "grade", "class")
+
+good_at_math <- empower %>%
+  select(pre_or_post, good_at_math, grade) %>%
+  mutate(class = "math")
+names(good_at_math) <- c("pre_or_post", "all", "grade", "class")
+
+higherlevel_math <- empower %>%
+  select(pre_or_post, higherlevel_math, grade) %>%
+  mutate(class = "math")
+names(higherlevel_math) <- c("pre_or_post", "all", "grade", "class")
+
+good_math_grades <- empower %>%
+  select(pre_or_post, good_math_grades, grade) %>%
+  mutate(class = "math")
+names(good_math_grades) <- c("pre_or_post", "all", "grade", "class")
+
+interesting_math <- empower %>%
+  select(pre_or_post, interesting_math, grade) %>%
+  mutate(class = "math")
+names(interesting_math) <- c("pre_or_post", "all", "grade", "class")
+
+future_math <- empower %>%
+  select(pre_or_post, future_math, grade) %>%
+  mutate(class = "math")
+names(future_math) <- c("pre_or_post", "all", "grade", "class")
+
+math_courses <- empower %>%
+  select(pre_or_post, math_courses, grade) %>%
+  mutate(class = "math")
+names(math_courses) <- c("pre_or_post", "all", "grade", "class")
+```
+
+### Binding all the variables to bootstrap/permute
+```{r}
+all <- rbind(new_products,
+             engineering_everyday,
+             enjoy_building,
+             interested_machines,
+             career_design,
+             curiosity_tech,
+             future_innovation,
+             mathscience_useful,
+             success_engineering,
+             i_can_build,
+             opportunity_engineering, 
+             sure_science,
+             science_career, 
+             science_outsideofschool,
+             science_pay,
+             science_job,
+             good_science,
+             higherlevel_science,
+             science_courses,
+             math_career,
+             good_at_math,
+             higherlevel_math,
+             good_math_grades,
+             interesting_math,
+             future_math,
+             math_courses)
+
+all$all <- all$all %>%
+  str_replace("neutral", "no")
+all <- all %>%
+  filter(!is.na(all))
+```
+
+### Visualizing sample statistic
+```{r}
+all$pre_or_post <- factor(all$pre_or_post, levels = c("pre", "post"))
+all$all <- factor(all$all, levels = c("no", "yes"))
+
+ggplot(data = all, mapping = aes(x = pre_or_post, fill = all)) +
+  geom_bar(position = "fill") +
+  labs(title = "Proportion of Girls Who Want to Take More STEM Classes", subtitle = "Before and After Ignite", x = "Pre or Post Ignite", y = "Proportion", fill = " ")
+```
+
+```{r}
+all$pre_or_post <- factor(all$pre_or_post, levels = c("pre", "post"))
+all$all <- factor(all$all, levels = c("no", "yes"))
+all <- all %>%
+  filter(!is.na(grade))
+
+ggplot(data = all, mapping = aes(x = pre_or_post, fill = all)) +
+  geom_bar(position = "fill") +
+  facet_grid(~ grade) +
+  labs(title = "Proportion of Girls Who Want to Take More STEM Classes", subtitle = "By Grade, Before and After Ignite", x = "Pre or Post Ignite", y = "Proportion", fill = " ")
+```
+
+```{r}
+all$pre_or_post <- factor(all$pre_or_post, levels = c("pre", "post"))
+all$all <- factor(all$all, levels = c("no", "yes"))
+all <- all %>%
+  filter(!is.na(grade))
+
+ggplot(data = all, mapping = aes(x = pre_or_post, fill = all)) +
+  geom_bar(position = "fill") +
+  facet_grid(~ class) +
+  labs(title = "Proportion of Girls Who Want to Take More STEM Classes", subtitle = "By Grade, Before and After Ignite", x = "Pre or Post Ignite", y = "Proportion", fill = " ")
+```
+
+### Sample statistic
+```{r}
+sampling <- all %>%
+  group_by(pre_or_post) %>%
+  count(all) %>%
+  mutate(prop = (n / sum(n))) %>%
+  ungroup(pre_or_post) %>%
+  group_by(all) %>%
+  mutate(diff(prop)) %>%
+  filter(pre_or_post == "pre") %>%
+  filter(all == "yes") %>%
+  select(-pre_or_post, -all, -n, -prop) %>%
+  pull()
+sampling
+```
+
+### Permute 
+```{r}
+set.seed(2019)
+permute_all <- all %>%
+  specify(response = all, explanatory = pre_or_post, success = "yes") %>%
+  hypothesize(null = "independence") %>%
+  generate(reps = 1000, type = "permute") %>%
+  calculate(stat = "diff in props", order = c("post", "pre"))
+```
+
+### Permute visualization
+```{r}
+ggplot(data = permute_all, 
+       mapping = aes(x = stat)) +
+  geom_histogram() +
+  labs(title = "Distribution of difference in proportion", subtitle = "of girls who want to take more STEM courses before and after Ignite", x = "Difference in Proportion of Girls", y = "Frequency") 
+```
+
+```{r}
+permute_all %>%
+  filter(stat >= sampling) %>%
+  summarise((p_value = n()/1000) * 2)
+```
+
+### More courses dataset for permute
+```{r}
+more_courses <- rbind(math_courses,
+             science_courses,
+             opportunity_engineering)
+
+more_courses$all <- more_courses$all %>%
+  str_replace("neutral", "no")
+more_courses <- more_courses %>%
+  filter(!is.na(all))
+```
+
+### Visualizing sample statistic
+```{r}
+more_courses$pre_or_post <- factor(more_courses$pre_or_post, levels = c("pre", "post"))
+more_courses$all <- factor(more_courses$all, levels = c("no", "yes"))
+
+ggplot(data = more_courses, mapping = aes(x = pre_or_post, fill = all)) +
+  geom_bar(position = "fill") + labs(title= "Proportion of Girls", subtitle = "Who wanted to take more STEM courses Before and After Ignite", x="Pre or Post", y="Proportion", fill=" ")
+```
+
+```{r}
+sampling_courses <- more_courses %>%
+  group_by(pre_or_post) %>%
+  count(all) %>%
+  mutate(prop = (n / sum(n))) %>%
+  ungroup(pre_or_post) %>%
+  group_by(all) %>%
+  mutate(diff(prop)) %>%
+  filter(pre_or_post == "pre") %>%
+  filter(all == "yes") %>%
+  select(-pre_or_post, -all, -n, -prop) %>%
+  pull()
+sampling_courses
+```
+
+```{r}
+set.seed(2019)
+permute_courses <- more_courses %>%
+  specify(response = all, explanatory = pre_or_post, success = "yes") %>%
+  hypothesize(null = "independence") %>%
+  generate(reps = 1000, type = "permute") %>%
+  calculate(stat = "diff in props", order = c("post", "pre"))
+```
+
+```{r}
+ggplot(data = permute_courses, 
+       mapping = aes(x = stat)) +
+  geom_histogram(binwidth=0.015) +
+  labs(title = "Distribution of difference in proportion of girls", subtitle = "who wanted to take more STEM courses before and after Ignite", x = "Difference in Proportion", y = "Frequency") 
+```
+
+```{r}
+permute_courses %>%
+  filter(stat >= sampling_courses) %>%
+  summarise((p_value = n()/1000) * 2)
+```
+
+
+
+--------------------------------------------------------------------------------------------------------------
+
+### Contributing to community
+```{r}
+empower_contribute <- empower %>%
+  select(pre_or_post, contribute_community)
+names(empower_contribute) <- c("pre_or_post", "all")
+
+empower_resolve <- empower %>%
+  select(pre_or_post, resolve_problems_community)
+names(empower_resolve) <- c("pre_or_post", "all")
+
+empower_help <- empower %>%
+  select(pre_or_post, external_help)
+names(empower_help) <- c("pre_or_post", "all")
+
+empower_leader <- empower %>%
+  select(pre_or_post, leader_community)
+names(empower_leader) <- c("pre_or_post", "all")
+
+empower_contribute1 <- empower %>%
+  select(pre_or_post, contribute_community.1)
+names(empower_contribute1) <- c("pre_or_post", "all")
+
+empower_bind <- rbind(empower_contribute, 
+                 empower_resolve, 
+                 empower_help, 
+                 empower_leader, 
+                 empower_contribute1)
+```
+
+### Yes vs. No (no "neutral")
+```{r}
+neutral <- function(no){
+  no %>%
+  str_replace("neutral", "no")
+}
+
+empower_bind$all <- neutral(empower_bind$all)
+  
+empower_bind <- empower_bind %>%
+  filter(!is.na(all))
+```
+
+
+### Bootstrap
+```{r}
+set.seed(2019)
+boot_community <- empower_bind %>%
+  specify(response = all, explanatory = pre_or_post, success = "yes") %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in props", order = c("post", "pre"))
+```
+
+```{r}
+ggplot(data = boot_community, mapping = aes(x = stat)) +
+  geom_histogram(binwidth = 0.01) +
+  labs(title = "Difference in Proportion of Girls", subtitle = "Who Want to Do More for Their Community after Ignite",
+       x = "Difference in Proportion", 
+       y = "Frequency")
+```
+
+```{r}
+boot_community %>%
+  summarize(lower_bound = quantile(stat, 0.005),
+            upper_bound = quantile(stat, 0.995))
+```
+I am 99% confident that the proportion of girls who want to do more for their community after the course is -0.043 to 0.13 greater than the proportion of girls wanted to do more for their community before the course. 
+
+### Sample statistic
+```{r}
+info <- empower_bind %>%
+  group_by(pre_or_post) %>%
+  count(all) %>%
+  mutate(prop = (n / sum(n))) %>%
+  ungroup(pre_or_post) %>%
+  group_by(all) %>%
+  mutate(diff(prop)) %>%
+  filter(pre_or_post == "pre") %>%
+  filter(all == "yes") %>%
+  select(-pre_or_post, -all, -n, -prop) %>%
+  pull()
+info
+```
+
+### Sample statistic visualization
+```{r}
+empower_bind$pre_or_post <- factor(empower_bind$pre_or_post, levels = c("pre", "post"))
+empower_bind$all <- factor(empower_bind$all, levels = c("no", "yes"))
+
+ggplot(data = empower_bind, mapping = aes(x = pre_or_post, fill = all)) +
+  geom_bar(position = "fill")
+```
+
+### Permute
+```{r}
+set.seed(2019)
+permute <- empower_bind %>%
+  specify(response = all, explanatory = pre_or_post, success = "yes") %>%
+  hypothesize(null = "independence") %>%
+  generate(reps = 1000, type = "permute") %>%
+  calculate(stat = "diff in props", order = c("post", "pre"))
+```
+### Visualizing Permute
+```{r}
+ggplot(data = permute, 
+       mapping = aes(x = stat)) +
+  geom_histogram() +
+  labs(title = "Distribution of difference in mean weights", subtitle = "of babies born to smoking and non-smoking mothers", x = "Difference in Mean Weight", y = "Frequency") 
+```
+
+```{r}
+permute %>%
+  filter(stat <= info) %>%
+  summarise((p_value = n()/1000) * 2)
+```
