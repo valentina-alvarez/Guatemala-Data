@@ -309,7 +309,7 @@ all$grade <- all$grade %>%
 ```
 
 ### Visualizing sample statistic
-```{r}
+```{r fig.height=8, fig.width=5}
 all$pre_or_post <- factor(all$pre_or_post, levels = c("Pre", "Post"))
 all$all <- factor(all$all, levels = c("Negative", "Positive"))
 
