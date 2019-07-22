@@ -1,0 +1,252 @@
+---
+title: "2019 Pre or Post"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Load packages
+```{r load-packages, message=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(shiny)
+library(infer)
+```
+
+### Load data
+```{r load-data}
+post <- read.csv("data/19.csv",
+                    sep = ";")
+pre <- read.csv("data/19x.csv",
+                    sep = ";")
+```
+
+### Name pre vs. post
+```{r data}
+a <- a %>%
+  mutate(pre_or_post = "pre") %>%
+  select(-c(parents_stem, 
+            which_parent_stem, 
+            parent_profession, 
+            number_science_classes, 
+            number_math_classes, 
+            number_tech_classes, 
+            number_egr_classes,
+            other_plan_afterschool))
+b <- b %>%
+  mutate(pre_or_post = "b") %>%
+   select(-c(parents_stem, 
+            which_parent_stem, 
+            parent_profession, 
+            number_science_classes, 
+            number_math_classes, 
+            number_tech_classes, 
+            number_egr_classes,
+            other_plan_afterschool))
+```
+
+### Join pre and post empower
+```{r}
+ab <- full_join(a, b)
+```
+
+```{r change-names}
+change_names <- function(naming){
+naming %>%
+  str_replace("A", "no") %>%
+  str_replace("B", "no") %>%
+  str_replace("C", "neutral") %>%
+  str_replace("D", "yes") %>%
+  str_replace("E", "yes")
+}
+
+change_names2 <- function(naming){
+naming %>%
+  str_replace("A", "very good") %>%
+  str_replace("B", "okay") %>%
+  str_replace("C", "bad")
+}
+
+change_names3 <- function(naming){
+naming %>%
+  str_replace("A", "yes") %>%
+  str_replace("B", "no") %>%
+  str_replace("C", "not sure")
+}
+
+ab$math_worst <- change_names(ab$math_worst)
+ab$math_career <- change_names(ab$math_career)
+ab$not_enjoy_math <- change_names(ab$not_enjoy_math)
+ab$good_at_math <- change_names(ab$good_at_math)
+ab$decentschool_badmath <- change_names(ab$decentschool_badmath)
+ab$higherlevel_math <- change_names(ab$higherlevel_math)
+ab$good_math_grades <- change_names(ab$good_math_grades)
+ab$interesting_math <- change_names(ab$interesting_math)
+ab$future_math <- change_names(ab$future_math)
+ab$math_courses <- change_names(ab$math_courses)
+ab$sure_science <- change_names(ab$sure_science)
+ab$science_career <- change_names(ab$science_career)
+ab$science_outsideofschool <- change_names(ab$science_outsideofschool)
+ab$science_pay <- change_names(ab$science_pay)
+ab$science_job <- change_names(ab$science_job)
+ab$good_science <- change_names(ab$good_science)
+ab$decentschool_badscience <- change_names(ab$decentschool_badscience)
+ab$higherlevel_science <- change_names(ab$higherlevel_science)
+ab$science_courses <- change_names(ab$science_courses)
+ab$new_products <- change_names(ab$new_products)
+ab$engineering_everyday <- change_names(ab$engineering_everyday)
+ab$enjoy_building <- change_names(ab$enjoy_building)
+ab$interested_machines <- change_names(ab$interested_machines)
+ab$career_design <- change_names(ab$career_design)
+ab$curiosity_tech <- change_names(ab$curiosity_tech)
+ab$future_innovation <- change_names(ab$future_innovation)
+ab$mathscience_useful <- change_names(ab$mathscience_useful)
+ab$success_engineering <- change_names(ab$success_engineering)
+ab$i_can_build <- change_names(ab$i_can_build)
+ab$opportunity_engineering <- change_names(ab$opportunity_engineering)
+ab$contribute_community <- change_names(ab$contribute_community)
+ab$resolve_problems_community <- change_names(ab$resolve_problems_community)
+ab$external_help <- change_names(ab$external_help)
+ab$leader_community <- change_names(ab$leader_community)
+ab$contribute_community.1 <- change_names(ab$contribute_community.1)
+
+ab$prediction_literature <- change_names2(ab$prediction_literature)
+ab$prediction_math <- change_names2(ab$prediction_math)
+ab$prediction_science <- change_names2(ab$prediction_science)
+
+ab$future_math_classes <- change_names3(ab$future_math_classes)
+ab$future_science_classes <- change_names3(ab$future_science_classes)
+ab$future_egr_classes <- change_names3(ab$future_egr_classes)
+```
+
+```{r}
+ab$math_career <- factor(ab$math_career, levels = c("yes", "neutral", "no"))
+ab$pre_or_post <- factor(ab$pre_or_post, levels = c("a", "b"))
+ab <- ab %>%
+  filter(!is.na(math_career))
+ggplot(data = ab) +
+  geom_bar(mapping = aes(x = pre_or_post, fill = math_career), position = "fill") +
+                labs(title = "Proportion of People Who Think of a Career in Math",
+                     x = "Pre or Post",
+                     y = "Proportions", 
+                     fill = "Would you consider a career in math?")
+```
+
+```{r}
+ab$science_courses <- factor(ab$science_courses, levels = c("yes", "neutral", "no"))
+ab$pre_or_post <- factor(ab$pre_or_post, levels = c("a", "b"))
+ab <- ab %>%
+  filter(!is.na(science_courses))
+ggplot(data = ab) +
+  geom_bar(mapping = aes(x = pre_or_post, fill = science_courses), position = "fill") +
+                labs(title = "Proportion of People Who Think of a Career in Math",
+                     x = "Pre or Post",
+                     y = "Proportions", 
+                     fill = "Would you consider a career in math?")
+```
+
+```{r}
+ab$math_courses <- factor(ab$math_courses, levels = c("yes", "neutral", "no"))
+ab$pre_or_post <- factor(ab$pre_or_post, levels = c("a", "b"))
+ab <- ab %>%
+  filter(!is.na(math_courses))
+ggplot(data = ab) +
+  geom_bar(mapping = aes(x = pre_or_post, fill = math_courses), position = "fill") +
+                labs(title = "Proportion of People Who Think of a Career in Math",
+                     x = "Pre or Post",
+                     y = "Proportions", 
+                     fill = "Would you consider a career in math?")
+```
+
+```{r}
+ab$opportunity_engineering <- factor(ab$opportunity_engineering, levels = c("yes", "neutral", "no"))
+ab$pre_or_post <- factor(ab$pre_or_post, levels = c("a", "b"))
+ab <- ab %>%
+  filter(!is.na(opportunity_engineering))
+ggplot(data = ab) +
+  geom_bar(mapping = aes(x = pre_or_post, fill = opportunity_engineering), position = "fill") +
+                labs(title = "Proportion of People Who Think of a Career in Math",
+                     x = "Pre or Post",
+                     y = "Proportions", 
+                     fill = "Would you consider a career in math?")
+```
+
+```{r}
+ab$good_science <- factor(ab$good_science, levels = c("yes", "neutral", "no"))
+ab$pre_or_post <- factor(ab$pre_or_post, levels = c("a", "b"))
+ab <- ab %>%
+  filter(!is.na(good_science))
+ggplot(data = ab) +
+  geom_bar(mapping = aes(x = pre_or_post, fill = good_science), position = "fill") +
+                labs(title = "Proportion of People Who Think of a Career in Math",
+                     x = "Pre or Post",
+                     y = "Proportions", 
+                     fill = "Would you consider a career in math?")
+```
+
+```{r}
+ab$success_engineering <- factor(ab$success_engineering, levels = c("yes", "neutral", "no"))
+ab$pre_or_post <- factor(ab$pre_or_post, levels = c("a", "b"))
+ab <- ab %>%
+  filter(!is.na(success_engineering))
+ggplot(data = ab) +
+  geom_bar(mapping = aes(x = pre_or_post, fill = success_engineering), position = "fill") +
+                labs(title = "Proportion of People Who Think of a Career in Math",
+                     x = "Pre or Post",
+                     y = "Proportions", 
+                     fill = "Would you consider a career in math?")
+```
+
+```{r}
+ab$mathscience_useful <- factor(ab$mathscience_useful, levels = c("yes", "neutral", "no"))
+ab$pre_or_post <- factor(ab$pre_or_post, levels = c("a", "b"))
+ab <- ab %>%
+  filter(!is.na(mathscience_useful))
+ggplot(data = ab) +
+  geom_bar(mapping = aes(x = pre_or_post, fill = mathscience_useful), position = "fill") +
+                labs(title = "Proportion of People Who Think of a Career in Math",
+                     x = "Pre or Post",
+                     y = "Proportions", 
+                     fill = "Would you consider a career in math?")
+```
+
+```{r}
+ab$good_at_math <- factor(ab$good_at_math, levels = c("yes", "neutral", "no"))
+ab$pre_or_post <- factor(ab$pre_or_post, levels = c("a", "b"))
+ab <- ab %>%
+  filter(!is.na(good_at_math))
+ggplot(data = ab) +
+  geom_bar(mapping = aes(x = pre_or_post, fill = good_at_math), position = "fill") +
+                labs(title = "Proportion of People Who Think of a Career in Math",
+                     x = "Pre or Post",
+                     y = "Proportions", 
+                     fill = "Would you consider a career in math?")
+```
+
+```{r}
+ab$future_innovation <- factor(ab$future_innovation, levels = c("yes", "neutral", "no"))
+ab$pre_or_post <- factor(ab$pre_or_post, levels = c("a", "b"))
+ab <- ab %>%
+  filter(!is.na(future_innovation))
+ggplot(data = ab) +
+  geom_bar(mapping = aes(x = pre_or_post, fill = future_innovation), position = "fill") +
+                labs(title = "Proportion of People Who Think of a Career in Math",
+                     x = "Pre or Post",
+                     y = "Proportions", 
+                     fill = "Would you consider a career in math?")
+```
+
+```{r}
+ab$resolve_problems_community <- factor(ab$resolve_problems_community, levels = c("yes", "neutral", "no"))
+ab$pre_or_post <- factor(ab$pre_or_post, levels = c("a", "b"))
+ab <- ab %>%
+  filter(!is.na(resolve_problems_community))
+ggplot(data = ab) +
+  geom_bar(mapping = aes(x = pre_or_post, fill = resolve_problems_community), position = "fill") +
+                labs(title = "Proportion of People Who Think of a Career in Math",
+                     x = "Pre or Post",
+                     y = "Proportions", 
+                     fill = "Would you consider a career in math?")
+```

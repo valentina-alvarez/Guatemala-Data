@@ -1,0 +1,2 @@
+"0","save(empower_new, file = ""data/empower_new.RData"")"
+"0","save(empower_byage, file = ""data/empower_byage.RData"")"

@@ -1,0 +1,22 @@
+---
+title: "Empower 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Load packages
+```{r load-packages, message=FALSE}
+library(tidyverse)
+library(broom)
+library(infer)
+library(ggplot2)
+```
+
+### Load data
+```{r load-data}
+pre_empower2017 <- read.csv("data/2017_Empower.csv",
+                    sep = ";")
+```

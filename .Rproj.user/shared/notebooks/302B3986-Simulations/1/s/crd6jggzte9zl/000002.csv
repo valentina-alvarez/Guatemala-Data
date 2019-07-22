@@ -1,0 +1,8 @@
+"0","pre_empower <- read.csv(""data/PRE_Empowerment.csv"","
+"0","                    sep = "";"")"
+"0","post_empower <- read.csv(""data/POST_Empowerment.csv"","
+"0","                    sep = "";"")"
+"0","pre_2019 <- read.csv(""data/PRE2019.csv"","
+"0","                    sep = "";"")"
+"0","post_2019 <- read.csv(""data/POST2019.csv"","
+"0","                    sep = "";"")"

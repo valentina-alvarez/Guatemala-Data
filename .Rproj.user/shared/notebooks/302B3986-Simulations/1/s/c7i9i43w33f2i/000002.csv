@@ -1,0 +1,20 @@
+"0","set.seed(2019)"
+"2","Warning messages:
+"
+"2","1: "
+"2","In mget(objectNames, envir = ns, inherits = TRUE) :"
+"2"," input string 'é' cannot be translated to UTF-8, is it valid in 'ANSI_X3.4-1968'?
+"
+"2","2: "
+"2","In mget(objectNames, envir = ns, inherits = TRUE) :"
+"2"," input string 'é' cannot be translated to UTF-8, is it valid in 'ANSI_X3.4-1968'?
+"
+"2","3: "
+"2","In mget(objectNames, envir = ns, inherits = TRUE) :"
+"2"," input string 'é' cannot be translated to UTF-8, is it valid in 'ANSI_X3.4-1968'?
+"
+"0","boot_all <- all %>%"
+"0","  specify(response = all, explanatory = pre_or_post, success = ""Positive"") %>%"
+"0","  generate(1000, type = ""bootstrap"") %>%"
+"0","  calculate(stat = ""diff in props"", "
+"0","            order = c(""Post"", ""Pre""))"
