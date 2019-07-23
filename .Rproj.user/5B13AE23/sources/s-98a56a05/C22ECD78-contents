@@ -128,6 +128,12 @@ empower$future_science_classes <- change_names3(empower$future_science_classes)
 empower$future_egr_classes <- change_names3(empower$future_egr_classes)
 ```
 
+```{r}
+empower %>%
+  count(grade)
+```
+
+
 ### Positive about STEM
 ### EGR
 ```{r}
@@ -315,7 +321,8 @@ all$all <- factor(all$all, levels = c("Negative", "Positive"))
 
 ggplot(data = all, mapping = aes(x = pre_or_post, fill = all)) +
   geom_bar(position = "fill") +
-  labs(title = "Proportion of Girls Who Feel Positively About STEM", subtitle = "Before and After the Implementation of Ignite", x = "Pre- or Post-Implementation", y = "Proportion", fill = " ")
+  labs(title = "Proportion of Girls Who Feel Positively About STEM", subtitle = "Before and After the Implementation of Ignite", x = "Pre- or Post-Implementation", y = "Proportion", fill = " ") +
+  scale_fill_manual(values=c("paleturquoise3", "skyblue4"))
 ```
 
 ```{r}
@@ -327,7 +334,8 @@ all <- all %>%
 ggplot(data = all, mapping = aes(x = pre_or_post, fill = all)) +
   geom_bar(position = "fill") +
   facet_grid(~ grade) +
-  labs(title = "Proportion of Girls Who Feel Positively About STEM", subtitle = "By Grade, Before and After the Implementation of Ignite", x = "Pre- or Post-Implementation", y = "Proportion", fill = " ")
+  labs(title = "Proportion of Girls Who Feel Positively About STEM", subtitle = "By Grade, Before and After the Implementation of Ignite", x = "Pre- or Post-Implementation", y = "Proportion", fill = " ") +
+  scale_fill_manual(values=c("paleturquoise3", "skyblue4"))
 ```
 
 ```{r}
@@ -341,7 +349,8 @@ sample_grade1 <- all %>%
   mutate(diff(prop)) %>%
   filter(pre_or_post == "Pre") %>%
   filter(all == "Positive") %>%
-  select(-pre_or_post, -all, -n, -prop)
+  select(-pre_or_post, -all, -n, -prop) %>%
+  pull()
 sample_grade1
 ```
 ```{r}
@@ -355,7 +364,8 @@ sample_grade2 <- all %>%
   mutate(diff(prop)) %>%
   filter(pre_or_post == "Pre") %>%
   filter(all == "Positive") %>%
-  select(-pre_or_post, -all, -n, -prop)
+  select(-pre_or_post, -all, -n, -prop) %>%
+  pull()
 sample_grade2
 ```
 
@@ -370,7 +380,8 @@ sample_grade3 <- all %>%
   mutate(diff(prop)) %>%
   filter(pre_or_post == "Pre") %>%
   filter(all == "Positive") %>%
-  select(-pre_or_post, -all, -n, -prop)
+  select(-pre_or_post, -all, -n, -prop) %>%
+  pull()
 sample_grade3
 ```
 
@@ -385,16 +396,10 @@ sample_grade5 <- all %>%
   mutate(diff(prop)) %>%
   filter(pre_or_post == "Pre") %>%
   filter(all == "Positive") %>%
-  select(-pre_or_post, -all, -n, -prop)
+  select(-pre_or_post, -all, -n, -prop) %>%
+  pull()
 sample_grade5
 ```
-
-```{r}
-all %>%
-  count(grade)
-949+1033+1942
-```
-
 
 ```{r}
 all$pre_or_post <- factor(all$pre_or_post, levels = c("Pre", "Post"))
@@ -405,7 +410,8 @@ all <- all %>%
 ggplot(data = all, mapping = aes(x = pre_or_post, fill = all)) +
   geom_bar(position = "fill") +
   facet_grid(~ class) +
-  labs(title = "Proportion of Girls Who Feel Positively About STEM", subtitle = "By subject area, Before and After the Implementation of Ignite", x = "Pre- or Post-Implementation", y = "Proportion", fill = " ")
+  labs(title = "Proportion of Girls Who Feel Positively About STEM", subtitle = "By subject area, Before and After the Implementation of Ignite", x = "Pre- or Post-Implementation", y = "Proportion", fill = " ") +
+  scale_fill_manual(values=c("paleturquoise3", "skyblue4"))
 ```
 
 ```{r}
@@ -419,7 +425,8 @@ sample_egr <- all %>%
   mutate(diff(prop)) %>%
   filter(pre_or_post == "Pre") %>%
   filter(all == "Positive") %>%
-  select(-pre_or_post, -all, -n, -prop)
+  select(-pre_or_post, -all, -n, -prop) %>%
+  pull()
 sample_egr
 ```
 
@@ -434,7 +441,8 @@ sample_math <- all %>%
   mutate(diff(prop)) %>%
   filter(pre_or_post == "Pre") %>%
   filter(all == "Positive") %>%
-  select(-pre_or_post, -all, -n, -prop)
+  select(-pre_or_post, -all, -n, -prop) %>%
+  pull()
 sample_math
 ```
 
@@ -449,7 +457,8 @@ sample_science <- all %>%
   mutate(diff(prop)) %>%
   filter(pre_or_post == "Pre") %>%
   filter(all == "Positive") %>%
-  select(-pre_or_post, -all, -n, -prop)
+  select(-pre_or_post, -all, -n, -prop) %>%
+  pull()
 sample_science
 ```
 
@@ -506,7 +515,182 @@ boot_all <- all %>%
 
 ```{r}
 boot_all %>%
-  summarize(lower_bound = quantile(stat, 0.05),
-            upper_bound = quantile(stat, 0.95))
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
 ```
 
+### 1st grade simulation
+
+### Permute 
+```{r}
+set.seed(2019)
+permute_first <- all %>%
+  filter(grade == "1") %>%
+  specify(response = all, explanatory = pre_or_post, success = "Positive") %>%
+  hypothesize(null = "independence") %>%
+  generate(reps = 1000, type = "permute") %>%
+  calculate(stat = "diff in props", order = c("Post", "Pre"))
+```
+
+```{r}
+permute_first %>%
+  filter(stat >= sample_grade1) %>%
+  summarise((p_value = n()/1000) * 2)
+```
+
+### 2nd grade simulation
+
+### Permute 
+```{r}
+set.seed(2019)
+permute_second <- all %>%
+  filter(grade == "2") %>%
+  specify(response = all, explanatory = pre_or_post, success = "Positive") %>%
+  hypothesize(null = "independence") %>%
+  generate(reps = 1000, type = "permute") %>%
+  calculate(stat = "diff in props", order = c("Post", "Pre"))
+```
+
+```{r}
+permute_second %>%
+  filter(stat >= sample_grade2) %>%
+  summarise((p_value = n()/1000) * 2)
+```
+
+### 3rd grade simulation
+
+### Permute 
+```{r}
+set.seed(2019)
+permute_third <- all %>%
+  filter(grade == "3") %>%
+  specify(response = all, explanatory = pre_or_post, success = "Positive") %>%
+  hypothesize(null = "independence") %>%
+  generate(reps = 1000, type = "permute") %>%
+  calculate(stat = "diff in props", order = c("Post", "Pre"))
+```
+
+```{r}
+permute_third %>%
+  filter(stat >= sample_grade3) %>%
+  summarise((p_value = n()/1000) * 2)
+```
+
+
+### 5th grade simulation
+
+### Permute
+```{r}
+set.seed(2019)
+permute_fifth <- all %>%
+  filter(grade == "5") %>%
+  specify(response = all, explanatory = pre_or_post, success = "Positive") %>%
+  hypothesize(null = "independence") %>%
+  generate(reps = 1000, type = "permute") %>%
+  calculate(stat = "diff in props", order = c("Post", "Pre"))
+```
+
+```{r}
+ggplot(data = permute_fifth, 
+       mapping = aes(x = stat)) +
+  geom_histogram() +
+  labs(title = "Distribution of difference in proportion", subtitle = "of girls in fifth grade who want to take more STEM courses before and after Ignite", x = "Difference in Proportion of Girls", y = "Frequency") 
+```
+
+```{r}
+permute_fifth %>%
+  filter(stat >= sample_grade5) %>%
+  summarise((p_value = n()/1000) * 2)
+```
+
+```{r}
+set.seed(2019)
+boot_fifth <- all %>%
+  filter(grade == "5") %>%
+  specify(response = all, explanatory = pre_or_post, success = "Positive") %>%
+  generate(1000, type = "bootstrap") %>%
+  calculate(stat = "diff in props", 
+            order = c("Post", "Pre"))
+```
+
+```{r}
+boot_fifth %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+
+### Math simulation
+
+### Permute 
+```{r}
+set.seed(2019)
+permute_math <- all %>%
+  filter(class == "Math") %>%
+  specify(response = all, explanatory = pre_or_post, success = "Positive") %>%
+  hypothesize(null = "independence") %>%
+  generate(reps = 1000, type = "permute") %>%
+  calculate(stat = "diff in props", order = c("Post", "Pre"))
+```
+
+```{r}
+permute_math %>%
+  filter(stat >= sample_math) %>%
+  summarise((p_value = n()/1000) * 2)
+```
+
+### Science simulation
+
+### Permute 
+```{r}
+set.seed(2019)
+permute_science <- all %>%
+  filter(class == "Science") %>%
+  specify(response = all, explanatory = pre_or_post, success = "Positive") %>%
+  hypothesize(null = "independence") %>%
+  generate(reps = 1000, type = "permute") %>%
+  calculate(stat = "diff in props", order = c("Post", "Pre"))
+```
+
+```{r}
+permute_science %>%
+  filter(stat >= sample_science) %>%
+  summarise((p_value = n()/1000) * 2)
+```
+
+### EGR simulation
+
+### Permute 
+```{r}
+set.seed(2019)
+permute_egr <- all %>%
+  filter(class == "Engineering") %>%
+  specify(response = all, explanatory = pre_or_post, success = "Positive") %>%
+  hypothesize(null = "independence") %>%
+  generate(reps = 1000, type = "permute") %>%
+  calculate(stat = "diff in props", order = c("Post", "Pre"))
+```
+
+```{r}
+permute_egr %>%
+  filter(stat >= sample_egr) %>%
+  summarise((p_value = n()/1000) * 2)
+```
+
+
+## Bootstrap EGR
+```{r}
+set.seed(2019)
+boot_egr <- all %>%
+  filter(class == "Engineering") %>%
+  specify(response = all, explanatory = pre_or_post, success = "Positive") %>%
+  generate(1000, type = "bootstrap") %>%
+  calculate(stat = "diff in props", 
+            order = c("Post", "Pre"))
+```
+
+```{r}
+boot_egr %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
