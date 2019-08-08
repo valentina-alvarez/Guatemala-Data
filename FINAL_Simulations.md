@@ -1,14 +1,9 @@
----
-title: "Simulations"
-output: github_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+Simulations
+================
 
 # Load packages
-```{r load-packages, message=FALSE}
+
+``` r
 library(tidyverse)
 library(ggplot2)
 library(shiny)
@@ -16,7 +11,8 @@ library(infer)
 ```
 
 # Load data
-```{r load-data}
+
+``` r
 pre_empower <- read.csv("data/PRE_Empowerment.csv",
                     sep = ";")
 post_empower <- read.csv("data/POST_Empowerment.csv",
@@ -28,7 +24,8 @@ post_2019 <- read.csv("data/POST2019.csv",
 ```
 
 ## Include columns that indicate whether responses are from pre- or post-implementation surveys, and what year they were collected
-```{r data}
+
+``` r
 pre_empower <- pre_empower %>%
   mutate(pre_or_post = "Pre") %>%
   mutate(year = "2018")
@@ -44,25 +41,213 @@ post_2019 <- post_2019 %>%
 ```
 
 ## Count how many students took the pre- and post-implementation surveys in 2018 and 2019
-```{r}
+
+``` r
 count(pre_empower)
+```
+
+    ## # A tibble: 1 x 1
+    ##       n
+    ##   <int>
+    ## 1    79
+
+``` r
 count(post_empower)
+```
+
+    ## # A tibble: 1 x 1
+    ##       n
+    ##   <int>
+    ## 1    64
+
+``` r
 count(pre_2019)
+```
+
+    ## # A tibble: 1 x 1
+    ##       n
+    ##   <int>
+    ## 1    39
+
+``` r
 count(post_2019)
 ```
 
+    ## # A tibble: 1 x 1
+    ##       n
+    ##   <int>
+    ## 1    39
+
 ## Join pre- and post-implementation data into one dataset. Then join data from 2018 and 2019 into one dataset
-```{r}
+
+``` r
 empower_2018 <- full_join(pre_empower, post_empower) %>%
   select(-c(other_plan_afterschool))
+```
+
+    ## Joining, by = c("grade", "city_birth", "parents_stem", "which_parent_stem", "parent_profession", "number_science_classes", "number_math_classes", "number_tech_classes", "number_egr_classes", "math_worst", "math_career", "not_enjoy_math", "good_at_math", "decentschool_badmath", "higherlevel_math", "good_math_grades", "interesting_math", "future_math", "math_courses", "sure_science", "science_career", "science_outsideofschool", "science_pay", "science_job", "good_science", "decentschool_badscience", "higherlevel_science", "science_courses", "new_products", "engineering_everyday", "enjoy_building", "interested_machines", "career_design", "curiosity_tech", "future_innovation", "mathscience_useful", "success_engineering", "i_can_build", "opportunity_engineering", "prediction_literature", "prediction_math", "prediction_science", "future_math_classes", "future_science_classes", "future_egr_classes", "college", "what_major", "why_not_college", "plan_after_school", "other_plan_afterschool", "frequency_learning_stem", "why_no_chances", "opportunities_women_stem", "reason_opportunities_stem", "contribute_community", "resolve_problems_community", "external_help", "leader_community", "contribute_community.1", "pre_or_post", "year")
+
+    ## Warning: Column `parent_profession` joining factors with different levels,
+    ## coercing to character vector
+
+    ## Warning: Column `math_courses` joining factors with different levels,
+    ## coercing to character vector
+
+    ## Warning: Column `science_job` joining factors with different levels,
+    ## coercing to character vector
+
+    ## Warning: Column `good_science` joining factors with different levels,
+    ## coercing to character vector
+
+    ## Warning: Column `new_products` joining factors with different levels,
+    ## coercing to character vector
+
+    ## Warning: Column `engineering_everyday` joining factors with different
+    ## levels, coercing to character vector
+
+    ## Warning: Column `enjoy_building` joining factors with different levels,
+    ## coercing to character vector
+
+    ## Warning: Column `curiosity_tech` joining factors with different levels,
+    ## coercing to character vector
+
+    ## Warning: Column `future_innovation` joining factors with different levels,
+    ## coercing to character vector
+
+    ## Warning: Column `mathscience_useful` joining factors with different levels,
+    ## coercing to character vector
+
+    ## Warning: Column `prediction_math` joining factors with different levels,
+    ## coercing to character vector
+
+    ## Warning: Column `college` joining factors with different levels, coercing
+    ## to character vector
+
+    ## Warning: Column `what_major` joining factors with different levels,
+    ## coercing to character vector
+
+    ## Warning: Column `why_not_college` joining factors with different levels,
+    ## coercing to character vector
+
+    ## Warning: Column `plan_after_school` joining factors with different levels,
+    ## coercing to character vector
+
+    ## Warning: Column `other_plan_afterschool` joining factors with different
+    ## levels, coercing to character vector
+
+    ## Warning: Column `why_no_chances` joining factors with different levels,
+    ## coercing to character vector
+
+    ## Warning: Column `opportunities_women_stem` joining factors with different
+    ## levels, coercing to character vector
+
+    ## Warning: Column `reason_opportunities_stem` joining factors with different
+    ## levels, coercing to character vector
+
+    ## Warning: Column `resolve_problems_community` joining factors with different
+    ## levels, coercing to character vector
+
+    ## Warning: Column `leader_community` joining factors with different levels,
+    ## coercing to character vector
+
+``` r
 empower_2019 <- full_join(pre_2019, post_2019) %>%
   select(-c(other_plan_afterschool))
+```
+
+    ## Joining, by = c("grade", "city_birth", "parents_stem", "which_parent_stem", "parent_profession", "number_science_classes", "number_math_classes", "number_tech_classes", "number_egr_classes", "math_worst", "math_career", "not_enjoy_math", "good_at_math", "decentschool_badmath", "higherlevel_math", "good_math_grades", "interesting_math", "future_math", "math_courses", "sure_science", "science_career", "science_outsideofschool", "science_pay", "science_job", "good_science", "decentschool_badscience", "higherlevel_science", "science_courses", "new_products", "engineering_everyday", "enjoy_building", "interested_machines", "career_design", "curiosity_tech", "future_innovation", "mathscience_useful", "success_engineering", "i_can_build", "opportunity_engineering", "prediction_literature", "prediction_math", "prediction_science", "future_math_classes", "future_science_classes", "future_egr_classes", "college", "what_major", "why_not_college", "plan_after_school", "other_plan_afterschool", "frequency_learning_stem", "why_no_chances", "opportunities_women_stem", "reason_opportunities_stem", "contribute_community", "resolve_problems_community", "external_help", "leader_community", "contribute_community.1", "pre_or_post", "year")
+
+``` r
 empower_2019$grade <- as.factor(empower_2019$grade)
 empower <- full_join(empower_2018, empower_2019)
 ```
 
-## Rename to positive vs. negative feelings from A, B, C, D, E (as they were on the survey) to "negative" or "positive"
-```{r change-names}
+    ## Joining, by = c("grade", "city_birth", "parents_stem", "which_parent_stem", "parent_profession", "number_science_classes", "number_math_classes", "number_tech_classes", "number_egr_classes", "math_worst", "math_career", "not_enjoy_math", "good_at_math", "decentschool_badmath", "higherlevel_math", "good_math_grades", "interesting_math", "future_math", "math_courses", "sure_science", "science_career", "science_outsideofschool", "science_pay", "science_job", "good_science", "decentschool_badscience", "higherlevel_science", "science_courses", "new_products", "engineering_everyday", "enjoy_building", "interested_machines", "career_design", "curiosity_tech", "future_innovation", "mathscience_useful", "success_engineering", "i_can_build", "opportunity_engineering", "prediction_literature", "prediction_math", "prediction_science", "future_math_classes", "future_science_classes", "future_egr_classes", "college", "what_major", "why_not_college", "plan_after_school", "frequency_learning_stem", "why_no_chances", "opportunities_women_stem", "reason_opportunities_stem", "contribute_community", "resolve_problems_community", "external_help", "leader_community", "contribute_community.1", "pre_or_post", "year")
+
+    ## Warning: Column `grade` joining factors with different levels, coercing to
+    ## character vector
+
+    ## Warning: Column `city_birth` joining factors with different levels,
+    ## coercing to character vector
+
+    ## Warning: Column `which_parent_stem` joining factors with different levels,
+    ## coercing to character vector
+
+    ## Warning: Column `parent_profession` joining character vector and factor,
+    ## coercing into character vector
+
+    ## Warning: Column `math_courses` joining character vector and factor,
+    ## coercing into character vector
+
+    ## Warning: Column `science_job` joining character vector and factor, coercing
+    ## into character vector
+
+    ## Warning: Column `good_science` joining character vector and factor,
+    ## coercing into character vector
+
+    ## Warning: Column `new_products` joining character vector and factor,
+    ## coercing into character vector
+
+    ## Warning: Column `engineering_everyday` joining character vector and factor,
+    ## coercing into character vector
+
+    ## Warning: Column `enjoy_building` joining character vector and factor,
+    ## coercing into character vector
+
+    ## Warning: Column `curiosity_tech` joining character vector and factor,
+    ## coercing into character vector
+
+    ## Warning: Column `future_innovation` joining character vector and factor,
+    ## coercing into character vector
+
+    ## Warning: Column `mathscience_useful` joining character vector and factor,
+    ## coercing into character vector
+
+    ## Warning: Column `prediction_literature` joining factors with different
+    ## levels, coercing to character vector
+
+    ## Warning: Column `prediction_math` joining character vector and factor,
+    ## coercing into character vector
+
+    ## Warning: Column `future_math_classes` joining factors with different
+    ## levels, coercing to character vector
+
+    ## Warning: Column `future_science_classes` joining factors with different
+    ## levels, coercing to character vector
+
+    ## Warning: Column `future_egr_classes` joining factors with different levels,
+    ## coercing to character vector
+
+    ## Warning: Column `college` joining character vector and factor, coercing
+    ## into character vector
+
+    ## Warning: Column `what_major` joining character vector and factor, coercing
+    ## into character vector
+
+    ## Warning: Column `why_not_college` joining character vector and factor,
+    ## coercing into character vector
+
+    ## Warning: Column `plan_after_school` joining character vector and factor,
+    ## coercing into character vector
+
+    ## Warning: Column `why_no_chances` joining character vector and factor,
+    ## coercing into character vector
+
+    ## Warning: Column `opportunities_women_stem` joining character vector and
+    ## factor, coercing into character vector
+
+    ## Warning: Column `reason_opportunities_stem` joining character vector and
+    ## factor, coercing into character vector
+
+    ## Warning: Column `resolve_problems_community` joining character vector and
+    ## factor, coercing into character vector
+
+    ## Warning: Column `leader_community` joining character vector and factor,
+    ## coercing into character vector
+
+## Rename to positive vs. negative feelings from A, B, C, D, E (as they were on the survey) to “negative” or “positive”
+
+``` r
 change_names <- function(naming){
 naming %>%
   str_replace("A", "negative") %>%
@@ -104,10 +289,11 @@ empower$i_can_build <- change_names(empower$i_can_build)
 empower$opportunity_engineering <- change_names(empower$opportunity_engineering)
 ```
 
-## Create different datasets for each question that will be analyzed. Each dataset should have the variables: "pre_or_post", "all" (the response - whether students feel positively or negatively towards the question), "grade" (the respondent's grade level), and "class" (which classifies which course the question refers to - EGR, math, or science)
+## Create different datasets for each question that will be analyzed. Each dataset should have the variables: “pre\_or\_post”, “all” (the response - whether students feel positively or negatively towards the question), “grade” (the respondent’s grade level), and “class” (which classifies which course the question refers to - EGR, math, or science)
 
 ### EGR
-```{r}
+
+``` r
 new_products <- empower %>%
   select(pre_or_post, new_products, grade) %>%
   mutate(class = "Engineering")
@@ -165,7 +351,8 @@ names(opportunity_engineering) <- c("pre_or_post", "all", "grade", "class")
 ```
 
 ### Science
-```{r}
+
+``` r
 sure_science <- empower %>%
   select(pre_or_post, sure_science, grade) %>%
   mutate(class = "Science")
@@ -208,7 +395,8 @@ names(science_courses) <- c("pre_or_post", "all", "grade", "class")
 ```
 
 ### Math
-```{r}
+
+``` r
 math_career <- empower %>%
   select(pre_or_post, math_career, grade) %>%
   mutate(class = "Math")
@@ -246,7 +434,8 @@ names(math_courses) <- c("pre_or_post", "all", "grade", "class")
 ```
 
 ## Binding all the variables to one data set, in order to conduct simulations
-```{r}
+
+``` r
 all <- rbind(new_products,
              engineering_everyday,
              enjoy_building,
@@ -276,7 +465,8 @@ all <- rbind(new_products,
 ```
 
 ## Renaming the responses in preparation for the simulation.
-```{r}
+
+``` r
 all$all <- all$all %>%
   str_replace("negative", "Negative") %>%
   str_replace("positive", "Positive")
@@ -287,12 +477,15 @@ all$grade <- all$grade %>%
   str_replace("5 mag", "5")
 ```
 
-
 # Proportion of Girls Who Feel Positively about STEM
-In the following section, the sample statistic will be visualized and the permute and bootstrap simulations will be conducted, pertinent to the proportion of girls who feel positively about STEM.
+
+In the following section, the sample statistic will be visualized and
+the permute and bootstrap simulations will be conducted, pertinent to
+the proportion of girls who feel positively about STEM.
 
 ## Visualizing sample statistic
-```{r fig.height=8, fig.width=5}
+
+``` r
 all$pre_or_post <- factor(all$pre_or_post, levels = c("Pre", "Post"))
 all$all <- factor(all$all, levels = c("Negative", "Positive"))
 
@@ -302,8 +495,11 @@ ggplot(data = all, mapping = aes(x = pre_or_post, fill = all)) +
   scale_fill_manual(values=c("paleturquoise3", "skyblue4"))
 ```
 
+![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
 ## Calculating sample statistic
-```{r}
+
+``` r
 sampling <- all %>%
   group_by(pre_or_post) %>%
   count(all) %>%
@@ -315,11 +511,19 @@ sampling <- all %>%
   filter(all == "Positive") %>%
   select(-pre_or_post, -all, -n, -prop) %>%
   pull()
+```
+
+    ## Adding missing grouping variables: `all`
+
+``` r
 sampling
 ```
 
+    ## [1] 0.04312676
+
 ## Permute simulation
-```{r}
+
+``` r
 set.seed(2019)
 permute_all <- all %>%
   specify(response = all, explanatory = pre_or_post, success = "Positive") %>%
@@ -329,22 +533,34 @@ permute_all <- all %>%
 ```
 
 ## Permute visualization
-```{r}
+
+``` r
 ggplot(data = permute_all, 
        mapping = aes(x = stat)) +
   geom_histogram() +
   labs(title = "Distribution of difference in proportion", subtitle = "of girls who want to take more STEM courses before and after Ignite", x = "Difference in Proportion of Girls", y = "Frequency") 
 ```
 
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
 ## P-value
-```{r}
+
+``` r
 permute_all %>%
   filter(stat >= sampling) %>%
   summarise((p_value = n()/1000) * 2)
 ```
 
+    ## # A tibble: 1 x 1
+    ##   `(p_value = n()/1000) * 2`
+    ##                        <dbl>
+    ## 1                          0
+
 ## Bootstrap simulation
-```{r}
+
+``` r
 set.seed(2019)
 boot_all <- all %>%
   specify(response = all, explanatory = pre_or_post, success = "Positive") %>%
@@ -354,18 +570,27 @@ boot_all <- all %>%
 ```
 
 ## 95% Bootstrap
-```{r}
+
+``` r
 boot_all %>%
   summarize(lower_bound = quantile(stat, 0.025),
             upper_bound = quantile(stat, 0.975))
 ```
 
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      0.0181      0.0679
+
 # Proportion of Girls Who Feel Positively about STEM BY GRADE
-In the following section, the sample statistic will be visualized and the permute and bootstrap simulations will be conducted, pertinent to the proportion of girls who feel positively about STEM, by grade.
+
+In the following section, the sample statistic will be visualized and
+the permute and bootstrap simulations will be conducted, pertinent to
+the proportion of girls who feel positively about STEM, by grade.
 
 ## Visualizing sample statistic
 
-```{r}
+``` r
 all$pre_or_post <- factor(all$pre_or_post, levels = c("Pre", "Post"))
 all$all <- factor(all$all, levels = c("Negative", "Positive"))
 all <- all %>%
@@ -378,8 +603,11 @@ ggplot(data = all, mapping = aes(x = pre_or_post, fill = all)) +
   scale_fill_manual(values=c("paleturquoise3", "skyblue4"))
 ```
 
+![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+
 ## Sample statistic - grade 1
-```{r}
+
+``` r
 sample_grade1 <- all %>%
   filter(grade == "1") %>%
   group_by(pre_or_post) %>%
@@ -392,11 +620,19 @@ sample_grade1 <- all %>%
   filter(all == "Positive") %>%
   select(-pre_or_post, -all, -n, -prop) %>%
   pull()
+```
+
+    ## Adding missing grouping variables: `all`
+
+``` r
 sample_grade1
 ```
 
+    ## [1] 0.02422213
+
 ## Sample statistic - grade 2
-```{r}
+
+``` r
 sample_grade2 <- all %>%
   filter(grade == "2") %>%
   group_by(pre_or_post) %>%
@@ -409,11 +645,19 @@ sample_grade2 <- all %>%
   filter(all == "Positive") %>%
   select(-pre_or_post, -all, -n, -prop) %>%
   pull()
+```
+
+    ## Adding missing grouping variables: `all`
+
+``` r
 sample_grade2
 ```
 
+    ## [1] 0.0119468
+
 ## Sample statistic - grade 3
-```{r}
+
+``` r
 sample_grade3 <- all %>%
   filter(grade == "3") %>%
   group_by(pre_or_post) %>%
@@ -426,11 +670,19 @@ sample_grade3 <- all %>%
   filter(all == "Positive") %>%
   select(-pre_or_post, -all, -n, -prop) %>%
   pull()
+```
+
+    ## Adding missing grouping variables: `all`
+
+``` r
 sample_grade3
 ```
 
+    ## [1] 0.0136393
+
 ## Sample statistic - grade 5
-```{r}
+
+``` r
 sample_grade5 <- all %>%
   filter(grade == "5") %>%
   group_by(pre_or_post) %>%
@@ -443,13 +695,21 @@ sample_grade5 <- all %>%
   filter(all == "Positive") %>%
   select(-pre_or_post, -all, -n, -prop) %>%
   pull()
+```
+
+    ## Adding missing grouping variables: `all`
+
+``` r
 sample_grade5
 ```
+
+    ## [1] 0.109921
 
 ## Permute simulations
 
 ### 1st grade permute
-```{r}
+
+``` r
 set.seed(2019)
 permute_first <- all %>%
   filter(grade == "1") %>%
@@ -459,14 +719,20 @@ permute_first <- all %>%
   calculate(stat = "diff in props", order = c("Post", "Pre"))
 ```
 
-```{r}
+``` r
 permute_first %>%
   filter(stat >= sample_grade1) %>%
   summarise((p_value = n()/1000) * 2)
 ```
 
+    ## # A tibble: 1 x 1
+    ##   `(p_value = n()/1000) * 2`
+    ##                        <dbl>
+    ## 1                      0.454
+
 ### 2nd grade permute
-```{r}
+
+``` r
 set.seed(2019)
 permute_second <- all %>%
   filter(grade == "2") %>%
@@ -476,14 +742,20 @@ permute_second <- all %>%
   calculate(stat = "diff in props", order = c("Post", "Pre"))
 ```
 
-```{r}
+``` r
 permute_second %>%
   filter(stat >= sample_grade2) %>%
   summarise((p_value = n()/1000) * 2)
 ```
 
+    ## # A tibble: 1 x 1
+    ##   `(p_value = n()/1000) * 2`
+    ##                        <dbl>
+    ## 1                      0.722
+
 ### 3rd grade permute
-```{r}
+
+``` r
 set.seed(2019)
 permute_third <- all %>%
   filter(grade == "3") %>%
@@ -493,15 +765,20 @@ permute_third <- all %>%
   calculate(stat = "diff in props", order = c("Post", "Pre"))
 ```
 
-```{r}
+``` r
 permute_third %>%
   filter(stat >= sample_grade3) %>%
   summarise((p_value = n()/1000) * 2)
 ```
 
+    ## # A tibble: 1 x 1
+    ##   `(p_value = n()/1000) * 2`
+    ##                        <dbl>
+    ## 1                      0.558
 
 ### 5th grade permute
-```{r}
+
+``` r
 set.seed(2019)
 permute_fifth <- all %>%
   filter(grade == "5") %>%
@@ -511,21 +788,31 @@ permute_fifth <- all %>%
   calculate(stat = "diff in props", order = c("Post", "Pre"))
 ```
 
-```{r}
+``` r
 ggplot(data = permute_fifth, 
        mapping = aes(x = stat)) +
   geom_histogram() +
   labs(title = "Distribution of difference in proportion", subtitle = "of girls in fifth grade who want to take more STEM courses before and after Ignite", x = "Difference in Proportion of Girls", y = "Frequency") 
 ```
 
-```{r}
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->
+
+``` r
 permute_fifth %>%
   filter(stat >= sample_grade5) %>%
   summarise((p_value = n()/1000) * 2)
 ```
 
-### Because 5th grade demonstrated a significant difference in attitudes towards STEM, a bootstrap simulation was conducted. 
-```{r}
+    ## # A tibble: 1 x 1
+    ##   `(p_value = n()/1000) * 2`
+    ##                        <dbl>
+    ## 1                          0
+
+### Because 5th grade demonstrated a significant difference in attitudes towards STEM, a bootstrap simulation was conducted.
+
+``` r
 set.seed(2019)
 boot_fifth <- all %>%
   filter(grade == "5") %>%
@@ -536,19 +823,28 @@ boot_fifth <- all %>%
 ```
 
 ### 95% bootstrap
-```{r}
+
+``` r
 boot_fifth %>%
   summarize(lower_bound = quantile(stat, 0.025),
             upper_bound = quantile(stat, 0.975))
 ```
 
-
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      0.0650       0.155
 
 # Proportion of Girls Who Feel Positively about STEM BY SUBJECT MATTER
-In the following section, the sample statistic will be visualized and the permute and bootstrap simulations will be conducted, pertinent to the proportion of girls who feel positively about STEM, by subject matter.
+
+In the following section, the sample statistic will be visualized and
+the permute and bootstrap simulations will be conducted, pertinent to
+the proportion of girls who feel positively about STEM, by subject
+matter.
 
 ## Visualizing sample statistic
-```{r}
+
+``` r
 all$pre_or_post <- factor(all$pre_or_post, levels = c("Pre", "Post"))
 all$all <- factor(all$all, levels = c("Negative", "Positive"))
 all <- all %>%
@@ -561,8 +857,11 @@ ggplot(data = all, mapping = aes(x = pre_or_post, fill = all)) +
   scale_fill_manual(values=c("paleturquoise3", "skyblue4"))
 ```
 
+![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-31-1.png)<!-- -->
+
 ## Sample statistic EGR
-```{r}
+
+``` r
 sample_egr <- all %>%
   filter(class == "Engineering") %>%
   group_by(pre_or_post) %>%
@@ -575,11 +874,19 @@ sample_egr <- all %>%
   filter(all == "Positive") %>%
   select(-pre_or_post, -all, -n, -prop) %>%
   pull()
+```
+
+    ## Adding missing grouping variables: `all`
+
+``` r
 sample_egr
 ```
 
+    ## [1] 0.05860625
+
 ## Sample statistic math
-```{r}
+
+``` r
 sample_math <- all %>%
   filter(class == "Math") %>%
   group_by(pre_or_post) %>%
@@ -592,11 +899,19 @@ sample_math <- all %>%
   filter(all == "Positive") %>%
   select(-pre_or_post, -all, -n, -prop) %>%
   pull()
+```
+
+    ## Adding missing grouping variables: `all`
+
+``` r
 sample_math
 ```
 
+    ## [1] 0.0308642
+
 ## Sample statistic science
-```{r}
+
+``` r
 sample_science <- all %>%
   filter(class == "Science") %>%
   group_by(pre_or_post) %>%
@@ -609,12 +924,21 @@ sample_science <- all %>%
   filter(all == "Positive") %>%
   select(-pre_or_post, -all, -n, -prop) %>%
   pull()
+```
+
+    ## Adding missing grouping variables: `all`
+
+``` r
 sample_science
 ```
 
+    ## [1] 0.03245806
+
 ## Permute simulations
-### Math Permute 
-```{r}
+
+### Math Permute
+
+``` r
 set.seed(2019)
 permute_math <- all %>%
   filter(class == "Math") %>%
@@ -624,14 +948,20 @@ permute_math <- all %>%
   calculate(stat = "diff in props", order = c("Post", "Pre"))
 ```
 
-```{r}
+``` r
 permute_math %>%
   filter(stat >= sample_math) %>%
   summarise((p_value = n()/1000) * 2)
 ```
 
+    ## # A tibble: 1 x 1
+    ##   `(p_value = n()/1000) * 2`
+    ##                        <dbl>
+    ## 1                       0.24
+
 ### Science permute
-```{r}
+
+``` r
 set.seed(2019)
 permute_science <- all %>%
   filter(class == "Science") %>%
@@ -641,14 +971,20 @@ permute_science <- all %>%
   calculate(stat = "diff in props", order = c("Post", "Pre"))
 ```
 
-```{r}
+``` r
 permute_science %>%
   filter(stat >= sample_science) %>%
   summarise((p_value = n()/1000) * 2)
 ```
 
+    ## # A tibble: 1 x 1
+    ##   `(p_value = n()/1000) * 2`
+    ##                        <dbl>
+    ## 1                       0.16
+
 ### EGR permute
-```{r}
+
+``` r
 set.seed(2019)
 permute_egr <- all %>%
   filter(class == "Engineering") %>%
@@ -658,14 +994,20 @@ permute_egr <- all %>%
   calculate(stat = "diff in props", order = c("Post", "Pre"))
 ```
 
-```{r}
+``` r
 permute_egr %>%
   filter(stat >= sample_egr) %>%
   summarise((p_value = n()/1000) * 2)
 ```
 
+    ## # A tibble: 1 x 1
+    ##   `(p_value = n()/1000) * 2`
+    ##                        <dbl>
+    ## 1                          0
+
 ## Bootstrap EGR
-```{r}
+
+``` r
 set.seed(2019)
 boot_egr <- all %>%
   filter(class == "Engineering") %>%
@@ -675,8 +1017,13 @@ boot_egr <- all %>%
             order = c("Post", "Pre"))
 ```
 
-```{r}
+``` r
 boot_egr %>%
   summarize(lower_bound = quantile(stat, 0.025),
             upper_bound = quantile(stat, 0.975))
 ```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      0.0225      0.0908
