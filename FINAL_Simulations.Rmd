@@ -669,6 +669,15 @@ permute_egr <- all %>%
 ```
 
 ```{r}
+ggplot(data = permute_egr, 
+       mapping = aes(x = stat)) +
+  geom_histogram(binwidth= 0.0001) +
+  labs(title = "Distribution of difference in proportion", subtitle = "of girls who want to take more EGR courses before and after Ignite", x = "Difference in Proportion of Girls", y = "Frequency") +
+  geom_vline(xintercept = sample_egr, color = "red") +
+  geom_vline(xintercept = -sample_egr, color = "red")
+```
+
+```{r}
 permute_egr %>%
   filter(stat >= sample_egr) %>%
   summarise((p_value = n()/1000) * 2)
