@@ -537,13 +537,11 @@ permute_all <- all %>%
 ``` r
 ggplot(data = permute_all, 
        mapping = aes(x = stat)) +
-  geom_histogram() +
+  geom_histogram(binwidth = 0.001) +
   labs(title = "Distribution of difference in proportion", subtitle = "of girls who want to take more STEM courses before and after Ignite", x = "Difference in Proportion of Girls", y = "Frequency") +
     geom_vline(xintercept = 0.04312676, color = "red") +
   geom_vline(xintercept = -0.04312676, color = "red")
 ```
-
-    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
 ![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
