@@ -538,7 +538,9 @@ permute_all <- all %>%
 ggplot(data = permute_all, 
        mapping = aes(x = stat)) +
   geom_histogram() +
-  labs(title = "Distribution of difference in proportion", subtitle = "of girls who want to take more STEM courses before and after Ignite", x = "Difference in Proportion of Girls", y = "Frequency") 
+  labs(title = "Distribution of difference in proportion", subtitle = "of girls who want to take more STEM courses before and after Ignite", x = "Difference in Proportion of Girls", y = "Frequency") +
+    geom_vline(xintercept = 0.04312676, color = "red") +
+  geom_vline(xintercept = -0.04312676, color = "red")
 ```
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
@@ -549,14 +551,25 @@ ggplot(data = permute_all,
 
 ``` r
 permute_all %>%
-  filter(stat >= sampling) %>%
-  summarise((p_value = n()/1000) * 2)
+  filter(stat >= 0.04312676) %>%
+  summarise(p_value = (n()/1000))
 ```
 
     ## # A tibble: 1 x 1
-    ##   `(p_value = n()/1000) * 2`
-    ##                        <dbl>
-    ## 1                          0
+    ##   p_value
+    ##     <dbl>
+    ## 1       0
+
+``` r
+permute_all %>%
+  filter(stat <= -sampling) %>%
+  summarise(p_value = (n()/1000))
+```
+
+    ## # A tibble: 1 x 1
+    ##   p_value
+    ##     <dbl>
+    ## 1       0
 
 ## Bootstrap simulation
 
@@ -603,7 +616,7 @@ ggplot(data = all, mapping = aes(x = pre_or_post, fill = all)) +
   scale_fill_manual(values=c("paleturquoise3", "skyblue4"))
 ```
 
-![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 ## Sample statistic - grade 1
 
@@ -792,12 +805,14 @@ permute_fifth <- all %>%
 ggplot(data = permute_fifth, 
        mapping = aes(x = stat)) +
   geom_histogram() +
-  labs(title = "Distribution of difference in proportion", subtitle = "of girls in fifth grade who want to take more STEM courses before and after Ignite", x = "Difference in Proportion of Girls", y = "Frequency") 
+  labs(title = "Distribution of difference in proportion", subtitle = "of girls in fifth grade who want to take more STEM courses before and after Ignite", x = "Difference in Proportion of Girls", y = "Frequency") +
+  geom_vline(xintercept = sample_grade5, color = "red") +
+  geom_vline(xintercept = -sample_grade5, color = "red")
 ```
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->
+![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
 
 ``` r
 permute_fifth %>%
@@ -857,7 +872,7 @@ ggplot(data = all, mapping = aes(x = pre_or_post, fill = all)) +
   scale_fill_manual(values=c("paleturquoise3", "skyblue4"))
 ```
 
-![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-31-1.png)<!-- -->
+![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-32-1.png)<!-- -->
 
 ## Sample statistic EGR
 

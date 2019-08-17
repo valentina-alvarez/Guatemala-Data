@@ -332,15 +332,23 @@ permute_all <- all %>%
 ```{r}
 ggplot(data = permute_all, 
        mapping = aes(x = stat)) +
-  geom_histogram() +
-  labs(title = "Distribution of difference in proportion", subtitle = "of girls who want to take more STEM courses before and after Ignite", x = "Difference in Proportion of Girls", y = "Frequency") 
+  geom_histogram(binwidth = 0.001) +
+  labs(title = "Distribution of difference in proportion", subtitle = "of girls who want to take more STEM courses before and after Ignite", x = "Difference in Proportion of Girls", y = "Frequency") +
+    geom_vline(xintercept = 0.04312676, color = "red") +
+  geom_vline(xintercept = -0.04312676, color = "red")
 ```
 
 ## P-value
 ```{r}
 permute_all %>%
-  filter(stat >= sampling) %>%
-  summarise((p_value = n()/1000) * 2)
+  filter(stat >= 0.04312676) %>%
+  summarise(p_value = (n()/1000))
+```
+
+```{r}
+permute_all %>%
+  filter(stat <= -sampling) %>%
+  summarise(p_value = (n()/1000))
 ```
 
 ## Bootstrap simulation
@@ -515,7 +523,9 @@ permute_fifth <- all %>%
 ggplot(data = permute_fifth, 
        mapping = aes(x = stat)) +
   geom_histogram() +
-  labs(title = "Distribution of difference in proportion", subtitle = "of girls in fifth grade who want to take more STEM courses before and after Ignite", x = "Difference in Proportion of Girls", y = "Frequency") 
+  labs(title = "Distribution of difference in proportion", subtitle = "of girls in fifth grade who want to take more STEM courses before and after Ignite", x = "Difference in Proportion of Girls", y = "Frequency") +
+  geom_vline(xintercept = sample_grade5, color = "red") +
+  geom_vline(xintercept = -sample_grade5, color = "red")
 ```
 
 ```{r}
