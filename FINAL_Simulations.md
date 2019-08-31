@@ -245,6 +245,21 @@ empower <- full_join(empower_2018, empower_2019)
     ## Warning: Column `leader_community` joining character vector and factor,
     ## coercing into character vector
 
+``` r
+empower %>%
+  filter(year == "2019") %>%
+  filter(pre_or_post == "Post") %>%
+  count(grade)
+```
+
+    ## # A tibble: 4 x 2
+    ##   grade     n
+    ##   <chr> <int>
+    ## 1 <NA>      1
+    ## 2 1         7
+    ## 3 2        11
+    ## 4 3        20
+
 ## Rename to positive vs. negative feelings from A, B, C, D, E (as they were on the survey) to “negative” or “positive”
 
 ``` r
@@ -296,57 +311,57 @@ empower$opportunity_engineering <- change_names(empower$opportunity_engineering)
 ``` r
 new_products <- empower %>%
   select(pre_or_post, new_products, grade) %>%
-  mutate(class = "Engineering")
+  mutate(class = "Engineering and Technology")
 names(new_products) <- c("pre_or_post", "all", "grade", "class")
 
 engineering_everyday <- empower %>%
   select(pre_or_post, engineering_everyday, grade) %>%
-  mutate(class = "Engineering")
+  mutate(class = "Engineering and Technology")
 names(engineering_everyday) <- c("pre_or_post", "all", "grade", "class")
 
 enjoy_building <- empower %>%
   select(pre_or_post, enjoy_building, grade) %>%
-  mutate(class = "Engineering")
+  mutate(class = "Engineering and Technology")
 names(enjoy_building) <- c("pre_or_post", "all", "grade", "class")
 
 interested_machines <- empower %>%
   select(pre_or_post, interested_machines, grade) %>%
-  mutate(class = "Engineering")
+  mutate(class = "Engineering and Technology")
 names(interested_machines) <- c("pre_or_post", "all", "grade", "class")
 
 career_design <- empower %>%
   select(pre_or_post, career_design, grade) %>%
-  mutate(class = "Engineering")
+  mutate(class = "Engineering and Technology")
 names(career_design) <- c("pre_or_post", "all", "grade", "class")
 
 curiosity_tech <- empower %>%
   select(pre_or_post, curiosity_tech, grade) %>%
-  mutate(class = "Engineering")
+  mutate(class = "Engineering and Technology")
 names(curiosity_tech) <- c("pre_or_post", "all", "grade", "class")
 
 future_innovation <- empower %>%
   select(pre_or_post, future_innovation, grade) %>%
-  mutate(class = "Engineering")
+  mutate(class = "Engineering and Technology")
 names(future_innovation) <- c("pre_or_post", "all", "grade", "class")
 
 mathscience_useful <- empower %>%
   select(pre_or_post, mathscience_useful, grade) %>%
-  mutate(class = "Engineering")
+  mutate(class = "Engineering and Technology")
 names(mathscience_useful) <- c("pre_or_post", "all", "grade", "class")
 
 success_engineering <- empower %>%
   select(pre_or_post, success_engineering, grade) %>%
-  mutate(class = "Engineering")
+  mutate(class = "Engineering and Technology")
 names(success_engineering) <- c("pre_or_post", "all", "grade", "class")
 
 i_can_build <- empower %>%
   select(pre_or_post, i_can_build, grade) %>%
-  mutate(class = "Engineering")
+  mutate(class = "Engineering and Technology")
 names(i_can_build) <- c("pre_or_post", "all", "grade", "class")
 
 opportunity_engineering <- empower %>%
   select(pre_or_post, opportunity_engineering, grade) %>%
-  mutate(class = "Engineering")
+  mutate(class = "Engineering and Technology")
 names(opportunity_engineering) <- c("pre_or_post", "all", "grade", "class")
 ```
 
@@ -483,6 +498,11 @@ In the following section, the sample statistic will be visualized and
 the permute and bootstrap simulations will be conducted, pertinent to
 the proportion of girls who feel positively about STEM.
 
+``` r
+all <- all %>%
+  mutate(facet = "n = 105")
+```
+
 ## Visualizing sample statistic
 
 ``` r
@@ -491,11 +511,18 @@ all$all <- factor(all$all, levels = c("Negative", "Positive"))
 
 ggplot(data = all, mapping = aes(x = pre_or_post, fill = all)) +
   geom_bar(position = "fill") +
-  labs(title = "Proportion of Girls Who Feel Positively About STEM", subtitle = "Before and After the Implementation of Ignite", x = "Pre- or Post-Implementation", y = "Proportion", fill = " ") +
-  scale_fill_manual(values=c("paleturquoise3", "skyblue4"))
+  labs(title = "Proportion of Girls Who Feel Positively 
+About STEM", subtitle = "Before and After the Implementation of Ignite", x = "Pre- or Post-Implementation", y = "Proportion", fill = " ") +
+  facet_grid(~ facet) +
+  scale_fill_manual(values=c("paleturquoise3", "skyblue4")) +
+  theme(plot.title = element_text(size = 16),
+  plot.subtitle = element_text(size = 14),
+  axis.text=element_text(size=12),
+  axis.title=element_text(size=14),
+  legend.text=element_text(size=12)) 
 ```
 
-![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 ## Calculating sample statistic
 
@@ -543,14 +570,14 @@ ggplot(data = permute_all,
   geom_vline(xintercept = -0.04312676, color = "red")
 ```
 
-![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 ## P-value
 
 ``` r
 permute_all %>%
   filter(stat >= 0.04312676) %>%
-  summarise(p_value = (n()/1000))
+  summarise(p_value = (n()/1000) * 2)
 ```
 
     ## # A tibble: 1 x 1
@@ -602,8 +629,22 @@ the proportion of girls who feel positively about STEM, by grade.
 ## Visualizing sample statistic
 
 ``` r
+all$grade <- all$grade %>%
+  str_replace("1", "one")
+```
+
+``` r
+all$grade <- all$grade %>%
+  str_replace("5", "11th grade (n = 64)") %>%
+  str_replace("3", "9th grade (n = 75)") %>%
+  str_replace("2", "8th grade (n = 43)") %>%
+  str_replace("one", "7th grade (n = 37)")
+```
+
+``` r
 all$pre_or_post <- factor(all$pre_or_post, levels = c("Pre", "Post"))
 all$all <- factor(all$all, levels = c("Negative", "Positive"))
+all$grade <- factor(all$grade, levels = c("7th grade (n = 37)", "8th grade (n = 43)", "9th grade (n = 75)", "11th grade (n = 64)"))
 all <- all %>%
   filter(!is.na(grade))
 
@@ -611,10 +652,27 @@ ggplot(data = all, mapping = aes(x = pre_or_post, fill = all)) +
   geom_bar(position = "fill") +
   facet_grid(~ grade) +
   labs(title = "Proportion of Girls Who Feel Positively About STEM", subtitle = "By Grade, Before and After the Implementation of Ignite", x = "Pre- or Post-Implementation", y = "Proportion", fill = " ") +
-  scale_fill_manual(values=c("paleturquoise3", "skyblue4"))
+  scale_fill_manual(values=c("paleturquoise3", "skyblue4")) +
+  theme(plot.title = element_text(size = 16),
+  plot.subtitle = element_text(size = 14),
+  axis.text=element_text(size=12),
+  axis.title=element_text(size=14),
+  legend.text=element_text(size=12))
 ```
 
-![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+
+``` r
+all$grade <- sub('\\(.*', '', all$grade)
+```
+
+``` r
+all$grade <- all$grade %>%
+  str_replace("7th grade ", "1") %>%
+  str_replace("8th grade ", "2") %>%
+  str_replace("9th grade ", "3") %>%
+  str_replace("11th grade ", "5")
+```
 
 ## Sample statistic - grade 1
 
@@ -810,7 +868,7 @@ ggplot(data = permute_fifth,
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
+![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-34-1.png)<!-- -->
 
 ``` r
 permute_fifth %>%
@@ -867,10 +925,19 @@ ggplot(data = all, mapping = aes(x = pre_or_post, fill = all)) +
   geom_bar(position = "fill") +
   facet_grid(~ class) +
   labs(title = "Proportion of Girls Who Feel Positively About STEM", subtitle = "By subject area, Before and After the Implementation of Ignite", x = "Pre- or Post-Implementation", y = "Proportion", fill = " ") +
-  scale_fill_manual(values=c("paleturquoise3", "skyblue4"))
+  scale_fill_manual(values=c("paleturquoise3", "skyblue4")) +
+  theme(plot.title = element_text(size = 16),
+  plot.subtitle = element_text(size = 14),
+  axis.text=element_text(size=12),
+  axis.title=element_text(size=14),
+  legend.text=element_text(size=12))
 ```
 
-![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-32-1.png)<!-- -->
+![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-38-1.png)<!-- -->
+
+``` r
+all$class <- sub(' and.*', '', all$class)
+```
 
 ## Sample statistic EGR
 
@@ -1016,7 +1083,7 @@ ggplot(data = permute_egr,
   geom_vline(xintercept = -sample_egr, color = "red")
 ```
 
-![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-41-1.png)<!-- -->
+![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-48-1.png)<!-- -->
 
 ``` r
 permute_egr %>%
