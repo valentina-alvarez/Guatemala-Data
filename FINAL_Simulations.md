@@ -503,12 +503,23 @@ all <- all %>%
   mutate(facet = "n = 105")
 ```
 
+``` r
+(WD <- getwd())
+```
+
+    ## [1] "/cloud/project"
+
+``` r
+if (!is.null(WD)) setwd(WD)
+```
+
 ## Visualizing sample statistic
 
 ``` r
 all$pre_or_post <- factor(all$pre_or_post, levels = c("Pre", "Post"))
 all$all <- factor(all$all, levels = c("Negative", "Positive"))
 
+tiff("figure1.tiff", units="in", width=5, height=8, res=300)
 ggplot(data = all, mapping = aes(x = pre_or_post, fill = all)) +
   geom_bar(position = "fill") +
   labs(title = "Proportion of Girls Who Feel Positively 
@@ -520,9 +531,11 @@ About STEM", subtitle = "Before and After the Implementation of Ignite", x = "Pr
   axis.text=element_text(size=12),
   axis.title=element_text(size=14),
   legend.text=element_text(size=12)) 
+dev.off()
 ```
 
-![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+    ## png 
+    ##   2
 
 ## Calculating sample statistic
 
@@ -570,7 +583,7 @@ ggplot(data = permute_all,
   geom_vline(xintercept = -0.04312676, color = "red")
 ```
 
-![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
 ## P-value
 
@@ -648,6 +661,7 @@ all$grade <- factor(all$grade, levels = c("7th grade (n = 37)", "8th grade (n = 
 all <- all %>%
   filter(!is.na(grade))
 
+tiff("figure2.tiff", units="in", width=8, height=5, res=300)
 ggplot(data = all, mapping = aes(x = pre_or_post, fill = all)) +
   geom_bar(position = "fill") +
   facet_grid(~ grade) +
@@ -658,9 +672,11 @@ ggplot(data = all, mapping = aes(x = pre_or_post, fill = all)) +
   axis.text=element_text(size=12),
   axis.title=element_text(size=14),
   legend.text=element_text(size=12))
+dev.off()
 ```
 
-![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+    ## png 
+    ##   2
 
 ``` r
 all$grade <- sub('\\(.*', '', all$grade)
@@ -868,7 +884,7 @@ ggplot(data = permute_fifth,
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-34-1.png)<!-- -->
+![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-35-1.png)<!-- -->
 
 ``` r
 permute_fifth %>%
@@ -921,6 +937,7 @@ all$all <- factor(all$all, levels = c("Negative", "Positive"))
 all <- all %>%
   filter(!is.na(grade))
 
+tiff("figure3.tiff", units="in", width=8, height=5, res=300)
 ggplot(data = all, mapping = aes(x = pre_or_post, fill = all)) +
   geom_bar(position = "fill") +
   facet_grid(~ class) +
@@ -931,9 +948,11 @@ ggplot(data = all, mapping = aes(x = pre_or_post, fill = all)) +
   axis.text=element_text(size=12),
   axis.title=element_text(size=14),
   legend.text=element_text(size=12))
+dev.off()
 ```
 
-![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-38-1.png)<!-- -->
+    ## png 
+    ##   2
 
 ``` r
 all$class <- sub(' and.*', '', all$class)
@@ -1083,7 +1102,7 @@ ggplot(data = permute_egr,
   geom_vline(xintercept = -sample_egr, color = "red")
 ```
 
-![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-48-1.png)<!-- -->
+![](FINAL_Simulations_files/figure-gfm/unnamed-chunk-49-1.png)<!-- -->
 
 ``` r
 permute_egr %>%
