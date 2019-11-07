@@ -281,6 +281,7 @@ all <- rbind(new_products,
              interesting_math,
              future_math,
              math_courses)
+all
 ```
 
 ## Renaming the responses in preparation for the simulation.
@@ -536,6 +537,7 @@ permute_first <- all %>%
 permute_first %>%
   filter(stat >= sample_grade1) %>%
   summarise((p_value = n()/1000) * 2)
+permute_first
 ```
 
 ### 2nd grade permute
@@ -552,7 +554,9 @@ permute_second <- all %>%
 ```{r}
 permute_second %>%
   filter(stat >= sample_grade2) %>%
-  summarise((p_value = n()/1000) * 2)
+  summarise((p_value = n()/1000) * 2) %>%
+  pull()
+permute_second
 ```
 
 ### 3rd grade permute
@@ -569,7 +573,9 @@ permute_third <- all %>%
 ```{r}
 permute_third %>%
   filter(stat >= sample_grade3) %>%
-  summarise((p_value = n()/1000) * 2)
+  summarise((p_value = n()/1000) * 2) %>%
+  pull()
+permute_third
 ```
 
 
@@ -596,7 +602,9 @@ ggplot(data = permute_fifth,
 ```{r}
 permute_fifth %>%
   filter(stat >= sample_grade5) %>%
-  summarise((p_value = n()/1000) * 2)
+  summarise((p_value = n()/1000) * 2) %>%
+  pull()
+permute_fifth
 ```
 
 ### Because 5th grade demonstrated a significant difference in attitudes towards STEM, a bootstrap simulation was conducted. 
@@ -715,6 +723,7 @@ permute_math <- all %>%
 permute_math %>%
   filter(stat >= sample_math) %>%
   summarise((p_value = n()/1000) * 2)
+permute_math
 ```
 
 ### Science permute
@@ -731,7 +740,9 @@ permute_science <- all %>%
 ```{r}
 permute_science %>%
   filter(stat >= sample_science) %>%
-  summarise((p_value = n()/1000) * 2)
+  summarise((p_value = n()/1000) * 2) %>%
+  pull()
+permute_science
 ```
 
 ### EGR permute
@@ -757,7 +768,9 @@ ggplot(data = permute_egr,
 ```{r}
 permute_egr %>%
   filter(stat >= sample_egr) %>%
-  summarise((p_value = n()/1000) * 2)
+  summarise((p_value = n()/1000) * 2) %>%
+  pull()
+permute_egr
 ```
 
 ## Bootstrap EGR
@@ -776,3 +789,54 @@ boot_egr %>%
   summarize(lower_bound = quantile(stat, 0.025),
             upper_bound = quantile(stat, 0.975))
 ```
+
+
+# Seeing the Differences on a Graph
+
+## Differences in Grade
+```{r}
+difference <- c(sample_grade1,sample_grade2,sample_grade3,sample_grade5)
+grade <- c("Grade 1","Grade 2","Grade 3", "Grade 5")
+pvalue <- c("P-value = 0.454", "P-value = 0.722", "P-value = 0.558", "P-value ~ 0")
+by_grade <- data.frame(grade, difference, pvalue) 
+by_grade
+```
+
+```{r}
+tiff("figure4.tiff", units="in", width=8, height=6, res=300)
+ggplot(data = by_grade, mapping = aes(x = grade, y = difference)) +
+  geom_bar(stat = "identity", fill = "skyblue4") +
+  labs(title = "Proportion of Girls Who Feel Positively About STEM", subtitle = "Before and After the Implementation of Ignite", x = "Pre- or Post-Implementation", y = "Proportion") +
+  stat_identity(geom="text", position = "dodge", aes(x=grade, label=pvalue), vjust=-0.5) +
+  theme(plot.title = element_text(size = 16),
+  plot.subtitle = element_text(size = 14),
+  axis.text=element_text(size=12),
+  axis.title=element_text(size=14),
+  legend.text=element_text(size=12))
+dev.off()
+```
+
+## Differences in Subject
+```{r}
+difference <- c(sample_math,sample_science,sample_egr)
+subject <- c("Math","Science","Engineering and Technology")
+pvalue <- c("P-value = 0.24", "P-value = 0.16", "P-value ~ 0")
+by_subject <- data.frame(subject, difference, pvalue) 
+by_subject
+```
+
+```{r}
+tiff("figure5.tiff", units="in", width=8, height=6, res=300)
+ggplot(data = by_subject, mapping = aes(x = subject, y = difference)) +
+  geom_bar(stat = "identity", fill = "skyblue4") +
+  labs(title = "Proportion of Girls Who Feel Positively About STEM", subtitle = "Before and After the Implementation of Ignite", x = "Pre- or Post-Implementation", y = "Proportion") +
+  stat_identity(geom="text", position = "dodge", aes(x=subject, label=pvalue), vjust=-0.5) +
+  theme(plot.title = element_text(size = 16),
+  plot.subtitle = element_text(size = 14),
+  axis.text=element_text(size=12),
+  axis.title=element_text(size=14),
+  legend.text=element_text(size=12))
+dev.off()
+```
+
+
