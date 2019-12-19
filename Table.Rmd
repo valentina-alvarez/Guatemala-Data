@@ -323,8 +323,7 @@ perm_grade1_math <- together %>%
   filter(grade == "1") %>%
   filter(class == "Math") %>%
   specify(response = all, explanatory = pre_or_post) %>%
-  hypothesize(null = "independence") %>%
-  generate(reps = 1000, type = "permute") %>%
+  generate(reps = 1000, type = "bootstrap") %>%
   calculate(stat = "diff in means", order = c("Post", "Pre"))
 ```
 
