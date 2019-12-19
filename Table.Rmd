@@ -323,7 +323,7 @@ perm_grade1_math <- together %>%
   filter(grade == "1") %>%
   filter(class == "Math") %>%
   specify(response = all, explanatory = pre_or_post) %>%
-  generate(reps = 1000, type = "bootstrap") %>%
+  generate(reps = 10000, type = "bootstrap") %>%
   calculate(stat = "diff in means", order = c("Post", "Pre"))
 ```
 
@@ -355,8 +355,7 @@ perm_grade1_science <- together %>%
   filter(grade == "1") %>%
   filter(class == "Science") %>%
   specify(response = all, explanatory = pre_or_post) %>%
-  hypothesize(null = "independence") %>%
-  generate(reps = 1000, type = "permute") %>%
+  generate(reps = 10000, type = "bootstrap") %>%
   calculate(stat = "diff in means", order = c("Post", "Pre"))
 ```
 
@@ -388,8 +387,7 @@ perm_grade1_egr <- together %>%
   filter(grade == "1") %>%
   filter(class == "Engineering and Technology") %>%
   specify(response = all, explanatory = pre_or_post) %>%
-  hypothesize(null = "independence") %>%
-  generate(reps = 1000, type = "permute") %>%
+  generate(reps = 10000, type = "bootstrap") %>%
   calculate(stat = "diff in means", order = c("Post", "Pre"))
 ```
 
@@ -426,8 +424,7 @@ perm_grade1 <- together %>%
   filter(!is.na(pre_or_post)) %>%
   filter(grade == "1") %>%
   specify(response = all, explanatory = pre_or_post) %>%
-  hypothesize(null = "independence") %>%
-  generate(reps = 1000, type = "permute") %>%
+  generate(reps = 10000, type = "bootstrap") %>%
   calculate(stat = "diff in means", order = c("Post", "Pre"))
 ```
 
@@ -460,8 +457,7 @@ perm_grade2_math <- together %>%
   filter(grade == "2") %>%
   filter(class == "Math") %>%
   specify(response = all, explanatory = pre_or_post) %>%
-  hypothesize(null = "independence") %>%
-  generate(reps = 1000, type = "permute") %>%
+  generate(reps = 10000, type = "bootstrap") %>%
   calculate(stat = "diff in means", order = c("Post", "Pre"))
 ```
 
@@ -493,8 +489,7 @@ perm_grade2_science <- together %>%
   filter(grade == "2") %>%
   filter(class == "Science") %>%
   specify(response = all, explanatory = pre_or_post) %>%
-  hypothesize(null = "independence") %>%
-  generate(reps = 1000, type = "permute") %>%
+  generate(reps = 10000, type = "bootstrap") %>%
   calculate(stat = "diff in means", order = c("Post", "Pre"))
 ```
 
@@ -526,8 +521,7 @@ perm_grade2_egr <- together %>%
   filter(grade == "2") %>%
   filter(class == "Engineering and Technology") %>%
   specify(response = all, explanatory = pre_or_post) %>%
-  hypothesize(null = "independence") %>%
-  generate(reps = 1000, type = "permute") %>%
+  generate(reps = 10000, type = "bootstrap") %>%
   calculate(stat = "diff in means", order = c("Post", "Pre"))
 ```
 
@@ -557,8 +551,7 @@ perm_grade2 <- together %>%
   filter(!is.na(pre_or_post)) %>%
   filter(grade == "2") %>%
   specify(response = all, explanatory = pre_or_post) %>%
-  hypothesize(null = "independence") %>%
-  generate(reps = 1000, type = "permute") %>%
+  generate(reps = 10000, type = "bootstrap") %>%
   calculate(stat = "diff in means", order = c("Post", "Pre"))
 ```
 
@@ -590,8 +583,7 @@ perm_grade3_math <- together %>%
   filter(grade == "3") %>%
   filter(class == "Math") %>%
   specify(response = all, explanatory = pre_or_post) %>%
-  hypothesize(null = "independence") %>%
-  generate(reps = 1000, type = "permute") %>%
+  generate(reps = 10000, type = "bootstrap") %>%
   calculate(stat = "diff in means", order = c("Post", "Pre"))
 ```
 
@@ -624,8 +616,7 @@ perm_grade3_science <- together %>%
   filter(grade == "3") %>%
   filter(class == "Science") %>%
   specify(response = all, explanatory = pre_or_post) %>%
-  hypothesize(null = "independence") %>%
-  generate(reps = 1000, type = "permute") %>%
+  generate(reps = 10000, type = "bootstrap") %>%
   calculate(stat = "diff in means", order = c("Post", "Pre"))
 ```
 
@@ -657,8 +648,7 @@ perm_grade3_egr <- together %>%
   filter(grade == "3") %>%
   filter(class == "Engineering and Technology") %>%
   specify(response = all, explanatory = pre_or_post) %>%
-  hypothesize(null = "independence") %>%
-  generate(reps = 1000, type = "permute") %>%
+  generate(reps = 10000, type = "bootstrap") %>%
   calculate(stat = "diff in means", order = c("Post", "Pre"))
 ```
 
@@ -688,8 +678,7 @@ perm_grade3 <- together %>%
   filter(!is.na(pre_or_post)) %>%
   filter(grade == "3") %>%
   specify(response = all, explanatory = pre_or_post) %>%
-  hypothesize(null = "independence") %>%
-  generate(reps = 1000, type = "permute") %>%
+  generate(reps = 10000, type = "bootstrap") %>%
   calculate(stat = "diff in means", order = c("Post", "Pre"))
 ```
 
@@ -723,8 +712,7 @@ perm_grade5_math <- together %>%
   filter(grade == "5") %>%
   filter(class == "Math") %>%
   specify(response = all, explanatory = pre_or_post) %>%
-  hypothesize(null = "independence") %>%
-  generate(reps = 1000, type = "permute") %>%
+  generate(reps = 10000, type = "bootstrap") %>%
   calculate(stat = "diff in means", order = c("Post", "Pre"))
 ```
 
@@ -756,8 +744,7 @@ perm_grade5_science <- together %>%
   filter(grade == "5") %>%
   filter(class == "Science") %>%
   specify(response = all, explanatory = pre_or_post) %>%
-  hypothesize(null = "independence") %>%
-  generate(reps = 1000, type = "permute") %>%
+  generate(reps = 10000, type = "bootstrap") %>%
   calculate(stat = "diff in means", order = c("Post", "Pre"))
 ```
 
@@ -789,8 +776,7 @@ perm_grade5_egr <- together %>%
   filter(grade == "5") %>%
   filter(class == "Engineering and Technology") %>%
   specify(response = all, explanatory = pre_or_post) %>%
-  hypothesize(null = "independence") %>%
-  generate(reps = 1000, type = "permute") %>%
+  generate(reps = 10000, type = "bootstrap") %>%
   calculate(stat = "diff in means", order = c("Post", "Pre"))
 ```
 
@@ -820,8 +806,7 @@ perm_grade5 <- together %>%
   filter(!is.na(pre_or_post)) %>%
   filter(grade == "5") %>%
   specify(response = all, explanatory = pre_or_post) %>%
-  hypothesize(null = "independence") %>%
-  generate(reps = 1000, type = "permute") %>%
+  generate(reps = 10000, type = "bootstrap") %>%
   calculate(stat = "diff in means", order = c("Post", "Pre"))
 ```
 
@@ -851,8 +836,7 @@ perm_math <- together %>%
   filter(!is.na(pre_or_post)) %>%
   filter(class == "Math") %>%
   specify(response = all, explanatory = pre_or_post) %>%
-  hypothesize(null = "independence") %>%
-  generate(reps = 1000, type = "permute") %>%
+  generate(reps = 10000, type = "bootstrap") %>%
   calculate(stat = "diff in means", order = c("Post", "Pre"))
 ```
 
@@ -882,8 +866,7 @@ perm_science <- together %>%
   filter(!is.na(pre_or_post)) %>%
   filter(class == "Science") %>%
   specify(response = all, explanatory = pre_or_post) %>%
-  hypothesize(null = "independence") %>%
-  generate(reps = 1000, type = "permute") %>%
+  generate(reps = 10000, type = "bootstrap") %>%
   calculate(stat = "diff in means", order = c("Post", "Pre"))
 ```
 
@@ -913,8 +896,7 @@ perm_egr <- together %>%
   filter(!is.na(pre_or_post)) %>%
   filter(class == "Engineering and Technology") %>%
   specify(response = all, explanatory = pre_or_post) %>%
-  hypothesize(null = "independence") %>%
-  generate(reps = 1000, type = "permute") %>%
+  generate(reps = 10000, type = "bootstrap") %>%
   calculate(stat = "diff in means", order = c("Post", "Pre"))
 ```
 
@@ -945,8 +927,7 @@ perm <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
   specify(response = all, explanatory = pre_or_post) %>%
-  hypothesize(null = "independence") %>%
-  generate(reps = 1000, type = "permute") %>%
+  generate(reps = 10000, type = "bootstrap") %>%
   calculate(stat = "diff in means", order = c("Post", "Pre"))
 ```
 
