@@ -1,0 +1,438 @@
+---
+title: "Data Exploration"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      warning = FALSE, 
+                      message = FALSE)
+```
+
+# Load packages
+```{r load-packages, message=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(shiny)
+library(infer)
+library(data.table)
+```
+
+# Load data
+```{r load-data}
+pre_empower <- read.csv("data/PRE_Empowerment.csv",
+                    sep = ";")
+post_empower <- read.csv("data/POST_Empowerment.csv",
+                    sep = ";")
+pre_2019 <- read.csv("data/PRE2019.csv",
+                    sep = ";")
+post_2019 <- read.csv("data/POST2019.csv",
+                    sep = ";")
+```
+
+## Include columns that indicate whether responses are from pre- or post-implementation surveys, and what year they were collected
+```{r data}
+pre_empower <- pre_empower %>%
+  mutate(pre_or_post = "Pre") %>%
+  mutate(year = "2018")
+post_empower <- post_empower %>%
+  mutate(pre_or_post = "Post") %>%
+  mutate(year = "2018")
+pre_2019 <- pre_2019 %>%
+  mutate(pre_or_post = "Pre") %>%
+  mutate(year = "2019")
+post_2019 <- post_2019 %>%
+  mutate(pre_or_post = "Post") %>%
+  mutate(year = "2019")
+```
+
+## Count how many students took the pre- and post-implementation surveys in 2018 and 2019
+```{r}
+count(pre_empower)
+count(post_empower)
+count(pre_2019)
+count(post_2019)
+```
+
+```{r}
+pre_empower %>%
+  group_by(grade) %>%
+  count
+post_empower %>%
+  group_by(grade) %>%
+  count
+pre_2019 %>%
+  group_by(grade) %>%
+  count
+post_2019 %>%
+  group_by(grade) %>%
+  count
+```
+
+
+## Join pre- and post-implementation data into one dataset. Then join data from 2018 and 2019 into one dataset
+```{r}
+empower_2018 <- full_join(pre_empower, post_empower) %>%
+  select(-c(other_plan_afterschool))
+empower_2019 <- full_join(pre_2019, post_2019) %>%
+  select(-c(other_plan_afterschool))
+empower_2019$grade <- as.factor(empower_2019$grade)
+empower <- full_join(empower_2018, empower_2019)
+```
+
+## Rename to positive vs. negative feelings from A, B, C, D, E (as they were on the survey) to 1, 2, 3, 4, 5
+```{r change-names}
+change_names <- function(naming){
+naming %>%
+  str_replace("A", "1") %>%
+  str_replace("B", "2") %>%
+  str_replace("C", "3") %>%
+  str_replace("D", "4") %>%
+  str_replace("E", "5")
+}
+
+empower$math_worst <- change_names(empower$math_worst)
+empower$math_career <- change_names(empower$math_career)
+empower$not_enjoy_math <- change_names(empower$not_enjoy_math)
+empower$good_at_math <- change_names(empower$good_at_math)
+empower$decentschool_badmath <- change_names(empower$decentschool_badmath)
+empower$higherlevel_math <- change_names(empower$higherlevel_math)
+empower$good_math_grades <- change_names(empower$good_math_grades)
+empower$interesting_math <- change_names(empower$interesting_math)
+empower$future_math <- change_names(empower$future_math)
+empower$math_courses <- change_names(empower$math_courses)
+empower$sure_science <- change_names(empower$sure_science)
+empower$science_career <- change_names(empower$science_career)
+empower$science_outsideofschool <- change_names(empower$science_outsideofschool)
+empower$science_pay <- change_names(empower$science_pay)
+empower$science_job <- change_names(empower$science_job)
+empower$good_science <- change_names(empower$good_science)
+empower$decentschool_badscience <- change_names(empower$decentschool_badscience)
+empower$higherlevel_science <- change_names(empower$higherlevel_science)
+empower$science_courses <- change_names(empower$science_courses)
+empower$new_products <- change_names(empower$new_products)
+empower$engineering_everyday <- change_names(empower$engineering_everyday)
+empower$enjoy_building <- change_names(empower$enjoy_building)
+empower$interested_machines <- change_names(empower$interested_machines)
+empower$career_design <- change_names(empower$career_design)
+empower$curiosity_tech <- change_names(empower$curiosity_tech)
+empower$future_innovation <- change_names(empower$future_innovation)
+empower$mathscience_useful <- change_names(empower$mathscience_useful)
+empower$success_engineering <- change_names(empower$success_engineering)
+empower$i_can_build <- change_names(empower$i_can_build)
+empower$opportunity_engineering <- change_names(empower$opportunity_engineering)
+empower$contribute_community <- change_names(empower$contribute_community)
+empower$resolve_problems_community <- change_names(empower$resolve_problems_community)
+empower$external_help <- change_names(empower$external_help)
+empower$leader_community <- change_names(empower$leader_community)
+empower$contribute_community.1 <- change_names(empower$contribute_community.1)
+```
+
+## Create different datasets for each question that will be analyzed. Each dataset should have the variables: "pre_or_post", "all" (the response - whether students feel positively or negatively towards the question), "grade" (the respondent's grade level), and "class" (which classifies which course the question refers to - EGR, math, or science)
+
+### EGR
+```{r}
+new_products <- empower %>%
+  select(pre_or_post, new_products, grade) %>%
+  mutate(class = "Engineering and Technology") %>%
+  mutate(question = "new_products")
+names(new_products) <- c("pre_or_post", "all", "grade", "class", "question")
+
+engineering_everyday <- empower %>%
+  select(pre_or_post, engineering_everyday, grade) %>%
+  mutate(class = "Engineering and Technology") %>%
+  mutate(question = "engineering_everyday")
+names(engineering_everyday) <- c("pre_or_post", "all", "grade", "class", "question")
+
+enjoy_building <- empower %>%
+  select(pre_or_post, enjoy_building, grade) %>%
+  mutate(class = "Engineering and Technology") %>%
+  mutate(question = "enjoy_building")
+names(enjoy_building) <- c("pre_or_post", "all", "grade", "class", "question")
+
+interested_machines <- empower %>%
+  select(pre_or_post, interested_machines, grade) %>%
+  mutate(class = "Engineering and Technology") %>%
+  mutate(question = "interested_machines")
+names(interested_machines) <- c("pre_or_post", "all", "grade", "class", "question")
+
+career_design <- empower %>%
+  select(pre_or_post, career_design, grade) %>%
+  mutate(class = "Engineering and Technology") %>%
+  mutate(question = "career_design")
+names(career_design) <- c("pre_or_post", "all", "grade", "class", "question")
+
+curiosity_tech <- empower %>%
+  select(pre_or_post, curiosity_tech, grade) %>%
+  mutate(class = "Engineering and Technology") %>%
+  mutate(question = "curiosity_tech")
+names(curiosity_tech) <- c("pre_or_post", "all", "grade", "class", "question")
+
+future_innovation <- empower %>%
+  select(pre_or_post, future_innovation, grade) %>%
+  mutate(class = "Engineering and Technology") %>%
+  mutate(question = "future_innovation")
+names(future_innovation) <- c("pre_or_post", "all", "grade", "class", "question")
+
+mathscience_useful <- empower %>%
+  select(pre_or_post, mathscience_useful, grade) %>%
+  mutate(class = "Engineering and Technology") %>%
+  mutate(question = "mathscience_useful")
+names(mathscience_useful) <- c("pre_or_post", "all", "grade", "class", "question")
+
+success_engineering <- empower %>%
+  select(pre_or_post, success_engineering, grade) %>%
+  mutate(class = "Engineering and Technology") %>%
+  mutate(question = "success_engineering")
+names(success_engineering) <- c("pre_or_post", "all", "grade", "class", "question")
+
+i_can_build <- empower %>%
+  select(pre_or_post, i_can_build, grade) %>%
+  mutate(class = "Engineering and Technology") %>%
+  mutate(question = "i_can_build")
+names(i_can_build) <- c("pre_or_post", "all", "grade", "class", "question")
+
+opportunity_engineering <- empower %>%
+  select(pre_or_post, opportunity_engineering, grade) %>%
+  mutate(class = "Engineering and Technology") %>%
+  mutate(question = "opportunity")
+names(opportunity_engineering) <- c("pre_or_post", "all", "grade", "class", "question")
+```
+
+### Science
+```{r}
+sure_science <- empower %>%
+  select(pre_or_post, sure_science, grade) %>%
+  mutate(class = "Science") %>%
+  mutate(question = "sure_science")
+names(sure_science) <- c("pre_or_post", "all", "grade", "class", "question")
+
+science_career <- empower %>%
+  select(pre_or_post, science_career, grade) %>%
+  mutate(class = "Science") %>%
+  mutate(question = "science_career")
+names(science_career) <- c("pre_or_post", "all", "grade", "class", "question")
+
+science_outsideofschool <- empower %>%
+  select(pre_or_post, science_outsideofschool, grade) %>%
+  mutate(class = "Science") %>%
+  mutate(question = "science_outsideofschool")
+names(science_outsideofschool) <- c("pre_or_post", "all", "grade", "class", "question")
+
+science_pay <- empower %>%
+  select(pre_or_post, science_pay, grade) %>%
+  mutate(class = "Science") %>%
+  mutate(question = "science_pay")
+names(science_pay) <- c("pre_or_post", "all", "grade", "class", "question")
+
+science_job <- empower %>%
+  select(pre_or_post, science_job, grade) %>%
+  mutate(class = "Science") %>%
+  mutate(question = "science_job")
+names(science_job) <- c("pre_or_post", "all", "grade", "class", "question")
+
+good_science <- empower %>%
+  select(pre_or_post, good_science, grade) %>%
+  mutate(class = "Science") %>%
+  mutate(question = "good_science")
+names(good_science) <- c("pre_or_post", "all", "grade", "class", "question")
+
+higherlevel_science <- empower %>%
+  select(pre_or_post, higherlevel_science, grade) %>%
+  mutate(class = "Science") %>%
+  mutate(question = "higherlevel_science")
+names(higherlevel_science) <- c("pre_or_post", "all", "grade", "class", "question")
+
+science_courses <- empower %>%
+  select(pre_or_post, science_courses, grade) %>%
+  mutate(class = "Science") %>%
+  mutate(question = "science_courses")
+names(science_courses) <- c("pre_or_post", "all", "grade", "class", "question")
+
+decentschool_badscience <- empower %>%
+  select(pre_or_post, decentschool_badscience, grade) %>%
+  mutate(class = "Science") %>%
+  mutate(question = "decentschool_badscience")
+names(decentschool_badscience) <- c("pre_or_post", "all", "grade", "class", "question")
+```
+
+
+### Math
+```{r}
+math_career <- empower %>%
+  select(pre_or_post, math_career, grade) %>%
+  mutate(class = "Math") %>%
+  mutate(question = "math_career")
+names(math_career) <- c("pre_or_post", "all", "grade", "class", "question")
+
+good_at_math <- empower %>%
+  select(pre_or_post, good_at_math, grade) %>%
+  mutate(class = "Math") %>%
+  mutate(question = "good_at_math")
+names(good_at_math) <- c("pre_or_post", "all", "grade", "class", "question")
+
+higherlevel_math <- empower %>%
+  select(pre_or_post, higherlevel_math, grade) %>%
+  mutate(class = "Math") %>%
+  mutate(question = "higherlevel_math")
+names(higherlevel_math) <- c("pre_or_post", "all", "grade", "class", "question")
+
+good_math_grades <- empower %>%
+  select(pre_or_post, good_math_grades, grade) %>%
+  mutate(class = "Math") %>%
+  mutate(question = "good_math_grades")
+names(good_math_grades) <- c("pre_or_post", "all", "grade", "class", "question")
+
+interesting_math <- empower %>%
+  select(pre_or_post, interesting_math, grade) %>%
+  mutate(class = "Math") %>%
+  mutate(question = "interesting_math")
+names(interesting_math) <- c("pre_or_post", "all", "grade", "class", "question")
+
+future_math <- empower %>%
+  select(pre_or_post, future_math, grade) %>%
+  mutate(class = "Math") %>%
+  mutate(question = "future_math")
+names(future_math) <- c("pre_or_post", "all", "grade", "class", "question")
+
+math_courses <- empower %>%
+  select(pre_or_post, math_courses, grade) %>%
+  mutate(class = "Math") %>%
+  mutate(question = "math_courses")
+names(math_courses) <- c("pre_or_post", "all", "grade", "class", "question")
+
+math_worst <- empower %>%
+  select(pre_or_post, math_worst, grade) %>%
+  mutate(class = "Math") %>%
+  mutate(question = "math_worst")
+names(math_worst) <- c("pre_or_post", "all", "grade", "class", "question")
+
+not_enjoy_math <- empower %>%
+  select(pre_or_post, not_enjoy_math, grade) %>%
+  mutate(class = "Math") %>%
+  mutate(question = "not_enjoy_math")
+names(not_enjoy_math) <- c("pre_or_post", "all", "grade", "class", "question")
+
+decentschool_badmath <- empower %>%
+  select(pre_or_post, decentschool_badmath, grade) %>%
+  mutate(class = "Math") %>%
+  mutate(question = "decentschool_badmath")
+names(decentschool_badmath) <- c("pre_or_post", "all", "grade", "class", "question")
+```
+
+### Helping community
+
+```{r}
+contribute_community <- empower %>%
+  select(pre_or_post, contribute_community, grade) %>%
+  mutate(class = "Others") %>%
+  mutate(question = "contribute_community")
+names(contribute_community) <- c("pre_or_post", "all", "grade", "class", "question")
+
+resolve_problems_community <- empower %>%
+  select(pre_or_post, resolve_problems_community, grade) %>%
+  mutate(class = "Others") %>%
+  mutate(question = "resolve_problems_community")
+names(resolve_problems_community) <- c("pre_or_post", "all", "grade", "class", "question")
+
+external_help <- empower %>%
+  select(pre_or_post, external_help, grade) %>%
+  mutate(class = "Others") %>%
+  mutate(question = "external_help")
+names(external_help) <- c("pre_or_post", "all", "grade", "class", "question")
+
+leader_community <- empower %>%
+  select(pre_or_post, leader_community, grade) %>%
+  mutate(class = "Others") %>%
+  mutate(question = "leader_community")
+names(leader_community) <- c("pre_or_post", "all", "grade", "class", "question")
+
+contribute_community.1 <- empower %>%
+  select(pre_or_post, contribute_community.1, grade) %>%
+  mutate(class = "Others") %>%
+  mutate(question = "contribute_community.1")
+names(contribute_community.1) <- c("pre_or_post", "all", "grade", "class", "question")
+```
+
+
+```{r}
+together <- rbind(new_products,
+             engineering_everyday,
+             enjoy_building,
+             interested_machines,
+             career_design,
+             curiosity_tech,
+             future_innovation,
+             mathscience_useful,
+             success_engineering,
+             i_can_build,
+             opportunity_engineering, 
+             sure_science,
+             science_career, 
+             science_outsideofschool,
+             science_pay,
+             science_job,
+             good_science,
+             higherlevel_science,
+             science_courses,
+             math_career,
+             good_at_math,
+             higherlevel_math,
+             good_math_grades,
+             interesting_math,
+             future_math,
+             math_courses)
+```
+
+```{r}
+others <- rbind(math_worst, 
+                not_enjoy_math,
+                decentschool_badmath,
+                decentschool_badscience,
+                contribute_community,
+                resolve_problems_community,
+                external_help,
+                leader_community,
+                contribute_community.1)
+```
+
+
+```{r}
+together$grade <- together$grade %>%
+  str_replace("5 bach", "5") %>%
+  str_replace("5 mag", "5")
+together <- transform(together, all = as.numeric(all))
+```
+
+```{r}
+together %>%
+  filter(!is.na(all)) %>%
+  group_by(pre_or_post) %>%
+  count(question)
+```
+
+```{r}
+observations1 <- together %>%
+  group_by(question, pre_or_post, grade) %>%
+  filter(!is.na(all)) %>%
+  count()
+observations1
+```
+
+```{r}
+others$grade <- others$grade %>%
+  str_replace("5 bach", "5") %>%
+  str_replace("5 mag", "5")
+others <- transform(others, all = as.numeric(all))
+```
+
+```{r}
+observations2 <- others %>%
+  group_by(question, pre_or_post, grade) %>%
+  filter(!is.na(all)) %>%
+  count()
+observations2
+```
+
+
+

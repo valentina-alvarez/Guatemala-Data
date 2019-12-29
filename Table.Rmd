@@ -295,7 +295,6 @@ together <- rbind(new_products,
              math_courses)
 ```
 
-
 ```{r}
 together$grade <- together$grade %>%
   str_replace("5 bach", "5") %>%
