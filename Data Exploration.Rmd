@@ -434,5 +434,16 @@ observations2 <- others %>%
 observations2
 ```
 
+```{r}
+sum_of_scores <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(grade)) %>%
+  group_by(question, pre_or_post, grade) %>%
+  summarize(Sum = sum(all))
+sum_of_scores
+```
+
+
+
 
 
