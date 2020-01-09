@@ -991,8 +991,7 @@ grade1_future_math <- together %>%
   filter(grade == "1") %>%
   filter(question == "future_math") %>%
   group_by(pre_or_post) %>%
-  summarize(mean = mean(all)) %>%
-  mutate(diff(mean))
+  summarize(mean = mean(all))
 grade1_future_math
 ```
 
@@ -1047,9 +1046,26 @@ grade5_future_math <- together %>%
   filter(grade == "5") %>%
   filter(question == "future_math") %>%
   group_by(pre_or_post) %>%
-  summarize(mean = mean(all)) %>%
-  mutate(diff(mean))
+  summarize(mean = mean(all))
 grade5_future_math
+```
+
+```{r}
+grade5_future_math$pre_or_post <- factor(grade5_future_math$pre_or_post, levels = c("Pre", "Post"))
+
+tiff("mathematics_future_career.tiff", units="in", width=7, height=9, res=300)
+ggplot(data = grade5_future_math, mapping = aes(x = pre_or_post, y = mean)) +
+  geom_bar(stat = "identity", fill = "slategray4") +
+    labs(title = "I plan to use mathematics in my future career", subtitle = "11th graders", x = "", y = "Average Positivity Towards STEM") +
+  theme(plot.title = element_text(size = 22),
+  plot.subtitle = element_text(size = 18),
+  axis.text=element_text(size=16),
+  axis.title=element_text(size=20),
+  legend.title=element_text(size=18),
+  legend.text=element_text(size=16),
+  strip.text=element_text(size=14),
+  legend.position ="none")
+dev.off()
 ```
 
 ```{r}
@@ -2128,9 +2144,27 @@ grade5_engineering_everyday <- together %>%
   filter(grade == "5") %>%
   filter(question == "engineering_everyday") %>%
   group_by(pre_or_post) %>%
-  summarize(mean = mean(all)) %>%
-  mutate(diff(mean))
+  summarize(mean = mean(all))
 grade5_engineering_everyday
+```
+
+```{r}
+grade5_engineering_everyday$pre_or_post <- factor(grade5_engineering_everyday$pre_or_post, levels = c("Pre", "Post"))
+
+tiff("engineering_everyday.tiff", units="in", width=7, height=9, res=300)
+ggplot(data = grade5_engineering_everyday, mapping = aes(x = pre_or_post, y = mean)) +
+  geom_bar(stat = "identity", fill = "slategray4") +
+    labs(title = "If I learn engineering, then I can 
+improve the things that people use every day.", subtitle = "11th graders", x = "", y = "Average Positivity Towards STEM") +
+  theme(plot.title = element_text(size = 22),
+  plot.subtitle = element_text(size = 18),
+  axis.text=element_text(size=16),
+  axis.title=element_text(size=20),
+  legend.title=element_text(size=18),
+  legend.text=element_text(size=16),
+  strip.text=element_text(size=14),
+  legend.position ="none")
+dev.off()
 ```
 
 ```{r}
@@ -2239,6 +2273,24 @@ grade5_enjoy_building <- together %>%
   summarize(mean = mean(all)) %>%
   mutate(diff(mean))
 grade5_enjoy_building
+```
+
+```{r}
+grade5_enjoy_building$pre_or_post <- factor(grade5_enjoy_building$pre_or_post, levels = c("Pre", "Post"))
+
+tiff("enjoy_building.tiff", units="in", width=7, height=9, res=300)
+ggplot(data = grade5_enjoy_building, mapping = aes(x = pre_or_post, y = mean)) +
+  geom_bar(stat = "identity", fill = "slategray4") +
+    labs(title = "I enjoy building and fixing things", subtitle = "11th graders", x = "", y = "Average Positivity Towards STEM") +
+  theme(plot.title = element_text(size = 22),
+  plot.subtitle = element_text(size = 18),
+  axis.text=element_text(size=16),
+  axis.title=element_text(size=20),
+  legend.title=element_text(size=18),
+  legend.text=element_text(size=16),
+  strip.text=element_text(size=14),
+  legend.position ="none")
+dev.off()
 ```
 
 ```{r}
@@ -2961,6 +3013,24 @@ grade5_i_can_build
 ```
 
 ```{r}
+grade5_i_can_build$pre_or_post <- factor(grade5_i_can_build$pre_or_post, levels = c("Pre", "Post"))
+
+tiff("i_can_build.tiff", units="in", width=7, height=9, res=300)
+ggplot(data = grade5_i_can_build, mapping = aes(x = pre_or_post, y = mean)) +
+  geom_bar(stat = "identity", fill = "slategray4") +
+    labs(title = "I am good at building and fixing things", subtitle = "11th graders", x = "", y = "Average Positivity Towards STEM") +
+  theme(plot.title = element_text(size = 22),
+  plot.subtitle = element_text(size = 18),
+  axis.text=element_text(size=16),
+  axis.title=element_text(size=20),
+  legend.title=element_text(size=18),
+  legend.text=element_text(size=16),
+  strip.text=element_text(size=14),
+  legend.position ="none")
+dev.off()
+```
+
+```{r}
 set.seed(2019)
 perm_grade5_i_can_build <- together %>%
   filter(!is.na(all)) %>%
@@ -3103,4 +3173,512 @@ perm_grade5_opportunity <- together %>%
 perm_grade5_opportunity %>%
   summarize(lower_bound = quantile(stat, 0.025),
             upper_bound = quantile(stat, 0.975))
+```
+
+
+# OTHERS
+
+# Grade 1
+
+## Contribute Community 
+
+```{r}
+grade1_contribute_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  filter(question == "contribute_community") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade1_contribute_community
+```
+
+## Resolve Problems Community 
+
+```{r}
+grade1_resolve_problems_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  filter(question == "resolve_problems_community") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade1_resolve_problems_community
+```
+
+## External Help 
+
+```{r}
+grade1_external_help <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  filter(question == "external_help") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade1_external_help
+```
+
+## Leader Community 
+
+```{r}
+grade1_leader_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  filter(question == "leader_community") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade1_leader_community
+```
+
+```{r}
+set.seed(2019)
+perm_grade1_leader_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  filter(question == "leader_community") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+```{r}
+perm_grade1_leader_community %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+## Contribute Community .1
+
+```{r}
+grade1_contribute_community.1 <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  filter(question == "contribute_community.1") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade1_contribute_community.1
+```
+
+## Grade 2
+
+## Contribute Community
+
+```{r}
+grade2_contribute_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "contribute_community") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade2_contribute_community
+```
+
+```{r}
+set.seed(2019)
+perm_grade2_contribute_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "contribute_community") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+```{r}
+perm_grade2_contribute_community %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+## Resolve Problems Community 
+
+```{r}
+grade2_resolve_problems_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "resolve_problems_community") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade2_resolve_problems_community
+```
+
+```{r}
+set.seed(2019)
+perm_grade2_resolve_problems_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "resolve_problems_community") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+```{r}
+perm_grade2_resolve_problems_community %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+## External Help 
+
+```{r}
+grade2_external_help <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "external_help") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade2_external_help
+```
+
+## Leader Community 
+
+```{r}
+grade2_leader_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "leader_community") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade2_leader_community
+```
+
+```{r}
+set.seed(2019)
+perm_grade2_leader_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "leader_community") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+```{r}
+perm_grade2_leader_community %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+## Contribute Community .1
+
+```{r}
+grade2_contribute_community.1 <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "contribute_community.1") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade2_contribute_community.1
+```
+```{r}
+set.seed(2019)
+perm_grade2_contribute_community.1 <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "contribute_community.1") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+```{r}
+perm_grade2_contribute_community.1 %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+## Grade 3
+
+## Contribute Community
+
+```{r}
+grade3_contribute_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "contribute_community") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade3_contribute_community
+```
+
+```{r}
+set.seed(2019)
+perm_grade3_contribute_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "contribute_community") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+```{r}
+perm_grade3_contribute_community %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+
+## Resolve Problems Community 
+
+```{r}
+grade3_resolve_problems_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "resolve_problems_community") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade3_resolve_problems_community
+```
+
+```{r}
+set.seed(2019)
+perm_grade3_resolve_problems_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "resolve_problems_community") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+```{r}
+perm_grade3_resolve_problems_community %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+## External Help 
+
+```{r}
+grade3_external_help <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "external_help") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade3_external_help
+```
+
+```{r}
+set.seed(2019)
+perm_grade3_external_help <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "external_help") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+```{r}
+perm_grade3_external_help %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+## Leader Community 
+
+```{r}
+grade3_leader_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "leader_community") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade3_leader_community
+```
+
+```{r}
+set.seed(2019)
+perm_grade3_leader_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "leader_community") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+```{r}
+perm_grade3_leader_community %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+## Contribute Community .1
+
+```{r}
+grade3_contribute_community.1 <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "contribute_community.1") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade3_contribute_community.1
+```
+
+```{r}
+set.seed(2019)
+perm_grade3_contribute_community.1 <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "contribute_community.1") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+```{r}
+perm_grade3_contribute_community.1 %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+## Grade 5
+
+## Contribute Community
+
+```{r}
+grade5_contribute_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "contribute_community") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade5_contribute_community
+```
+
+## Resolve Problems Community 
+
+```{r}
+grade5_resolve_problems_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "resolve_problems_community") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade5_resolve_problems_community
+```
+
+```{r}
+set.seed(2019)
+perm_grade5_resolve_problems_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "resolve_problems_community") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+```{r}
+perm_grade5_resolve_problems_community %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+## External Help 
+
+```{r}
+grade5_external_help <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "external_help") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade5_external_help
+```
+
+
+## Leader Community 
+
+```{r}
+grade5_leader_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "leader_community") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade5_leader_community
+```
+
+```{r}
+set.seed(2019)
+perm_grade5_leader_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "leader_community") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+```{r}
+perm_grade5_leader_community %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+## Contribute Community .1
+
+```{r}
+grade5_contribute_community.1 <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "contribute_community.1") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade5_contribute_community.1
 ```

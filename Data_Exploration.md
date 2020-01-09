@@ -556,29 +556,116 @@ observations2
     ## # … with 78 more rows
 
 ``` r
-sum_of_scores <- together %>%
+first_others <- others %>%
   filter(!is.na(all)) %>%
-  filter(!is.na(grade)) %>%
-  group_by(question, pre_or_post, grade) %>%
-  summarize(Sum = sum(all))
-sum_of_scores
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+first_others
 ```
 
-    ## # A tibble: 208 x 4
-    ## # Groups:   question, pre_or_post [52]
-    ##    question       pre_or_post grade   Sum
-    ##    <chr>          <chr>       <chr> <dbl>
-    ##  1 career_design  Post        1        64
-    ##  2 career_design  Post        2        69
-    ##  3 career_design  Post        3       117
-    ##  4 career_design  Post        5       105
-    ##  5 career_design  Pre         1        81
-    ##  6 career_design  Pre         2        61
-    ##  7 career_design  Pre         3       134
-    ##  8 career_design  Pre         5       126
-    ##  9 curiosity_tech Post        1        68
-    ## 10 curiosity_tech Post        2        89
-    ## # … with 198 more rows
+    ## # A tibble: 2 x 3
+    ##   pre_or_post  mean `diff(mean)`
+    ##   <chr>       <dbl>        <dbl>
+    ## 1 Post         3.41       0.0160
+    ## 2 Pre          3.43       0.0160
+
+``` r
+second_others <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+second_others
+```
+
+    ## # A tibble: 2 x 3
+    ##   pre_or_post  mean `diff(mean)`
+    ##   <chr>       <dbl>        <dbl>
+    ## 1 Post         3.24       0.0559
+    ## 2 Pre          3.30       0.0559
+
+``` r
+third_others <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+third_others
+```
+
+    ## # A tibble: 2 x 3
+    ##   pre_or_post  mean `diff(mean)`
+    ##   <chr>       <dbl>        <dbl>
+    ## 1 Post         3.15      -0.0713
+    ## 2 Pre          3.08      -0.0713
+
+``` r
+set.seed(2019)
+perm_third_others <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_third_others %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.145       0.273
+
+``` r
+fifth_others <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+fifth_others
+```
+
+    ## # A tibble: 2 x 3
+    ##   pre_or_post  mean `diff(mean)`
+    ##   <chr>       <dbl>        <dbl>
+    ## 1 Post         3.39     -0.00877
+    ## 2 Pre          3.38     -0.00877
+
+``` r
+set.seed(2019)
+perm_fifth_others <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_fifth_others %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.186       0.197
 
 # MATH
 
@@ -586,7 +673,7 @@ sum_of_scores
 
 2.  I consider choosing a career related to mathematics.
 
-<!-- end list -->
+YES
 
 ``` r
 grade1_math_career <- together %>%
@@ -607,6 +694,29 @@ grade1_math_career
     ## 2 Pre          2.8       -0.0125
 
 ``` r
+set.seed(2019)
+perm_grade1_math_career <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  filter(question == "math_career") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade1_math_career %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.844       0.830
+
+``` r
 grade2_math_career <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -623,6 +733,8 @@ grade2_math_career
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         2.05        0.316
     ## 2 Pre          2.36        0.316
+
+YES
 
 ``` r
 grade3_math_career <- together %>%
@@ -643,6 +755,31 @@ grade3_math_career
     ## 2 Pre           3           -0.5
 
 ``` r
+set.seed(2019)
+perm_grade3_math_career <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "math_career") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade3_math_career %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1     -0.0691        1.09
+
+YES
+
+``` r
 grade5_math_career <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -659,6 +796,29 @@ grade5_math_career
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         2.82       -0.292
     ## 2 Pre          2.53       -0.292
+
+``` r
+set.seed(2019)
+perm_grade5_math_career <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "math_career") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade5_math_career %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.279       0.846
 
 ### Good at math
 
@@ -702,6 +862,8 @@ grade2_good_at_math
     ## 1 Post         2.85        0.377
     ## 2 Pre          3.23        0.377
 
+YES
+
 ``` r
 grade3_good_at_math <- together %>%
   filter(!is.na(all)) %>%
@@ -721,6 +883,31 @@ grade3_good_at_math
     ## 2 Pre          3.10       -0.147
 
 ``` r
+set.seed(2019)
+perm_grade3_good_at_math <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "good_at_math") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade3_good_at_math %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.471       0.700
+
+YES
+
+``` r
 grade5_good_at_math <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -737,6 +924,29 @@ grade5_good_at_math
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         3.14       -0.309
     ## 2 Pre          2.83       -0.309
+
+``` r
+set.seed(2019)
+perm_grade5_good_at_math <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "good_at_math") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade5_good_at_math %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.258       0.820
 
 ### Higher level math
 
@@ -762,6 +972,8 @@ grade1_higherlevel_math
     ## 1 Post         3.19        0.241
     ## 2 Pre          3.43        0.241
 
+YES
+
 ``` r
 grade2_higherlevel_math <- together %>%
   filter(!is.na(all)) %>%
@@ -779,6 +991,31 @@ grade2_higherlevel_math
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         3.45       -0.260
     ## 2 Pre          3.19       -0.260
+
+``` r
+set.seed(2019)
+perm_grade2_higherlevel_math <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "higherlevel_math") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade2_higherlevel_math %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.628        1.05
+
+YES
 
 ``` r
 grade3_higherlevel_math <- together %>%
@@ -799,6 +1036,31 @@ grade3_higherlevel_math
     ## 2 Pre          3.87      -0.0425
 
 ``` r
+set.seed(2019)
+perm_grade3_higherlevel_math <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "higherlevel_math") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade3_higherlevel_math %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.450       0.541
+
+YES
+
+``` r
 grade5_higherlevel_math <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -816,11 +1078,34 @@ grade5_higherlevel_math
     ## 1 Post         3.59       -0.174
     ## 2 Pre          3.41       -0.174
 
+``` r
+set.seed(2019)
+perm_grade5_higherlevel_math <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "higherlevel_math") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade5_higherlevel_math %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.462       0.787
+
 ### Good math grades
 
 7.  I got good grades in math
 
-<!-- end list -->
+YES
 
 ``` r
 grade1_good_math_grades <- together %>%
@@ -839,6 +1124,29 @@ grade1_good_math_grades
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         3.27      -0.0286
     ## 2 Pre          3.24      -0.0286
+
+``` r
+set.seed(2019)
+perm_grade1_good_math_grades <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  filter(question == "good_math_grades") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade1_good_math_grades %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.725       0.788
 
 ``` r
 grade2_good_math_grades <- together %>%
@@ -876,6 +1184,8 @@ grade3_good_math_grades
     ## 1 Post         3.25        0.160
     ## 2 Pre          3.41        0.160
 
+YES
+
 ``` r
 grade5_good_math_grades <- together %>%
   filter(!is.na(all)) %>%
@@ -893,6 +1203,29 @@ grade5_good_math_grades
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         3.41       -0.214
     ## 2 Pre          3.2        -0.214
+
+``` r
+set.seed(2019)
+perm_grade5_good_math_grades <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "good_math_grades") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade5_good_math_grades %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.329       0.767
 
 ### Interesting math
 
@@ -954,6 +1287,8 @@ grade3_interesting_math
     ## 1 Post         4.42       0.0192
     ## 2 Pre          4.44       0.0192
 
+YES
+
 ``` r
 grade5_interesting_math <- together %>%
   filter(!is.na(all)) %>%
@@ -972,6 +1307,29 @@ grade5_interesting_math
     ## 1 Post         4.17       -0.401
     ## 2 Pre          3.77       -0.401
 
+``` r
+set.seed(2019)
+perm_grade5_interesting_math <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "interesting_math") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade5_interesting_math %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1     -0.0369       0.845
+
 ### Future Math
 
 9.  I plan to use mathematics in my future career.
@@ -985,16 +1343,15 @@ grade1_future_math <- together %>%
   filter(grade == "1") %>%
   filter(question == "future_math") %>%
   group_by(pre_or_post) %>%
-  summarize(mean = mean(all)) %>%
-  mutate(diff(mean))
+  summarize(mean = mean(all))
 grade1_future_math
 ```
 
-    ## # A tibble: 2 x 3
-    ##   pre_or_post  mean `diff(mean)`
-    ##   <chr>       <dbl>        <dbl>
-    ## 1 Post         3.25        0.226
-    ## 2 Pre          3.48        0.226
+    ## # A tibble: 2 x 2
+    ##   pre_or_post  mean
+    ##   <chr>       <dbl>
+    ## 1 Post         3.25
+    ## 2 Pre          3.48
 
 ``` r
 grade2_future_math <- together %>%
@@ -1013,6 +1370,8 @@ grade2_future_math
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         3.9         0.148
     ## 2 Pre          4.05        0.148
+
+YES
 
 ``` r
 grade3_future_math <- together %>%
@@ -1033,22 +1392,90 @@ grade3_future_math
     ## 2 Pre          3.85      -0.0150
 
 ``` r
+set.seed(2019)
+perm_grade3_future_math <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "future_math") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade3_future_math %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.544       0.550
+
+YES
+
+``` r
 grade5_future_math <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
   filter(grade == "5") %>%
   filter(question == "future_math") %>%
   group_by(pre_or_post) %>%
-  summarize(mean = mean(all)) %>%
-  mutate(diff(mean))
+  summarize(mean = mean(all))
 grade5_future_math
 ```
 
-    ## # A tibble: 2 x 3
-    ##   pre_or_post  mean `diff(mean)`
-    ##   <chr>       <dbl>        <dbl>
-    ## 1 Post         4.31       -0.567
-    ## 2 Pre          3.74       -0.567
+    ## # A tibble: 2 x 2
+    ##   pre_or_post  mean
+    ##   <chr>       <dbl>
+    ## 1 Post         4.31
+    ## 2 Pre          3.74
+
+``` r
+grade5_future_math$pre_or_post <- factor(grade5_future_math$pre_or_post, levels = c("Pre", "Post"))
+
+tiff("mathematics_future_career.tiff", units="in", width=7, height=9, res=300)
+ggplot(data = grade5_future_math, mapping = aes(x = pre_or_post, y = mean)) +
+  geom_bar(stat = "identity", fill = "slategray4") +
+    labs(title = "I plan to use mathematics in my future career", subtitle = "11th graders", x = "", y = "Average Positivity Towards STEM") +
+  theme(plot.title = element_text(size = 22),
+  plot.subtitle = element_text(size = 18),
+  axis.text=element_text(size=16),
+  axis.title=element_text(size=20),
+  legend.title=element_text(size=18),
+  legend.text=element_text(size=16),
+  strip.text=element_text(size=14),
+  legend.position ="none")
+dev.off()
+```
+
+    ## png 
+    ##   2
+
+``` r
+set.seed(2019)
+perm_grade5_future_math <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "future_math") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade5_future_math %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1       0.111        1.04
 
 ### Math courses
 
@@ -1074,6 +1501,8 @@ grade1_math_courses
     ## 1 Post         3.56        0.388
     ## 2 Pre          3.95        0.388
 
+YES
+
 ``` r
 grade2_math_courses <- together %>%
   filter(!is.na(all)) %>%
@@ -1093,6 +1522,29 @@ grade2_math_courses
     ## 2 Pre          3.43      -0.0714
 
 ``` r
+set.seed(2019)
+perm_grade2_math_courses <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "math_courses") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade2_math_courses %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.815       0.881
+
+``` r
 grade3_math_courses <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -1109,6 +1561,8 @@ grade3_math_courses
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         3.89        0.111
     ## 2 Pre          4           0.111
+
+YES
 
 ``` r
 grade5_math_courses <- together %>%
@@ -1127,6 +1581,29 @@ grade5_math_courses
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         4.17       -0.401
     ## 2 Pre          3.77       -0.401
+
+``` r
+set.seed(2019)
+perm_grade5_math_courses <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "math_courses") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade5_math_courses %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.172       0.931
 
 # SCIENCE
 
@@ -1190,6 +1667,8 @@ grade3_sure_science
     ## 1 Post         3.56      0.00855
     ## 2 Pre          3.56      0.00855
 
+YES
+
 ``` r
 grade5_sure_science <- together %>%
   filter(!is.na(all)) %>%
@@ -1207,6 +1686,29 @@ grade5_sure_science
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         3.45       -0.277
     ## 2 Pre          3.17       -0.277
+
+``` r
+set.seed(2019)
+perm_grade5_sure_science <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "sure_science") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade5_sure_science %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.251       0.833
 
 ### Science career
 
@@ -1250,6 +1752,8 @@ grade2_science_career
     ## 1 Post         3.47        0.276
     ## 2 Pre          3.75        0.276
 
+YES
+
 ``` r
 grade3_science_career <- together %>%
   filter(!is.na(all)) %>%
@@ -1269,6 +1773,31 @@ grade3_science_career
     ## 2 Pre          3.56      -0.0470
 
 ``` r
+set.seed(2019)
+perm_grade3_science_career <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "science_career") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade3_science_career %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.511       0.618
+
+YES
+
+``` r
 grade5_science_career <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -1285,6 +1814,29 @@ grade5_science_career
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         3.93       -0.417
     ## 2 Pre          3.51       -0.417
+
+``` r
+set.seed(2019)
+perm_grade5_science_career <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "science_career") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade5_science_career %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1     -0.0779       0.955
 
 ### Science outside of school
 
@@ -1310,6 +1862,8 @@ grade1_science_outsideofschool
     ## 1 Post         3.62        0.327
     ## 2 Pre          3.95        0.327
 
+YES
+
 ``` r
 grade2_science_outsideofschool <- together %>%
   filter(!is.na(all)) %>%
@@ -1329,6 +1883,29 @@ grade2_science_outsideofschool
     ## 2 Pre          3.86      -0.0429
 
 ``` r
+set.seed(2019)
+perm_grade2_science_outsideofschool <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "science_outsideofschool") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade2_science_outsideofschool %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.809       0.870
+
+``` r
 grade3_science_outsideofschool <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -1345,6 +1922,8 @@ grade3_science_outsideofschool
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         3.91      0.00879
     ## 2 Pre          3.92      0.00879
+
+YES
 
 ``` r
 grade5_science_outsideofschool <- together %>%
@@ -1364,11 +1943,34 @@ grade5_science_outsideofschool
     ## 1 Post         4.17       -0.115
     ## 2 Pre          4.06       -0.115
 
+``` r
+set.seed(2019)
+perm_grade5_science_outsideofschool <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "science_outsideofschool") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade5_science_outsideofschool %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.263       0.514
+
 ### Science pay
 
 14. Knowledge of science will help me earn a living.
 
-<!-- end list -->
+YES
 
 ``` r
 grade1_science_pay <- together %>%
@@ -1389,6 +1991,31 @@ grade1_science_pay
     ## 2 Pre          3.57       -0.116
 
 ``` r
+set.seed(2019)
+perm_grade1_science_pay <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  filter(question == "science_pay") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade1_science_pay %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.718       0.859
+
+YES
+
+``` r
 grade2_science_pay <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -1407,6 +2034,31 @@ grade2_science_pay
     ## 2 Pre          3.62       -0.181
 
 ``` r
+set.seed(2019)
+perm_grade2_science_pay <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "science_pay") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade2_science_pay %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.556       0.911
+
+YES
+
+``` r
 grade3_science_pay <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -1423,6 +2075,29 @@ grade3_science_pay
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         4.11      -0.0598
     ## 2 Pre          4.05      -0.0598
+
+``` r
+set.seed(2019)
+perm_grade3_science_pay <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "science_pay") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade3_science_pay %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.357       0.501
 
 ``` r
 grade5_science_pay <- together %>%
@@ -1484,6 +2159,8 @@ grade2_science_job
     ## 1 Post         3.7        0.0619
     ## 2 Pre          3.76       0.0619
 
+YES
+
 ``` r
 grade3_science_job <- together %>%
   filter(!is.na(all)) %>%
@@ -1501,6 +2178,29 @@ grade3_science_job
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         3.89      -0.0684
     ## 2 Pre          3.82      -0.0684
+
+``` r
+set.seed(2019)
+perm_grade3_science_job <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "science_job") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade3_science_job %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.470       0.594
 
 ``` r
 grade5_science_job <- together %>%
@@ -1544,6 +2244,8 @@ grade1_good_science
     ## 1 Post         3.81        0.287
     ## 2 Pre          4.1         0.287
 
+YES
+
 ``` r
 grade2_good_science <- together %>%
   filter(!is.na(all)) %>%
@@ -1561,6 +2263,31 @@ grade2_good_science
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         3.95      -0.0452
     ## 2 Pre          3.90      -0.0452
+
+``` r
+set.seed(2019)
+perm_grade2_good_science <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "good_science") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade2_good_science %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.645       0.788
+
+YES
 
 ``` r
 grade3_good_science <- together %>%
@@ -1581,6 +2308,31 @@ grade3_good_science
     ## 2 Pre          3.71       -0.123
 
 ``` r
+set.seed(2019)
+perm_grade3_good_science <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "good_science") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade3_good_science %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.393       0.625
+
+YES
+
+``` r
 grade5_good_science <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -1598,11 +2350,34 @@ grade5_good_science
     ## 1 Post         4.04       -0.183
     ## 2 Pre          3.85       -0.183
 
+``` r
+set.seed(2019)
+perm_grade5_good_science <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "good_science") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade5_good_science %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.257       0.619
+
 ### Higher level science
 
 18. I am considering taking higher level courses in science.
 
-<!-- end list -->
+YES
 
 ``` r
 grade1_higherlevel_science <- together %>%
@@ -1623,6 +2398,31 @@ grade1_higherlevel_science
     ## 2 Pre          3.05       -0.263
 
 ``` r
+set.seed(2019)
+perm_grade1_higherlevel_science <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  filter(question == "higherlevel_science") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade1_higherlevel_science %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.502        1.00
+
+YES
+
+``` r
 grade2_higherlevel_science <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -1639,6 +2439,31 @@ grade2_higherlevel_science
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         3.32       -0.316
     ## 2 Pre          3          -0.316
+
+``` r
+set.seed(2019)
+perm_grade2_higherlevel_science <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "higherlevel_science") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade2_higherlevel_science %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.453         1.1
+
+YES
 
 ``` r
 grade3_higherlevel_science <- together %>%
@@ -1659,6 +2484,31 @@ grade3_higherlevel_science
     ## 2 Pre          3.38       -0.171
 
 ``` r
+set.seed(2019)
+perm_grade3_higherlevel_science <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "higherlevel_science") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade3_higherlevel_science %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.409       0.767
+
+YES
+
+``` r
 grade5_higherlevel_science <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -1675,6 +2525,29 @@ grade5_higherlevel_science
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         3.55       -0.218
     ## 2 Pre          3.33       -0.218
+
+``` r
+set.seed(2019)
+perm_grade5_higherlevel_science <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "higherlevel_science") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade5_higherlevel_science %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.326       0.774
 
 ### Science courses
 
@@ -1700,6 +2573,8 @@ grade1_science_courses
     ## 1 Post         3.31        0.354
     ## 2 Pre          3.67        0.354
 
+YES
+
 ``` r
 grade2_science_courses <- together %>%
   filter(!is.na(all)) %>%
@@ -1717,6 +2592,31 @@ grade2_science_courses
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         3.78       -0.357
     ## 2 Pre          3.42       -0.357
+
+``` r
+set.seed(2019)
+perm_grade2_science_courses <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "science_courses") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade2_science_courses %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.500        1.18
+
+YES
 
 ``` r
 grade3_science_courses <- together %>%
@@ -1737,6 +2637,31 @@ grade3_science_courses
     ## 2 Pre          3.92      -0.0234
 
 ``` r
+set.seed(2019)
+perm_grade3_science_courses <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "science_courses") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade3_science_courses %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.509       0.561
+
+YES
+
+``` r
 grade5_science_courses <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -1754,13 +2679,36 @@ grade5_science_courses
     ## 1 Post         4.28       -0.335
     ## 2 Pre          3.94       -0.335
 
+``` r
+set.seed(2019)
+perm_grade5_science_courses <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "science_courses") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade5_science_courses %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1     -0.0998       0.791
+
 # EGR
 
 ### New Products
 
 20. I Iike to imagine myself creating new products.
 
-<!-- end list -->
+YES
 
 ``` r
 grade1_new_products <- together %>%
@@ -1779,6 +2727,29 @@ grade1_new_products
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         4.31       -0.265
     ## 2 Pre          4.05       -0.265
+
+``` r
+set.seed(2019)
+perm_grade1_new_products <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  filter(question == "new_products") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade1_new_products %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.515       0.989
 
 ``` r
 grade2_new_products <- together %>%
@@ -1816,6 +2787,8 @@ grade3_new_products
     ## 1 Post         4.11       0.0427
     ## 2 Pre          4.15       0.0427
 
+YES
+
 ``` r
 grade5_new_products <- together %>%
   filter(!is.na(all)) %>%
@@ -1834,12 +2807,35 @@ grade5_new_products
     ## 1 Post         4.38       -0.203
     ## 2 Pre          4.18       -0.203
 
+``` r
+set.seed(2019)
+perm_grade5_new_products <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "new_products") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade5_new_products %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.170       0.593
+
 ### Engineering Everyday
 
 21. If I learn engineering, then I can improve the things that people
     use every day.
 
-<!-- end list -->
+YES
 
 ``` r
 grade1_engineering_everyday <- together %>%
@@ -1860,6 +2856,31 @@ grade1_engineering_everyday
     ## 2 Pre          4.3       -0.0125
 
 ``` r
+set.seed(2019)
+perm_grade1_engineering_everyday <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  filter(question == "engineering_everyday") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade1_engineering_everyday %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.517       0.502
+
+YES
+
+``` r
 grade2_engineering_everyday <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -1876,6 +2897,31 @@ grade2_engineering_everyday
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         4.2        -0.253
     ## 2 Pre          3.95       -0.253
+
+``` r
+set.seed(2019)
+perm_grade2_engineering_everyday <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "engineering_everyday") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade2_engineering_everyday %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.365       0.841
+
+YES
 
 ``` r
 grade3_engineering_everyday <- together %>%
@@ -1896,28 +2942,97 @@ grade3_engineering_everyday
     ## 2 Pre          4.21       -0.100
 
 ``` r
+set.seed(2019)
+perm_grade3_engineering_everyday <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "engineering_everyday") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade3_engineering_everyday %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.332       0.554
+
+YES
+
+``` r
 grade5_engineering_everyday <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
   filter(grade == "5") %>%
   filter(question == "engineering_everyday") %>%
   group_by(pre_or_post) %>%
-  summarize(mean = mean(all)) %>%
-  mutate(diff(mean))
+  summarize(mean = mean(all))
 grade5_engineering_everyday
 ```
 
-    ## # A tibble: 2 x 3
-    ##   pre_or_post  mean `diff(mean)`
-    ##   <chr>       <dbl>        <dbl>
-    ## 1 Post         4.28       -0.394
-    ## 2 Pre          3.88       -0.394
+    ## # A tibble: 2 x 2
+    ##   pre_or_post  mean
+    ##   <chr>       <dbl>
+    ## 1 Post         4.28
+    ## 2 Pre          3.88
+
+``` r
+grade5_engineering_everyday$pre_or_post <- factor(grade5_engineering_everyday$pre_or_post, levels = c("Pre", "Post"))
+
+tiff("engineering_everyday.tiff", units="in", width=7, height=9, res=300)
+ggplot(data = grade5_engineering_everyday, mapping = aes(x = pre_or_post, y = mean)) +
+  geom_bar(stat = "identity", fill = "slategray4") +
+    labs(title = "If I learn engineering, then I can 
+improve the things that people use every day.", subtitle = "11th graders", x = "", y = "Average Positivity Towards STEM") +
+  theme(plot.title = element_text(size = 22),
+  plot.subtitle = element_text(size = 18),
+  axis.text=element_text(size=16),
+  axis.title=element_text(size=20),
+  legend.title=element_text(size=18),
+  legend.text=element_text(size=16),
+  strip.text=element_text(size=14),
+  legend.position ="none")
+dev.off()
+```
+
+    ## png 
+    ##   2
+
+``` r
+set.seed(2019)
+perm_grade5_engineering_everyday <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "engineering_everyday") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade5_engineering_everyday %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1     0.00921       0.769
 
 ### Enjoy Building
 
 22. I enjoy building and fixing things.
 
-<!-- end list -->
+YES
 
 ``` r
 grade1_enjoy_building <- together %>%
@@ -1938,6 +3053,29 @@ grade1_enjoy_building
     ## 2 Pre          3.90       -0.533
 
 ``` r
+set.seed(2019)
+perm_grade1_enjoy_building <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  filter(question == "enjoy_building") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade1_enjoy_building %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1     -0.0706        1.16
+
+``` r
 grade2_enjoy_building <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -1954,6 +3092,8 @@ grade2_enjoy_building
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         3.9         0.153
     ## 2 Pre          4.05        0.153
+
+YES
 
 ``` r
 grade3_enjoy_building <- together %>%
@@ -1974,6 +3114,31 @@ grade3_enjoy_building
     ## 2 Pre          3.87       -0.132
 
 ``` r
+set.seed(2019)
+perm_grade3_enjoy_building <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "enjoy_building") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade3_enjoy_building %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.351       0.620
+
+YES
+
+``` r
 grade5_enjoy_building <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -1991,11 +3156,55 @@ grade5_enjoy_building
     ## 1 Post         4.03       -0.459
     ## 2 Pre          3.58       -0.459
 
+``` r
+grade5_enjoy_building$pre_or_post <- factor(grade5_enjoy_building$pre_or_post, levels = c("Pre", "Post"))
+
+tiff("enjoy_building.tiff", units="in", width=7, height=9, res=300)
+ggplot(data = grade5_enjoy_building, mapping = aes(x = pre_or_post, y = mean)) +
+  geom_bar(stat = "identity", fill = "slategray4") +
+    labs(title = "I enjoy building and fixing things", subtitle = "11th graders", x = "", y = "Average Positivity Towards STEM") +
+  theme(plot.title = element_text(size = 22),
+  plot.subtitle = element_text(size = 18),
+  axis.text=element_text(size=16),
+  axis.title=element_text(size=20),
+  legend.title=element_text(size=18),
+  legend.text=element_text(size=16),
+  strip.text=element_text(size=14),
+  legend.position ="none")
+dev.off()
+```
+
+    ## png 
+    ##   2
+
+``` r
+set.seed(2019)
+perm_grade5_enjoy_building <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "enjoy_building") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade5_enjoy_building %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      0.0315       0.893
+
 ### Interested machines
 
 23. I am interested in how certain machines work.
 
-<!-- end list -->
+YES
 
 ``` r
 grade1_interested_machines <- together %>%
@@ -2016,6 +3225,31 @@ grade1_interested_machines
     ## 2 Pre          3.76       -0.676
 
 ``` r
+set.seed(2019)
+perm_grade1_interested_machines <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  filter(question == "interested_machines") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade1_interested_machines %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1     -0.0412        1.34
+
+YES
+
+``` r
 grade2_interested_machines <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -2034,6 +3268,31 @@ grade2_interested_machines
     ## 2 Pre          4.21       -0.239
 
 ``` r
+set.seed(2019)
+perm_grade2_interested_machines <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "interested_machines") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade2_interested_machines %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.308       0.823
+
+YES
+
+``` r
 grade3_interested_machines <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -2050,6 +3309,29 @@ grade3_interested_machines
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         4.25      -0.0192
     ## 2 Pre          4.23      -0.0192
+
+``` r
+set.seed(2019)
+perm_grade3_interested_machines <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "interested_machines") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade3_interested_machines %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.472       0.551
 
 ``` r
 grade5_interested_machines<- together %>%
@@ -2074,7 +3356,7 @@ grade5_interested_machines
 24. Designing products or structures will be important for my future
     career.
 
-<!-- end list -->
+YES
 
 ``` r
 grade1_careerdesign <- together %>%
@@ -2095,6 +3377,31 @@ grade1_careerdesign
     ## 2 Pre          3.86       -0.143
 
 ``` r
+set.seed(2019)
+perm_grade1_careerdesign <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  filter(question == "career_design") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade1_careerdesign %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.485       0.764
+
+YES
+
+``` r
 grade2_careerdesign <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -2111,6 +3418,29 @@ grade2_careerdesign
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         3.63       -0.243
     ## 2 Pre          3.39       -0.243
+
+``` r
+set.seed(2019)
+perm_grade2_careerdesign <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "career_design") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade2_careerdesign %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.656        1.10
 
 ``` r
 grade3_careerdesign <- together %>%
@@ -2152,7 +3482,7 @@ grade5_careerdesign
 
 25. I’m curious about how electronics work.
 
-<!-- end list -->
+YES
 
 ``` r
 grade1_curiosity_tech <- together %>%
@@ -2173,6 +3503,31 @@ grade1_curiosity_tech
     ## 2 Pre          4           -0.25
 
 ``` r
+set.seed(2019)
+perm_grade1_curiosity_tech <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  filter(question == "curiosity_tech") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade1_curiosity_tech %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.516        1.06
+
+YES
+
+``` r
 grade2_curiosity_tech <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -2189,6 +3544,31 @@ grade2_curiosity_tech
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         4.45       -0.292
     ## 2 Pre          4.16       -0.292
+
+``` r
+set.seed(2019)
+perm_grade2_curiosity_tech <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "curiosity_tech") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade2_curiosity_tech %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1        -0.5        1.09
+
+YES
 
 ``` r
 grade3_curiosity_tech <- together %>%
@@ -2209,6 +3589,31 @@ grade3_curiosity_tech
     ## 2 Pre          4.05       -0.120
 
 ``` r
+set.seed(2019)
+perm_grade3_curiosity_tech <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "curiosity_tech") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade3_curiosity_tech %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.390       0.676
+
+YES
+
+``` r
 grade5_curiosity_tech <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -2225,6 +3630,29 @@ grade5_curiosity_tech
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         4.28       -0.188
     ## 2 Pre          4.09       -0.188
+
+``` r
+set.seed(2019)
+perm_grade5_curiosity_tech <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "curiosity_tech") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade5_curiosity_tech %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.201       0.625
 
 ### Future Innovation
 
@@ -2250,6 +3678,8 @@ grade1_future_innovation
     ## 1 Post         3.86       0.0902
     ## 2 Pre          3.95       0.0902
 
+YES
+
 ``` r
 grade2_future_innovation <- together %>%
   filter(!is.na(all)) %>%
@@ -2269,6 +3699,29 @@ grade2_future_innovation
     ## 2 Pre          3.84     -0.00789
 
 ``` r
+set.seed(2019)
+perm_grade2_future_innovation <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "future_innovation") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade2_future_innovation %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.669       0.671
+
+``` r
 grade3_future_innovation <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -2285,6 +3738,8 @@ grade3_future_innovation
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         3.94        0.107
     ## 2 Pre          4.05        0.107
+
+YES
 
 ``` r
 grade5_future_innovation <- together %>%
@@ -2303,6 +3758,29 @@ grade5_future_innovation
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         4.41       -0.232
     ## 2 Pre          4.18       -0.232
+
+``` r
+set.seed(2019)
+perm_grade5_future_innovation <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "future_innovation") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade5_future_innovation %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.249       0.724
 
 ### Math science useful
 
@@ -2329,6 +3807,8 @@ grade1_mathscience_useful
     ## 1 Post         3.75         0.25
     ## 2 Pre          4            0.25
 
+YES
+
 ``` r
 grade2_mathscience_useful <- together %>%
   filter(!is.na(all)) %>%
@@ -2348,6 +3828,29 @@ grade2_mathscience_useful
     ## 2 Pre          4.05      -0.0974
 
 ``` r
+set.seed(2019)
+perm_grade2_mathscience_useful <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "mathscience_useful") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade2_mathscience_useful %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.508       0.675
+
+``` r
 grade3_mathscience_useful <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -2364,6 +3867,8 @@ grade3_mathscience_useful
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         4.11       0.0427
     ## 2 Pre          4.15       0.0427
+
+YES
 
 ``` r
 grade5_mathscience_useful <- together %>%
@@ -2383,11 +3888,34 @@ grade5_mathscience_useful
     ## 1 Post         4.21       -0.207
     ## 2 Pre          4          -0.207
 
+``` r
+set.seed(2019)
+perm_grade5_mathscience_useful <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "mathscience_useful") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade5_mathscience_useful %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.186       0.633
+
 ### Success engineering
 
 28. I think I can succeed in an engineering career.
 
-<!-- end list -->
+YES
 
 ``` r
 grade1_success_engineering <- together %>%
@@ -2408,6 +3936,31 @@ grade1_success_engineering
     ## 2 Pre          3.52       -0.414
 
 ``` r
+set.seed(2019)
+perm_grade1_success_engineering <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  filter(question == "success_engineering") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade1_success_engineering %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.462        1.17
+
+YES
+
+``` r
 grade2_success_engineering <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -2424,6 +3977,31 @@ grade2_success_engineering
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         4.25       -0.145
     ## 2 Pre          4.11       -0.145
+
+``` r
+set.seed(2019)
+perm_grade2_success_engineering <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "success_engineering") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade2_success_engineering %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.321       0.606
+
+YES
 
 ``` r
 grade3_success_engineering <- together %>%
@@ -2444,6 +4022,31 @@ grade3_success_engineering
     ## 2 Pre          3.95       -0.190
 
 ``` r
+set.seed(2019)
+perm_grade3_success_engineering <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "success_engineering") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade3_success_engineering %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.239       0.625
+
+YES
+
+``` r
 grade5_success_engineering <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -2461,11 +4064,34 @@ grade5_success_engineering
     ## 1 Post         3.54      -0.0945
     ## 2 Pre          3.44      -0.0945
 
+``` r
+set.seed(2019)
+perm_grade5_success_engineering <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "success_engineering") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade5_success_engineering %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.429       0.652
+
 # I can build
 
 29. I am good at building and fixing things.
 
-<!-- end list -->
+YES
 
 ``` r
 grade1_i_can_build <- together %>%
@@ -2484,6 +4110,29 @@ grade1_i_can_build
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         4.19       -0.568
     ## 2 Pre          3.62       -0.568
+
+``` r
+set.seed(2019)
+perm_grade1_i_can_build <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  filter(question == "i_can_build") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade1_i_can_build %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.158        1.34
 
 ``` r
 grade2_i_can_build <- together %>%
@@ -2521,6 +4170,8 @@ grade3_i_can_build
     ## 1 Post         3.56       0.0234
     ## 2 Pre          3.58       0.0234
 
+YES
+
 ``` r
 grade5_i_can_build <- together %>%
   filter(!is.na(all)) %>%
@@ -2539,11 +4190,55 @@ grade5_i_can_build
     ## 1 Post         3.69       -0.631
     ## 2 Pre          3.06       -0.631
 
+``` r
+grade5_i_can_build$pre_or_post <- factor(grade5_i_can_build$pre_or_post, levels = c("Pre", "Post"))
+
+tiff("i_can_build.tiff", units="in", width=7, height=9, res=300)
+ggplot(data = grade5_i_can_build, mapping = aes(x = pre_or_post, y = mean)) +
+  geom_bar(stat = "identity", fill = "slategray4") +
+    labs(title = "I am good at building and fixing things", subtitle = "11th graders", x = "", y = "Average Positivity Towards STEM") +
+  theme(plot.title = element_text(size = 22),
+  plot.subtitle = element_text(size = 18),
+  axis.text=element_text(size=16),
+  axis.title=element_text(size=20),
+  legend.title=element_text(size=18),
+  legend.text=element_text(size=16),
+  strip.text=element_text(size=14),
+  legend.position ="none")
+dev.off()
+```
+
+    ## png 
+    ##   2
+
+``` r
+set.seed(2019)
+perm_grade5_i_can_build <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "i_can_build") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade5_i_can_build %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1       0.180        1.05
+
 ### Opportunity egr
 
 30. I would like the opportunity to take more engineering courses.
 
-<!-- end list -->
+YES
 
 ``` r
 grade1_opportunity <- together %>%
@@ -2564,6 +4259,31 @@ grade1_opportunity
     ## 2 Pre          3.43       -0.634
 
 ``` r
+set.seed(2019)
+perm_grade1_opportunity <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  filter(question == "opportunity") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade1_opportunity %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.219        1.48
+
+YES
+
+``` r
 grade2_opportunity <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -2580,6 +4300,31 @@ grade2_opportunity
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         4.3        -0.142
     ## 2 Pre          4.16       -0.142
+
+``` r
+set.seed(2019)
+perm_grade2_opportunity <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "opportunity") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade2_opportunity %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.420       0.724
+
+YES
 
 ``` r
 grade3_opportunity <- together %>%
@@ -2600,6 +4345,31 @@ grade3_opportunity
     ## 2 Pre          4.32      -0.0175
 
 ``` r
+set.seed(2019)
+perm_grade3_opportunity <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "opportunity") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade3_opportunity %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.421       0.470
+
+YES
+
+``` r
 grade5_opportunity <- together %>%
   filter(!is.na(all)) %>%
   filter(!is.na(pre_or_post)) %>%
@@ -2616,3 +4386,712 @@ grade5_opportunity
     ##   <chr>       <dbl>        <dbl>
     ## 1 Post         3.86       -0.274
     ## 2 Pre          3.59       -0.274
+
+``` r
+set.seed(2019)
+perm_grade5_opportunity <- together %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "opportunity") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade5_opportunity %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.291       0.867
+
+# OTHERS
+
+# Grade 1
+
+## Contribute Community
+
+``` r
+grade1_contribute_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  filter(question == "contribute_community") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade1_contribute_community
+```
+
+    ## # A tibble: 2 x 3
+    ##   pre_or_post  mean `diff(mean)`
+    ##   <chr>       <dbl>        <dbl>
+    ## 1 Post          4         0.1000
+    ## 2 Pre           4.1       0.1000
+
+## Resolve Problems Community
+
+``` r
+grade1_resolve_problems_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  filter(question == "resolve_problems_community") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade1_resolve_problems_community
+```
+
+    ## # A tibble: 2 x 3
+    ##   pre_or_post  mean `diff(mean)`
+    ##   <chr>       <dbl>        <dbl>
+    ## 1 Post         3.8       0.00952
+    ## 2 Pre          3.81      0.00952
+
+## External Help
+
+``` r
+grade1_external_help <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  filter(question == "external_help") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade1_external_help
+```
+
+    ## # A tibble: 2 x 3
+    ##   pre_or_post  mean `diff(mean)`
+    ##   <chr>       <dbl>        <dbl>
+    ## 1 Post         2.71        0.286
+    ## 2 Pre          3           0.286
+
+## Leader Community
+
+``` r
+grade1_leader_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  filter(question == "leader_community") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade1_leader_community
+```
+
+    ## # A tibble: 2 x 3
+    ##   pre_or_post  mean `diff(mean)`
+    ##   <chr>       <dbl>        <dbl>
+    ## 1 Post         3.53     -0.00952
+    ## 2 Pre          3.52     -0.00952
+
+``` r
+set.seed(2019)
+perm_grade1_leader_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  filter(question == "leader_community") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade1_leader_community %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.647       0.625
+
+## Contribute Community .1
+
+``` r
+grade1_contribute_community.1 <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "1") %>%
+  filter(question == "contribute_community.1") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade1_contribute_community.1
+```
+
+    ## # A tibble: 2 x 3
+    ##   pre_or_post  mean `diff(mean)`
+    ##   <chr>       <dbl>        <dbl>
+    ## 1 Post         3.73       0.0762
+    ## 2 Pre          3.81       0.0762
+
+## Grade 2
+
+## Contribute Community
+
+``` r
+grade2_contribute_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "contribute_community") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade2_contribute_community
+```
+
+    ## # A tibble: 2 x 3
+    ##   pre_or_post  mean `diff(mean)`
+    ##   <chr>       <dbl>        <dbl>
+    ## 1 Post         3.95       -0.188
+    ## 2 Pre          3.76       -0.188
+
+``` r
+set.seed(2019)
+perm_grade2_contribute_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "contribute_community") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade2_contribute_community %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.628       0.931
+
+## Resolve Problems Community
+
+``` r
+grade2_resolve_problems_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "resolve_problems_community") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade2_resolve_problems_community
+```
+
+    ## # A tibble: 2 x 3
+    ##   pre_or_post  mean `diff(mean)`
+    ##   <chr>       <dbl>        <dbl>
+    ## 1 Post         3.95       -0.331
+    ## 2 Pre          3.62       -0.331
+
+``` r
+set.seed(2019)
+perm_grade2_resolve_problems_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "resolve_problems_community") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade2_resolve_problems_community %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.443       0.981
+
+## External Help
+
+``` r
+grade2_external_help <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "external_help") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade2_external_help
+```
+
+    ## # A tibble: 2 x 3
+    ##   pre_or_post  mean `diff(mean)`
+    ##   <chr>       <dbl>        <dbl>
+    ## 1 Post         2.95        0.193
+    ## 2 Pre          3.14        0.193
+
+## Leader Community
+
+``` r
+grade2_leader_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "leader_community") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade2_leader_community
+```
+
+    ## # A tibble: 2 x 3
+    ##   pre_or_post  mean `diff(mean)`
+    ##   <chr>       <dbl>        <dbl>
+    ## 1 Post         3.48       -0.143
+    ## 2 Pre          3.33       -0.143
+
+``` r
+set.seed(2019)
+perm_grade2_leader_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "leader_community") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade2_leader_community %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.655       0.929
+
+## Contribute Community .1
+
+``` r
+grade2_contribute_community.1 <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "contribute_community.1") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade2_contribute_community.1
+```
+
+    ## # A tibble: 2 x 3
+    ##   pre_or_post  mean `diff(mean)`
+    ##   <chr>       <dbl>        <dbl>
+    ## 1 Post         3.86      -0.0476
+    ## 2 Pre          3.81      -0.0476
+
+``` r
+set.seed(2019)
+perm_grade2_contribute_community.1 <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "2") %>%
+  filter(question == "contribute_community.1") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade2_contribute_community.1 %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.712       0.788
+
+## Grade 3
+
+## Contribute Community
+
+``` r
+grade3_contribute_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "contribute_community") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade3_contribute_community
+```
+
+    ## # A tibble: 2 x 3
+    ##   pre_or_post  mean `diff(mean)`
+    ##   <chr>       <dbl>        <dbl>
+    ## 1 Post         3.97      -0.0512
+    ## 2 Pre          3.92      -0.0512
+
+``` r
+set.seed(2019)
+perm_grade3_contribute_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "contribute_community") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade3_contribute_community %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.424       0.542
+
+## Resolve Problems Community
+
+``` r
+grade3_resolve_problems_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "resolve_problems_community") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade3_resolve_problems_community
+```
+
+    ## # A tibble: 2 x 3
+    ##   pre_or_post  mean `diff(mean)`
+    ##   <chr>       <dbl>        <dbl>
+    ## 1 Post         3.89      -0.0468
+    ## 2 Pre          3.84      -0.0468
+
+``` r
+set.seed(2019)
+perm_grade3_resolve_problems_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "resolve_problems_community") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade3_resolve_problems_community %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.410       0.555
+
+## External Help
+
+``` r
+grade3_external_help <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "external_help") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade3_external_help
+```
+
+    ## # A tibble: 2 x 3
+    ##   pre_or_post  mean `diff(mean)`
+    ##   <chr>       <dbl>        <dbl>
+    ## 1 Post         3.41       -0.141
+    ## 2 Pre          3.27       -0.141
+
+``` r
+set.seed(2019)
+perm_grade3_external_help <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "external_help") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade3_external_help %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.428       0.708
+
+## Leader Community
+
+``` r
+grade3_leader_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "leader_community") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade3_leader_community
+```
+
+    ## # A tibble: 2 x 3
+    ##   pre_or_post  mean `diff(mean)`
+    ##   <chr>       <dbl>        <dbl>
+    ## 1 Post         3.63      -0.0233
+    ## 2 Pre          3.61      -0.0233
+
+``` r
+set.seed(2019)
+perm_grade3_leader_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "leader_community") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade3_leader_community %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.520       0.537
+
+## Contribute Community .1
+
+``` r
+grade3_contribute_community.1 <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "contribute_community.1") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade3_contribute_community.1
+```
+
+    ## # A tibble: 2 x 3
+    ##   pre_or_post  mean `diff(mean)`
+    ##   <chr>       <dbl>        <dbl>
+    ## 1 Post         4         -0.0263
+    ## 2 Pre          3.97      -0.0263
+
+``` r
+set.seed(2019)
+perm_grade3_contribute_community.1 <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "3") %>%
+  filter(question == "contribute_community.1") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade3_contribute_community.1 %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.509       0.573
+
+## Grade 5
+
+## Contribute Community
+
+``` r
+grade5_contribute_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "contribute_community") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade5_contribute_community
+```
+
+    ## # A tibble: 2 x 3
+    ##   pre_or_post  mean `diff(mean)`
+    ##   <chr>       <dbl>        <dbl>
+    ## 1 Post         4           0.171
+    ## 2 Pre          4.17        0.171
+
+## Resolve Problems Community
+
+``` r
+grade5_resolve_problems_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "resolve_problems_community") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade5_resolve_problems_community
+```
+
+    ## # A tibble: 2 x 3
+    ##   pre_or_post  mean `diff(mean)`
+    ##   <chr>       <dbl>        <dbl>
+    ## 1 Post         4.10       -0.103
+    ## 2 Pre          4          -0.103
+
+``` r
+set.seed(2019)
+perm_grade5_resolve_problems_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "resolve_problems_community") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade5_resolve_problems_community %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.226       0.453
+
+## External Help
+
+``` r
+grade5_external_help <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "external_help") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade5_external_help
+```
+
+    ## # A tibble: 2 x 3
+    ##   pre_or_post  mean `diff(mean)`
+    ##   <chr>       <dbl>        <dbl>
+    ## 1 Post         3.24        0.101
+    ## 2 Pre          3.34        0.101
+
+## Leader Community
+
+``` r
+grade5_leader_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "leader_community") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade5_leader_community
+```
+
+    ## # A tibble: 2 x 3
+    ##   pre_or_post  mean `diff(mean)`
+    ##   <chr>       <dbl>        <dbl>
+    ## 1 Post         3.90       -0.211
+    ## 2 Pre          3.69       -0.211
+
+``` r
+set.seed(2019)
+perm_grade5_leader_community <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "leader_community") %>%
+  specify(response = all, explanatory = pre_or_post) %>%
+  generate(reps = 1000, type = "bootstrap") %>%
+  calculate(stat = "diff in means", order = c("Post", "Pre"))
+```
+
+``` r
+perm_grade5_leader_community %>%
+  summarize(lower_bound = quantile(stat, 0.025),
+            upper_bound = quantile(stat, 0.975))
+```
+
+    ## # A tibble: 1 x 2
+    ##   lower_bound upper_bound
+    ##         <dbl>       <dbl>
+    ## 1      -0.267       0.668
+
+## Contribute Community .1
+
+``` r
+grade5_contribute_community.1 <- others %>%
+  filter(!is.na(all)) %>%
+  filter(!is.na(pre_or_post)) %>%
+  filter(grade == "5") %>%
+  filter(question == "contribute_community.1") %>%
+  group_by(pre_or_post) %>%
+  summarize(mean = mean(all)) %>%
+  mutate(diff(mean))
+grade5_contribute_community.1
+```
+
+    ## # A tibble: 2 x 3
+    ##   pre_or_post  mean `diff(mean)`
+    ##   <chr>       <dbl>        <dbl>
+    ## 1 Post         4.07        0.131
+    ## 2 Pre          4.2         0.131
